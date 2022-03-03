@@ -28,7 +28,7 @@ public class ClientEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinTable(name = "workouts",
+    @JoinTable(name = "client_workout",
             joinColumns = {@JoinColumn(name = "client_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     List<WorkoutEntity> workouts;
