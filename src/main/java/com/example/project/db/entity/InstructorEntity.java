@@ -3,6 +3,7 @@ package com.example.project.db.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -18,6 +19,9 @@ public class InstructorEntity {
 
     @Column(name = "last_name")
     String lastName;
+
+    @Column(name = "birthdate")
+    LocalDate birthdate;
 
     @ManyToOne(cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)

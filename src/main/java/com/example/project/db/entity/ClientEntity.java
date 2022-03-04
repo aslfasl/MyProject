@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -22,6 +23,9 @@ public class ClientEntity {
 
     @Column(name = "last_name")
     String lastName;
+
+    @Column(name = "birthdate")
+    LocalDate birthdate;
 
     @Column(name = "status")
     boolean isActive;
