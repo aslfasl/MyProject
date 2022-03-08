@@ -10,13 +10,14 @@ import java.util.List;
 public interface ClientService {
 
     ClientEntity saveClient(ClientDto client);
-    ClientEntity getClientById(Long id);
+    ClientDto getClientById(Long id);
     void deleteClientById(Long id);
-    List<ClientEntity> getAll();
+    List<ClientDto> getAll();
 
     // TODO: 07.03.2022
 //    ClientEntity updateClientById(Long id);
 
-    ClientEntity getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
+    ClientDto getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
+    ClientDto getClientByPassport(String passport);
 
 }

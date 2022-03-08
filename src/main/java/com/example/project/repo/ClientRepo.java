@@ -19,4 +19,6 @@ public interface ClientRepo extends JpaRepository<ClientEntity, Long> {
                                                                            String lastName,
                                                                            LocalDate birthdate);
 
+    ClientEntity findClientEntityByPassport(String passport);
+
 }

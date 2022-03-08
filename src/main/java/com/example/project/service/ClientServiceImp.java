@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,13 +27,17 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public ClientEntity getClientById(Long id) {
-        return clientRepo.findClientById(id);
+    public ClientDto getClientById(Long id) {
+        ClientEntity clientEntity = clientRepo.findClientById(id);
+        return converter.convertClientEntity(clientEntity);
     }
 
     @Override
-    public List<ClientEntity> getAll(){
-        return clientRepo.findAll();
+    public List<ClientDto> getAll(){
+        return clientRepo.findAll()
+                .stream()
+                .map(converter::convertClientEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -47,12 +52,17 @@ public class ClientServiceImp implements ClientService {
 //    }
 
     @Override
-    public ClientEntity getClientByFullNameAndBirthDate(String firstName,
+    public ClientDto getClientByFullNameAndBirthDate(String firstName,
                                                               String lastName,
                                                               LocalDate birthdate) {
 
-        return clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate(firstName,
+        return converter.convertClientEntity(clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate(firstName,
                 lastName,
-                birthdate);
+                birthdate));
+    }
+
+    @Override
+    public ClientDto getClientByPassport(String passport) {
+        return converter.convertClientEntity(clientRepo.findClientEntityByPassport(passport));
     }
 }

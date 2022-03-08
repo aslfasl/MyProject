@@ -34,7 +34,7 @@ class WorkoutServiceImpTest {
     void getById() {
         WorkoutEntity workout = new WorkoutEntity("testOne", 60);
 // TODO: 07.03.2022  
-        workout.addClient(new ClientEntity("one", "one", LocalDate.of(2000,1,1), true));
+        workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000,1,1), true));
         workout.addInstructor(new InstructorEntity("one1", "one1", LocalDate.of(2001,2,2)));
         workoutRepo.save(workout);
         long id = workout.getId();

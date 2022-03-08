@@ -1,10 +1,7 @@
 package com.example.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -29,6 +26,10 @@ public class ClientEntity {
     @Column(name = "last_name")
     String lastName;
 
+    @Column(name = "passport",
+            unique = true)
+    String passport;
+
     @Column(name = "birthdate")
     LocalDate birthdate;
 
@@ -42,12 +43,14 @@ public class ClientEntity {
             joinColumns = {@JoinColumn(name = "client_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Set<WorkoutEntity> clientWorkouts = new HashSet<>();
 
 
-    public ClientEntity(String firstName, String lastName, LocalDate birthdate, boolean isActive) {
+    public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.passport = passport;
         this.birthdate = birthdate;
         this.isActive = isActive;
     }
