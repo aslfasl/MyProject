@@ -23,6 +23,9 @@ public class WorkoutEntity {
     @Column(name = "name")
     String name;
 
+    @Column(name = "duration")
+    int duration;
+
     @ManyToMany(mappedBy = "clientWorkouts",
             fetch = FetchType.EAGER)
     @JsonIgnore
@@ -35,8 +38,9 @@ public class WorkoutEntity {
     @JsonIgnore
     Set<InstructorEntity> instructors = new HashSet<>();
 
-    public WorkoutEntity(String name) {
+    public WorkoutEntity(String name, int duration) {
         this.name = name;
+        this.duration = duration;
     }
 
     public void addInstructor(InstructorEntity instructor){
