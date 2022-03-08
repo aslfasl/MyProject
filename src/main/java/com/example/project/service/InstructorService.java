@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.InstructorEntity;
+import com.example.project.entity.InstructorEntity;
 
 import java.time.LocalDate;
 

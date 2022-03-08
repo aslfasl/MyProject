@@ -1,8 +1,7 @@
 package com.example.project.service;
 
-import ch.qos.logback.core.net.server.Client;
-import com.example.project.db.entity.ClientEntity;
-import com.example.project.db.repo.ClientRepo;
+import com.example.project.entity.ClientEntity;
+import com.example.project.repo.ClientRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

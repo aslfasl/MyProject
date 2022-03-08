@@ -1,12 +1,10 @@
-package com.example.project.db.repo;
+package com.example.project.repo;
 
-import com.example.project.db.entity.InstructorEntity;
-import com.example.project.db.entity.WorkoutEntity;
+import com.example.project.entity.InstructorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Repository
 public interface InstructorRepo extends JpaRepository<InstructorEntity, Long> {

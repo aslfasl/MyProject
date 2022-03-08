@@ -1,17 +1,9 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.ClientEntity;
-import com.example.project.db.repo.ClientRepo;
-import com.example.project.dto.ClientDto;
-import com.example.project.dto.Converter;
-import com.example.project.dto.WorkoutDto;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.example.project.entity.ClientEntity;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public interface ClientService {

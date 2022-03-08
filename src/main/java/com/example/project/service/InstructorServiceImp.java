@@ -1,7 +1,7 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.InstructorEntity;
-import com.example.project.db.repo.InstructorRepo;
+import com.example.project.entity.InstructorEntity;
+import com.example.project.repo.InstructorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

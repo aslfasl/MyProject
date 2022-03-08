@@ -1,7 +1,7 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.ClientEntity;
-import com.example.project.db.repo.ClientRepo;
+import com.example.project.entity.ClientEntity;
+import com.example.project.repo.ClientRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ClientServiceImpTest {

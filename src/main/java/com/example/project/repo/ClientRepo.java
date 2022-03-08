@@ -1,12 +1,11 @@
-package com.example.project.db.repo;
+package com.example.project.repo;
 
-import com.example.project.db.entity.ClientEntity;
+import com.example.project.entity.ClientEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Repository
 public interface ClientRepo extends JpaRepository<ClientEntity, Long> {

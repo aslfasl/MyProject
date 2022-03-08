@@ -1,7 +1,7 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.WorkoutEntity;
-import com.example.project.db.repo.WorkoutRepo;
+import com.example.project.entity.WorkoutEntity;
+import com.example.project.repo.WorkoutRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

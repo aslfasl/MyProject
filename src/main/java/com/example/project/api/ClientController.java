@@ -1,6 +1,6 @@
 package com.example.project.api;
 
-import com.example.project.db.entity.ClientEntity;
+import com.example.project.entity.ClientEntity;
 import com.example.project.service.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

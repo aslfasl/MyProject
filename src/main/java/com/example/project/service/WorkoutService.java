@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.db.entity.WorkoutEntity;
+import com.example.project.entity.WorkoutEntity;
 
 public interface WorkoutService {
     WorkoutEntity getById(Long id);
