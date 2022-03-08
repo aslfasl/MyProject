@@ -1,30 +1,63 @@
 package com.example.project.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+
+@Getter
+@Setter
 @Entity
-@Table(name = "workouts")
+@Table(name = "workout")
+@NoArgsConstructor
 public class WorkoutEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     long id;
 
-    @Column
+    @Column(name = "name")
     String name;
 
-    @ManyToMany(mappedBy = "workouts",
-            fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "clientWorkouts",
+            fetch = FetchType.EAGER)
     @JsonIgnore
-    List<ClientEntity> clients;
+    @ToString.Exclude
+    Set<ClientEntity> clients = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
-            mappedBy = "workout")
-    List<InstructorEntity> instructors;
+    @ManyToMany(mappedBy = "instructorWorkouts",
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonIgnore
+    Set<InstructorEntity> instructors = new HashSet<>();
+
+    public WorkoutEntity(String name) {
+        this.name = name;
+    }
+
+    public void addInstructor(InstructorEntity instructor){
+        if (instructors.contains(instructor)){
+            throw new RuntimeException("потом напишу"); // TODO: 07.03.2022
+        }
+        instructors.add(instructor);
+    }
+
+    public void addClient(ClientEntity client) {
+        if (clients.contains(client)){
+            throw new RuntimeException("потом напишу"); // TODO: 07.03.2022
+        }
+        clients.add(client);
+    }
+
+    @Override
+    public String toString() {
+        return "WorkoutEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
