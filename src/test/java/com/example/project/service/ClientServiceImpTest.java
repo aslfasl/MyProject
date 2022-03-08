@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.repo.ClientRepo;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootTest
 class ClientServiceImpTest {
@@ -29,8 +34,8 @@ class ClientServiceImpTest {
                 "SurnameSecond",
                 LocalDate.of(2000, 1,1),
                 true);
-        service.saveClient(clientEntity1);
-        service.saveClient(clientEntity2);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
         long id1 = clientEntity1.getId();
         long id2 = clientEntity2.getId();
     }
@@ -42,15 +47,17 @@ class ClientServiceImpTest {
 
     @Test
     void saveClient() {
-        ClientEntity clientEntity = new ClientEntity( "Name",
+        Collection<WorkoutDto> workoutsDto = new HashSet<>();
+        workoutsDto.add(new WorkoutDto("test training", 90));
+        ClientDto clientDto = new ClientDto("Name",
                 "Surname",
-                LocalDate.of(2000, 1,1),
-                true);
-        service.saveClient(clientEntity);
-        long id = clientEntity.getId();
+                LocalDate.of(2000, 1, 1),
+                true,
+                workoutsDto);
+        System.out.println(clientDto);
+        service.saveClient(clientDto);
         // TODO: 07.03.2022
 
-        System.out.println(clientRepo.findById(id));
     }
 
     @Test

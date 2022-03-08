@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import com.example.project.dto.ClientDto;
 import com.example.project.entity.ClientEntity;
 
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface ClientService {
 
-    ClientEntity saveClient(ClientEntity client);
+    ClientEntity saveClient(ClientDto client);
     ClientEntity getClientById(Long id);
     void deleteClientById(Long id);
     List<ClientEntity> getAll();

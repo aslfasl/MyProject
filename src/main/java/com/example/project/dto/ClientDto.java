@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collection;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +16,5 @@ public class ClientDto {
     String lastName;
     LocalDate birthdate;
     boolean isActive;
-    List<WorkoutDto> workouts;
+    Collection<WorkoutDto> workouts;
 }

@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.Converter;
 import com.example.project.entity.ClientEntity;
 import com.example.project.repo.ClientRepo;
 import lombok.AllArgsConstructor;
@@ -15,10 +17,12 @@ import java.util.List;
 public class ClientServiceImp implements ClientService {
 
     private final ClientRepo clientRepo;
+    private final Converter converter;
 
     @Override
-    public ClientEntity saveClient(ClientEntity client) {
-        return clientRepo.save(client);
+    public ClientEntity saveClient(ClientDto clientDto) {
+        ClientEntity clientEntity = converter.convertClientDto(clientDto);
+        return clientRepo.save(clientEntity);
     }
 
     @Override
