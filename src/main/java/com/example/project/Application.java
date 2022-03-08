@@ -22,7 +22,7 @@ public class Application {
 
 	// TODO: 08.03.2022
 	@Bean
-	PasswordEncoder passwordEncoder() {
+	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 
 	}

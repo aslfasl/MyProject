@@ -23,14 +23,14 @@ public class Converter {
         List<WorkoutDto> workouts = clientEntity.getClientWorkouts().stream()
                 .map(workoutEntity -> convertValue(workoutEntity, WorkoutDto.class))
                 .collect(Collectors.toList());
-        clientDto.setWorkouts(workouts);
+        clientDto.setClientWorkouts(workouts);
         return clientDto;
     }
 
     public ClientEntity convertClientDto(ClientDto clientDto) {
         ClientEntity clientEntity = convertValue(clientDto, ClientEntity.class);
 
-        Set<WorkoutEntity> workouts = clientDto.getWorkouts().stream()
+        Set<WorkoutEntity> workouts = clientDto.getClientWorkouts().stream()
 
                 .map(workoutDto -> convertValue(workoutDto, WorkoutEntity.class))
                 .collect(Collectors.toSet());

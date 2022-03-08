@@ -46,7 +46,7 @@ class ClientServiceImpTest {
     }
 
     @Test
-    void saveClient() {
+    void shouldSaveClient() {
         Collection<WorkoutDto> workoutsDto = new HashSet<>();
         workoutsDto.add(new WorkoutDto("test training", 90));
         ClientDto clientDto = new ClientDto("Name",
@@ -56,6 +56,10 @@ class ClientServiceImpTest {
                 workoutsDto);
         System.out.println(clientDto);
         service.saveClient(clientDto);
+
+        ClientEntity clientInDb = clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate("Name", "Surname", LocalDate.of(2000, 1, 1));
+        System.out.println(clientInDb.getClientWorkouts());
+        System.out.println(clientInDb);
         // TODO: 07.03.2022
 
     }

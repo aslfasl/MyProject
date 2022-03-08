@@ -16,5 +16,5 @@ public class ClientDto {
     String lastName;
     LocalDate birthdate;
     boolean isActive;
-    Collection<WorkoutDto> workouts;
+    Collection<WorkoutDto> clientWorkouts;
 }
