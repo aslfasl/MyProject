@@ -20,14 +20,14 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	// TODO: 08.03.2022
+	// TODO: 08.03.2022 put it in ConfigClass
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 
 	}
 
-	// TODO: 08.03.2022
+	// TODO: 08.03.2022 put it in ConfigClass
 	@Bean
 	CommandLineRunner run(UserService userService){
 		return args -> {

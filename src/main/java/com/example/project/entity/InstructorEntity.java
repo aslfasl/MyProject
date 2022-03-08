@@ -27,6 +27,10 @@ public class InstructorEntity {
     @Column(name = "last_name")
     String lastName;
 
+    @Column(name = "passport",
+            unique = true)
+    String passport;
+
     @Column(name = "birthdate")
     LocalDate birthdate;
 

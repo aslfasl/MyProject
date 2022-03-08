@@ -1,6 +1,7 @@
 package com.example.project.dto;
 
 import com.example.project.entity.ClientEntity;
+import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
@@ -20,9 +21,9 @@ public class Converter {
 
     public ClientDto convertClientEntity(ClientEntity clientEntity) {
         ClientDto clientDto = convertValue(clientEntity, ClientDto.class);
-        List<WorkoutDto> workouts = clientEntity.getClientWorkouts().stream()
+        Set<WorkoutDto> workouts = clientEntity.getClientWorkouts().stream()
                 .map(workoutEntity -> convertValue(workoutEntity, WorkoutDto.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         clientDto.setClientWorkouts(workouts);
         return clientDto;
     }
@@ -37,4 +38,22 @@ public class Converter {
         clientEntity.setClientWorkouts(workouts);
         return clientEntity;
     }
+
+    public InstructorDto convertInstructorEntity(InstructorEntity instructorEntity){
+        InstructorDto instructorDto = convertValue(instructorEntity, InstructorDto.class);
+        Set<WorkoutDto> workouts = instructorEntity.getInstructorWorkouts().stream()
+                .map(workoutEntity -> convertValue(workoutEntity, WorkoutDto.class))
+                .collect(Collectors.toSet());
+        instructorDto.setInstructorWorkouts(workouts);
+        return instructorDto;
+    }
+    public InstructorEntity convertInstructorDto(InstructorDto instructorDto){
+        InstructorEntity instructorEntity = convertValue(instructorDto, InstructorEntity.class);
+        Set<WorkoutEntity> workouts = instructorDto.getInstructorWorkouts().stream()
+                .map(workoutDto -> convertValue(workoutDto, WorkoutEntity.class))
+                .collect(Collectors.toSet());
+        instructorEntity.setInstructorWorkouts(workouts);
+        return instructorEntity;
+    }
+
 }
