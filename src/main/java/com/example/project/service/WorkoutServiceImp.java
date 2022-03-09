@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import com.example.project.dto.Converter;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.WorkoutRepo;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WorkoutServiceImp implements WorkoutService{
 
     private final WorkoutRepo workoutRepo;
+    private final Converter converter;
 
     // TODO: 08.03.2022 Begin with that class, need testing
 

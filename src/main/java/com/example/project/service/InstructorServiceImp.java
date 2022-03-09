@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.Converter;
+import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.repo.InstructorRepo;
 import lombok.AllArgsConstructor;
@@ -14,20 +16,22 @@ import java.time.LocalDate;
 public class InstructorServiceImp implements InstructorService{
 
     private final InstructorRepo instructorRepo;
+    private final Converter converter;
 
     @Override
-    public InstructorEntity getById(Long id) {
-        return instructorRepo.getById(id);
+    public InstructorDto getById(Long id) {
+        return converter.convertInstructorEntity(instructorRepo.getById(id));
     }
 
     @Override
-    public InstructorEntity getByFullNameAndBirthdate(String firstName, String lastName, LocalDate birthdate) {
-        return instructorRepo.getInstructorEntityByFirstNameAndLastNameAndBirthdate(firstName, lastName, birthdate);
+    public InstructorDto getByFullNameAndBirthdate(String firstName, String lastName, LocalDate birthdate) {
+        return converter.convertInstructorEntity(
+                instructorRepo.getInstructorEntityByFirstNameAndLastNameAndBirthdate(firstName, lastName, birthdate));
     }
 
     @Override
     public void deleteById(Long id) {
-// TODO: 07.03.2022
+        instructorRepo.deleteById(id);
     }
 
     @Override
@@ -36,8 +40,7 @@ public class InstructorServiceImp implements InstructorService{
     }
 
     @Override
-    public InstructorEntity save(InstructorEntity instructor) {
-        // TODO: 07.03.2022
-        return null;
+    public InstructorDto save(InstructorEntity instructor) {
+        return converter.convertInstructorEntity(instructorRepo.save(instructor));
     }
 }
