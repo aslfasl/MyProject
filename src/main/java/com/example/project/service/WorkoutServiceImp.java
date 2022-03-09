@@ -13,6 +13,8 @@ public class WorkoutServiceImp implements WorkoutService{
 
     private final WorkoutRepo workoutRepo;
 
+    // TODO: 08.03.2022 Begin with that class, need testing
+
     @Override
     public WorkoutEntity getById(Long id) {
         return workoutRepo.findById(id).get(); // TODO: 07.03.2022
@@ -32,4 +34,6 @@ public class WorkoutServiceImp implements WorkoutService{
     public void deleteById(Long id) {
 
     }
+
+
 }
