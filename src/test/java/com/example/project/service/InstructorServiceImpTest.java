@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.InstructorDto;
+import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.InstructorRepo;
@@ -8,9 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class InstructorServiceImpTest {
@@ -21,59 +29,105 @@ class InstructorServiceImpTest {
     @Autowired
     private InstructorServiceImp service;
 
-    long id1;
-    long id2;
-
-    @BeforeEach
-    void init() {
-        InstructorEntity instructorEntity1 = new InstructorEntity("InstructorName1",
-                "InstructorName1",
-                LocalDate.of(2001, 1, 1));
-        InstructorEntity instructorEntity2 = new InstructorEntity("InstructorName2",
-                "InstructorName2",
-                LocalDate.of(2002, 2, 2));
-        instructorRepo.save(instructorEntity1);
-        instructorRepo.save(instructorEntity2);
-        id1 = instructorEntity1.getId();
-        id2 = instructorEntity2.getId();
-    }
-
     @AfterEach
     void after() {
         instructorRepo.deleteAll();
     }
 
     @Test
+    @Transactional
     void shouldGetInstructorById() {
-        Optional<InstructorEntity> instructorById = instructorRepo.findById(id1);
-        InstructorEntity instructorEntity = instructorById.get();
-        System.out.println(instructorEntity);
-        instructorEntity.addWorkout(new WorkoutEntity());
+        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("testName",
+                        "testSurname",
+                        "1234",
+                        true,
+                        LocalDate.of(2000, 1, 1));
+        instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);
-        id1 = instructorEntity.getId();
-        instructorById = instructorRepo.findById(id1);
-        instructorEntity = instructorById.get();
-        System.out.println(instructorEntity.getInstructorWorkouts());
-        // TODO: 07.03.2022
+        long id = instructorEntity.getId();
+
+        InstructorDto instructorDto = service.getById(id);
+
+        assertEquals(instructorEntity.getPassport(), instructorDto.getPassport());
+        assertEquals(instructorEntity.getBirthdate(), instructorDto.getBirthdate());
+        assertEquals(instructorEntity.getFirstName(), instructorDto.getFirstName());
+        assertEquals(instructorEntity.getLastName(), instructorDto.getLastName());
+        assertEquals(instructorEntity.getInstructorWorkouts().size(),
+                instructorDto.getInstructorWorkouts().size());
     }
 
     @Test
-    void getByFullNameAndBirthdate() {
-        InstructorEntity instructorEntity = instructorRepo.getInstructorEntityByFirstNameAndLastNameAndBirthdate("InstructorName1",
-                "InstructorName1",
-                LocalDate.of(2001, 1, 1));
-        System.out.println(instructorEntity);
-        System.out.println(instructorEntity.getInstructorWorkouts());
-        // TODO: 07.03.2022
+    void shouldGetAllInstructorsByFullName() {
+        String firstName = "InstructorName1";
+        String lastName = "InstructorName1";
+        InstructorEntity instructorEntity1 =
+                new InstructorEntity(firstName, lastName,";lkj",true, LocalDate.of(2000, 1, 1));
+        InstructorEntity instructorEntity2 =
+                new InstructorEntity(firstName, lastName,"x2xx2xj",true, LocalDate.of(2000, 1, 1));
+        instructorRepo.save(instructorEntity1);
+        instructorRepo.save(instructorEntity2);
+
+        List<InstructorDto> instructorsWithTheSameName = service.getByFullName(firstName, lastName);
+        assertTrue(instructorsWithTheSameName.stream()
+                .allMatch(instructorDto -> instructorDto.getFirstName().equalsIgnoreCase(firstName)));
+        assertTrue(instructorsWithTheSameName.stream()
+                .allMatch(instructorDto -> instructorDto.getLastName().equalsIgnoreCase(lastName)));
     }
 
     @Test
-    void deleteById() {
-        // TODO: 07.03.2022
+    @Transactional
+    void shouldChangeActiveToFalseWhenDeleteById() {
+        InstructorEntity instructorEntity = new InstructorEntity();
+        instructorEntity.setActive(true);
+        instructorRepo.save(instructorEntity);
+        long id = instructorEntity.getId();
+
+        service.deleteById(id);
+
+        assertFalse(instructorRepo.getById(id).isActive());
     }
 
     @Test
     void update() {
         // TODO: 07.03.2022
+    }
+
+    @Test
+    void save() {
+        String passport = "111160";
+        InstructorDto instructorDto =
+                new InstructorDto("Bob", "Smith", passport, true,
+                        LocalDate.of(2000, 1,1), null);
+        Set<WorkoutDto> workoutDtoSet = new HashSet<>();
+        instructorDto.setInstructorWorkouts(workoutDtoSet);
+        assertFalse(instructorRepo.existsByPassport(passport));
+
+        InstructorEntity instructorEntity = service.save(instructorDto);
+
+
+        assertTrue(instructorRepo.existsByPassport(passport));
+        assertEquals(instructorDto.getPassport(), instructorEntity.getPassport());
+        assertEquals(instructorDto.getFirstName(), instructorEntity.getFirstName());
+        assertEquals(instructorDto.getBirthdate(), instructorEntity.getBirthdate());
+    }
+
+    @Test
+    void shouldGetInstructorByPassport() {
+        String passport = "4009";
+        InstructorEntity instructorEntity = new InstructorEntity(
+                "Alex", "Boch", passport, true,
+                LocalDate.of(1989, 1, 1));
+        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true);
+        instructorEntity.addWorkout(workoutEntity);
+        instructorRepo.save(instructorEntity);
+
+        InstructorDto instructorDto = service.getByPassport(passport);
+
+        assertEquals(instructorEntity.getInstructorWorkouts().size(),
+                instructorDto.getInstructorWorkouts().size());
+        assertEquals(instructorEntity.getPassport(), instructorDto.getPassport());
+        assertEquals(instructorEntity.getLastName(), instructorDto.getLastName());
     }
 }

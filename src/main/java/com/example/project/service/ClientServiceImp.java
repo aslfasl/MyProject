@@ -52,13 +52,14 @@ public class ClientServiceImp implements ClientService {
 //    }
 
     @Override
-    public ClientDto getClientByFullNameAndBirthDate(String firstName,
+    public List<ClientDto> getClientByFullNameAndBirthDate(String firstName,
                                                               String lastName,
                                                               LocalDate birthdate) {
 
-        return converter.convertClientEntity(clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate(firstName,
-                lastName,
-                birthdate));
+        return clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate(firstName, lastName, birthdate).stream()
+                .map(converter::convertClientEntity)
+                .collect(Collectors.toList());
+
     }
 
     @Override

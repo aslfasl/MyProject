@@ -9,6 +9,7 @@ import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +36,10 @@ class WorkoutServiceImpTest {
     @Autowired
     InstructorRepo instructorRepo;
 
+    @BeforeEach
+    void setUp(){
+        workoutRepo.deleteAll();
+    }
 
     @Test
     @Transactional
@@ -42,7 +47,7 @@ class WorkoutServiceImpTest {
         WorkoutEntity workout = new WorkoutEntity("testOne", 60, true);
 // TODO: 07.03.2022  
         workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000,1,1), true));
-        workout.addInstructor(new InstructorEntity("one1", "one1", LocalDate.of(2001,2,2)));
+        workout.addInstructor(new InstructorEntity("one1", "one1", "00001", true,LocalDate.of(2001,2,2)));
         workoutRepo.save(workout);
         long id = workout.getId();
         WorkoutEntity workoutDb = workoutRepo.findById(id).get();
@@ -93,5 +98,23 @@ class WorkoutServiceImpTest {
         service.deleteById(id);
 
         assertFalse(workoutRepo.getById(id).isAvailable());
+    }
+
+    @Test
+    void shouldGetAllAvailableAndAllWorkouts() {
+        WorkoutEntity workoutEntity1 = new WorkoutEntity();
+        WorkoutEntity workoutEntity2 = new WorkoutEntity();
+        WorkoutEntity workoutEntity3 = new WorkoutEntity();
+        workoutEntity1.setAvailable(true);
+        workoutEntity2.setAvailable(true);
+        workoutEntity3.setAvailable(false);
+        assertEquals(0, workoutRepo.findAll().size());
+        workoutRepo.save(workoutEntity1);
+        workoutRepo.save(workoutEntity2);
+        workoutRepo.save(workoutEntity3);
+
+        assertEquals(2, service.getAllAvailable().size());
+        assertEquals(3, service.getAll().size());
+        System.out.println(workoutRepo.findAll());
     }
 }

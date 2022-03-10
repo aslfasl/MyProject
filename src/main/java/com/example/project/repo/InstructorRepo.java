@@ -5,11 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface InstructorRepo extends JpaRepository<InstructorEntity, Long> {
-    InstructorEntity getInstructorEntityByFirstNameAndLastNameAndBirthdate(String firstName,
-                                                                            String lastName,
-                                                                            LocalDate birthdate);
+    List<InstructorEntity> getInstructorEntityByFirstNameAndLastName(String firstName,
+                                                                     String lastName);
+    InstructorEntity findByPassport(String passport);
+    boolean existsByPassport(String passport);
 
 }

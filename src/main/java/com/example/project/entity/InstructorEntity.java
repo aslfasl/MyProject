@@ -31,6 +31,9 @@ public class InstructorEntity {
             unique = true)
     private String passport;
 
+    @Column(name = "active")
+    private boolean isActive;
+
     @Column(name = "birthdate")
     private LocalDate birthdate;
 
@@ -43,9 +46,11 @@ public class InstructorEntity {
     @ToString.Exclude
     private Set<WorkoutEntity> instructorWorkouts = new HashSet<>();
 
-    public InstructorEntity(String firstName, String lastName, LocalDate birthdate) {
+    public InstructorEntity(String firstName, String lastName, String passport, boolean isActive, LocalDate birthdate) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.passport = passport;
+        this.isActive = isActive;
         this.birthdate = birthdate;
     }
 

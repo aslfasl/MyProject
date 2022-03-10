@@ -16,7 +16,7 @@ public interface ClientRepo extends JpaRepository<ClientEntity, Long> {
             "WHERE c.id = ?1")
     ClientEntity findClientById(long clientId);
 
-    ClientEntity getClientEntitiesByFirstNameAndLastNameAndBirthdate(String firstName,
+    List<ClientEntity> getClientEntitiesByFirstNameAndLastNameAndBirthdate(String firstName,
                                                                            String lastName,
                                                                            LocalDate birthdate);
 
