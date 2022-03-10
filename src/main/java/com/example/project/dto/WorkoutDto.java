@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkoutDto {
 
-    String name;
-    int duration;
+    private String name;
+    private int durationInMinutes;
+    private boolean isAvailable;
+    private Set<ClientDto> clients;
+    private Set<InstructorDto> instructors;
 }

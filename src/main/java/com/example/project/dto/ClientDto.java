@@ -12,10 +12,10 @@ import java.util.Collection;
 @AllArgsConstructor
 public class ClientDto {
 
-    String firstName;
-    String lastName;
-    String passport;
-    LocalDate birthdate;
-    boolean isActive;
-    Collection<WorkoutDto> clientWorkouts;
+    private String firstName;
+    private String lastName;
+    private String passport;
+    private LocalDate birthdate;
+    private boolean isActive;
+    private Collection<WorkoutDto> clientWorkouts;
 }

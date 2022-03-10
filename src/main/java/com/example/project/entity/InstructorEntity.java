@@ -19,20 +19,20 @@ public class InstructorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    long id;
+    private long id;
 
     @Column(name = "first_name")
-    String firstName;
+    private String firstName;
 
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
 
     @Column(name = "passport",
             unique = true)
-    String passport;
+    private String passport;
 
     @Column(name = "birthdate")
-    LocalDate birthdate;
+    private LocalDate birthdate;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
@@ -41,7 +41,7 @@ public class InstructorEntity {
             joinColumns = {@JoinColumn(name = "instructor_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     @ToString.Exclude
-    Set<WorkoutEntity> instructorWorkouts = new HashSet<>();
+    private Set<WorkoutEntity> instructorWorkouts = new HashSet<>();
 
     public InstructorEntity(String firstName, String lastName, LocalDate birthdate) {
         this.firstName = firstName;

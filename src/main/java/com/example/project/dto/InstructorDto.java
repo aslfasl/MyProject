@@ -13,11 +13,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class InstructorDto {
 
-    String firstName;
-    String lastName;
-    String passport;
-    LocalDate birthdate;
-    Set<WorkoutDto> instructorWorkouts;
+    private String firstName;
+    private String lastName;
+    private String passport;
+    private LocalDate birthdate;
+    private Set<WorkoutDto> instructorWorkouts;
 
 
 }

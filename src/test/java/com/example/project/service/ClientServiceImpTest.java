@@ -50,7 +50,7 @@ class ClientServiceImpTest {
     @Test
     void shouldSaveClient() {
         Collection<WorkoutDto> workoutsDto = new HashSet<>();
-        workoutsDto.add(new WorkoutDto("test training", 90));
+        workoutsDto.add(new WorkoutDto("test training", 90, true, null, null));
         ClientDto clientDto = new ClientDto("Name",
                 "Surname",
                 "010101",
@@ -64,7 +64,6 @@ class ClientServiceImpTest {
         System.out.println(clientInDb.getClientWorkouts());
         System.out.println(clientInDb);
         // TODO: 07.03.2022
-
     }
 
     @Test
@@ -99,4 +98,5 @@ class ClientServiceImpTest {
         System.out.println(clientDto);
         System.out.println(clientDto.getClientWorkouts());
     }
+
 }

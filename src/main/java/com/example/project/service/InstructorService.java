@@ -11,6 +11,6 @@ public interface InstructorService {
     InstructorDto getByFullNameAndBirthdate(String firstName, String lastName, LocalDate birthdate);
     void deleteById(Long id);
     void update(); // TODO: 07.03.2022
-    InstructorDto save(InstructorEntity instructor); // TODO: 07.03.2022
+    InstructorEntity save(InstructorDto instructor);
 
 }

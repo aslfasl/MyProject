@@ -18,29 +18,33 @@ public class WorkoutEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    long id;
+    private long id;
 
     @Column(name = "name")
-    String name;
+    private String name;
 
     @Column(name = "duration")
-    int duration;
+    private int durationInMinutes;
+
+    @Column(name = "available")
+    private boolean isAvailable;
 
     @ManyToMany(mappedBy = "clientWorkouts",
             fetch = FetchType.EAGER)
     @JsonIgnore
     @ToString.Exclude
-    Set<ClientEntity> clients = new HashSet<>();
+    private Set<ClientEntity> clients = new HashSet<>();
 
     @ManyToMany(mappedBy = "instructorWorkouts",
             fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
-    Set<InstructorEntity> instructors = new HashSet<>();
+    private Set<InstructorEntity> instructors = new HashSet<>();
 
-    public WorkoutEntity(String name, int duration) {
+    public WorkoutEntity(String name, int durationInMinutes, boolean isAvailable) {
         this.name = name;
-        this.duration = duration;
+        this.durationInMinutes = durationInMinutes;
+        this.isAvailable = isAvailable;
     }
 
     public void addInstructor(InstructorEntity instructor){
@@ -62,6 +66,9 @@ public class WorkoutEntity {
         return "WorkoutEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", durationInMinutes=" + durationInMinutes +
+                ", isAvailable=" + isAvailable +
                 '}';
     }
 }
+

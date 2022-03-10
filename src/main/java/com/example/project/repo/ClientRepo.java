@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ClientRepo extends JpaRepository<ClientEntity, Long> {
@@ -20,5 +21,7 @@ public interface ClientRepo extends JpaRepository<ClientEntity, Long> {
                                                                            LocalDate birthdate);
 
     ClientEntity findClientEntityByPassport(String passport);
+
+    Iterable<ClientEntity> findAllByIsActiveTrue();
 
 }

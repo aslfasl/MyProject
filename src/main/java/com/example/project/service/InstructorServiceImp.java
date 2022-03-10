@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Service
 @AllArgsConstructor
 @Transactional
-public class InstructorServiceImp implements InstructorService{
+public class InstructorServiceImp implements InstructorService {
 
     private final InstructorRepo instructorRepo;
     private final Converter converter;
@@ -40,7 +40,8 @@ public class InstructorServiceImp implements InstructorService{
     }
 
     @Override
-    public InstructorDto save(InstructorEntity instructor) {
-        return converter.convertInstructorEntity(instructorRepo.save(instructor));
+    public InstructorEntity save(InstructorDto instructor) {
+        InstructorEntity instructorEntity = converter.convertInstructorDto(instructor);
+        return instructorRepo.save(instructorEntity);
     }
 }

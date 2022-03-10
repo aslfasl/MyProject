@@ -18,23 +18,23 @@ public class ClientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    long id;
+    private long id;
 
     @Column(name = "first_name")
-    String firstName;
+    private String firstName;
 
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
 
     @Column(name = "passport",
             unique = true)
-    String passport;
+    private String passport;
 
     @Column(name = "birthdate")
-    LocalDate birthdate;
+    private LocalDate birthdate;
 
     @Column(name = "status")
-    boolean isActive;
+    private boolean isActive;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
@@ -44,7 +44,7 @@ public class ClientEntity {
             inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<WorkoutEntity> clientWorkouts = new HashSet<>();
+    private Set<WorkoutEntity> clientWorkouts = new HashSet<>();
 
 
     public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
