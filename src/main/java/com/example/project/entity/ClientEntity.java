@@ -34,6 +34,7 @@ public class ClientEntity {
     private LocalDate birthdate;
 
     @Column(name = "status")
+    @EqualsAndHashCode.Exclude
     private boolean isActive;
 
     @ManyToMany(fetch = FetchType.EAGER,
@@ -61,6 +62,8 @@ public class ClientEntity {
         }
         clientWorkouts.add(workout);
     }
+
+
 
 
 }

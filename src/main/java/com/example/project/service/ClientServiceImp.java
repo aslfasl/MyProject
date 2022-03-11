@@ -21,9 +21,9 @@ public class ClientServiceImp implements ClientService {
     private final Converter converter;
 
     @Override
-    public ClientEntity saveClient(ClientDto clientDto) {
-        ClientEntity clientEntity = converter.convertClientDto(clientDto);
-        return clientRepo.save(clientEntity);
+    public ClientDto saveClient(ClientDto clientDto) {
+        ClientEntity clientEntity = clientRepo.save(converter.convertClientDto(clientDto));
+        return converter.convertClientEntity(clientEntity);
     }
 
     @Override

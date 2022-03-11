@@ -44,7 +44,7 @@ class WorkoutServiceImpTest {
     @Test
     @Transactional
     void getById() {
-        WorkoutEntity workout = new WorkoutEntity("testOne", 60, true);
+        WorkoutEntity workout = new WorkoutEntity("testOne", 60, true, 100);
 // TODO: 07.03.2022  
         workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000,1,1), true));
         workout.addInstructor(new InstructorEntity("one1", "one1", "00001", true,LocalDate.of(2001,2,2)));
@@ -78,7 +78,7 @@ class WorkoutServiceImpTest {
     @Test
     void shouldGetWorkoutByName() {
         String name = "YOGA BY SOMEONE";
-        WorkoutEntity workoutEntity = new WorkoutEntity(name, 90, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity(name, 90, true, 100);
         workoutRepo.save(workoutEntity);
 
         WorkoutDto workoutDto = service.getByName(name);
@@ -91,7 +91,7 @@ class WorkoutServiceImpTest {
     @Test
     @Transactional
     void shouldChangeAvailableInWorkoutWhenDeleteById() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("name", 90, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("name", 90, true, 100);
         workoutRepo.save(workoutEntity);
         Long id = workoutEntity.getId();
 

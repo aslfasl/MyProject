@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface WorkoutRepo extends JpaRepository<WorkoutEntity, Long> {
     List<WorkoutEntity> findAllByIsAvailableTrue();
-    List<WorkoutEntity> findAllByIsAvailableFalse();
+    List<WorkoutEntity> findAllByIsAvailableFalse(); // TODO: 10.03.2022  
     WorkoutEntity findByName(String name);
     boolean existsByNameAndDurationInMinutes(String name, int duration);
 }

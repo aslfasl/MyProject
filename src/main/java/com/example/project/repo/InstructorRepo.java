@@ -13,5 +13,8 @@ public interface InstructorRepo extends JpaRepository<InstructorEntity, Long> {
                                                                      String lastName);
     InstructorEntity findByPassport(String passport);
     boolean existsByPassport(String passport);
+    List<InstructorEntity> findAllByIsActiveTrue();
+    List<InstructorEntity> findAllByIsActiveFalse(); // TODO: 10.03.2022  
+    
 
 }

@@ -14,6 +14,7 @@ public class WorkoutDto {
     private String name;
     private int durationInMinutes;
     private boolean isAvailable;
+    private int peopleLimit;
     private Set<ClientDto> clients;
     private Set<InstructorDto> instructors;
 }

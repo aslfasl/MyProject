@@ -60,4 +60,18 @@ public class InstructorServiceImp implements InstructorService {
         }
         return converter.convertInstructorEntity(instructor);
     }
+
+    @Override
+    public List<InstructorDto> getAllActive() {
+        return instructorRepo.findAllByIsActiveTrue().stream()
+                .map(converter::convertInstructorEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InstructorDto> getAll() {
+        return instructorRepo.findAll().stream()
+                .map(converter::convertInstructorEntity)
+                .collect(Collectors.toList());
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ClientService {
 
-    ClientEntity saveClient(ClientDto client);
+    ClientDto saveClient(ClientDto client);
     ClientDto getClientById(Long id);
     void deleteClientById(Long id);
     List<ClientDto> getAll();

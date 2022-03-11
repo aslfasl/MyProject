@@ -37,7 +37,7 @@ class InstructorServiceImpTest {
     @Test
     @Transactional
     void shouldGetInstructorById() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true, 100);
         InstructorEntity instructorEntity =
                 new InstructorEntity("testName",
                         "testSurname",
@@ -119,7 +119,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity = new InstructorEntity(
                 "Alex", "Boch", passport, true,
                 LocalDate.of(1989, 1, 1));
-        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true, 100);
         instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);
 
@@ -129,5 +129,24 @@ class InstructorServiceImpTest {
                 instructorDto.getInstructorWorkouts().size());
         assertEquals(instructorEntity.getPassport(), instructorDto.getPassport());
         assertEquals(instructorEntity.getLastName(), instructorDto.getLastName());
+    }
+
+    @Test
+    void shouldGetAllandAllActive() {
+        InstructorEntity instructorEntity1 = new InstructorEntity();
+        InstructorEntity instructorEntity2 = new InstructorEntity();
+        InstructorEntity instructorEntity3 = new InstructorEntity();
+        instructorEntity1.setPassport("1ooo");
+        instructorEntity2.setPassport("2ooo");
+        instructorEntity3.setPassport("3ooo");
+        instructorEntity3.setActive(true);
+        assertEquals(0, instructorRepo.findAll().size());
+
+        instructorRepo.save(instructorEntity1);
+        instructorRepo.save(instructorEntity2);
+        instructorRepo.save(instructorEntity3);
+
+        assertEquals(3, service.getAll().size());
+        assertEquals(1, service.getAllActive().size());
     }
 }
