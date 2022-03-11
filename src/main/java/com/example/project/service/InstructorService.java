@@ -14,5 +14,7 @@ public interface InstructorService {
     void update(); // TODO: 07.03.2022
     InstructorEntity save(InstructorDto instructor);
     InstructorDto getByPassport(String passport);
+    List<InstructorDto> getAllActive();
+    List<InstructorDto> getAll();
 
 }

@@ -29,6 +29,12 @@ public class WorkoutEntity {
     @Column(name = "available")
     private boolean isAvailable;
 
+    @Column(name = "people_limit")
+    private int peopleLimit;
+
+    @Column(name = "current_members")
+    private int currentMembers = 0;
+
     @ManyToMany(mappedBy = "clientWorkouts",
             fetch = FetchType.EAGER)
     @JsonIgnore
