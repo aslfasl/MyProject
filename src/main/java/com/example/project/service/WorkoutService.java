@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.WorkoutEntity;
 
@@ -12,6 +14,9 @@ public interface WorkoutService {
     void deleteById(Long id);
     List<WorkoutDto> getAllAvailable();
     List<WorkoutDto> getAll();
+    void addClientToWorkoutById(ClientDto clientDto, Long workoutId);
+    void addInstructorToWorkoutById(InstructorDto instructorDto, Long workoutId);
+
 
 //    update
     // TODO: 07.03.2022

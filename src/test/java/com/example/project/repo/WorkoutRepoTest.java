@@ -15,10 +15,10 @@ class WorkoutRepoTest {
 
     @Test
     void shouldGetAllAvailableWorkouts() {
-        workoutRepo.save(new WorkoutEntity("One", 90, true));
-        workoutRepo.save(new WorkoutEntity("Two", 90, true));
-        workoutRepo.save(new WorkoutEntity("One", 90, false));
-        workoutRepo.save(new WorkoutEntity("One", 90, false));
+        workoutRepo.save(new WorkoutEntity("One", 90, true, 100));
+        workoutRepo.save(new WorkoutEntity("Two", 90, true, 100));
+        workoutRepo.save(new WorkoutEntity("One", 90, false, 100));
+        workoutRepo.save(new WorkoutEntity("One", 90, false, 100));
         System.out.println(workoutRepo.findAllByIsAvailableTrue());
         // TODO: 10.03.2022  
     }

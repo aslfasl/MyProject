@@ -42,7 +42,7 @@ class ClientServiceImpTest {
     @Test
     void shouldSaveClient() {
         Collection<WorkoutDto> workoutsDto = new HashSet<>();
-        workoutsDto.add(new WorkoutDto("test training", 90, true, 10, 0,null, null));
+        workoutsDto.add(new WorkoutDto("test training", 90, true, 10, null, null));
         ClientDto clientDto = new ClientDto("Name",
                 "Surname",
                 "010101",

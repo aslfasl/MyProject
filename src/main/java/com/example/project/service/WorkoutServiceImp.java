@@ -1,6 +1,8 @@
 package com.example.project.service;
 
+import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
+import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.WorkoutRepo;
@@ -69,5 +71,19 @@ public class WorkoutServiceImp implements WorkoutService{
         return workoutRepo.findAll().stream()
                 .map(converter::convertWorkoutEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addClientToWorkoutById(ClientDto clientDto, Long workoutId) {
+        Optional<WorkoutEntity> workoutById = workoutRepo.findById(workoutId);
+        if (workoutById.isEmpty()) {
+            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
+        }
+        workoutById.get().addClient(converter.convertClientDto(clientDto));
+    }
+
+    @Override
+    public void addInstructorToWorkoutById(InstructorDto instructorDto, Long workoutId) {
+
     }
 }

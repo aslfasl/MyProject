@@ -37,7 +37,7 @@ class InstructorServiceImpTest {
     @Test
     @Transactional
     void shouldGetInstructorById() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true, 100);
         InstructorEntity instructorEntity =
                 new InstructorEntity("testName",
                         "testSurname",
@@ -119,7 +119,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity = new InstructorEntity(
                 "Alex", "Boch", passport, true,
                 LocalDate.of(1989, 1, 1));
-        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true, 100);
         instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);
 
