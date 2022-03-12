@@ -12,11 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
@@ -41,30 +40,23 @@ class ClientServiceImpTest {
 
     @Test
     void shouldSaveClient() {
-        Collection<WorkoutDto> workoutsDto = new HashSet<>();
-        workoutsDto.add(new WorkoutDto("test training", 90, true, 10, null, null));
-        ClientDto clientDto = new ClientDto("Name",
-                "Surname",
-                "010101",
-                LocalDate.of(2000, 1, 1),
-                true,
-                workoutsDto);
-        System.out.println(clientDto);
-        service.saveClient(clientDto);
+        ClientDto clientDto = new ClientDto("Clint", "Eastwood", "123",
+                LocalDate.of(2000, 1, 1), true, new HashSet<>());
+        clientDto.getClientWorkouts().add(new WorkoutDto());
+        assertFalse(clientRepo.existsByPassport("123"));
 
-        // TODO: 10.03.2022 Change to list
-//        ClientEntity clientInDb = clientRepo.getClientEntitiesByFirstNameAndLastNameAndBirthdate("Name", "Surname", LocalDate.of(2000, 1, 1));
-//        System.out.println(clientInDb.getClientWorkouts());
-//        System.out.println(clientInDb);
-        // TODO: 07.03.2022
+        ClientDto client = service.saveClient(clientDto);
+        assertTrue(clientRepo.existsByPassport("123"));
+        assertEquals(clientDto.getBirthdate(), client.getBirthdate());
+        assertEquals(clientDto.getClientWorkouts().size(), client.getClientWorkouts().size());
     }
 
     @Test
     void shouldGetClientById() {
-        ClientEntity clientEntity = new ClientEntity( "NameFirst",
+        ClientEntity clientEntity = new ClientEntity("NameFirst",
                 "SurnameFirst",
                 "414141",
-                LocalDate.of(2000, 1,1),
+                LocalDate.of(2000, 1, 1),
                 true);
         assertFalse(clientRepo.exists(Example.of(clientEntity, modelMatcher)));
         clientRepo.save(clientEntity);
@@ -78,18 +70,57 @@ class ClientServiceImpTest {
     }
 
     @Test
-    void deleteClientById() {
-        // TODO: 07.03.2022
+    @Transactional
+    void shouldChangeClientIsActiveToFalseWhenDeleteById() {
+        ClientEntity clientEntity = new ClientEntity("NameFirst",
+                "SurnameFirst",
+                "414141",
+                LocalDate.of(2000, 1, 1),
+                true);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+
+        ClientDto clientDto = service.deleteClientById(id);
+
+        assertFalse(clientDto.isActive());
+        assertFalse(clientRepo.getById(id).isActive());
     }
 
     @Test
-    void getClientByFullNameAndBirthDate() {
-        // TODO: 07.03.2022 it's list now
-//        ClientDto clientDto = service.getClientByFullNameAndBirthDate("NameFirst",
-//                "SurnameFirst",
-//                LocalDate.of(2000, 1, 1));
-//        System.out.println(clientDto);
-//        System.out.println(clientDto.getClientWorkouts());
+    void shouldGetAllClientsByFullNameAndBirthDate() {
+        String name = "Bob";
+        String lastName = "Lee";
+        LocalDate localDate = LocalDate.of(2000,1,1);
+        ClientEntity clientEntity1 = new ClientEntity(name, lastName, "414141",
+                localDate, true);
+        ClientEntity clientEntity2 = new ClientEntity(name, lastName, "3333",
+                localDate, true);
+        ClientEntity clientEntity3 = new ClientEntity(name, lastName, "12111",
+                localDate, true);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
+        clientRepo.save(clientEntity3);
+
+        List<ClientDto> clients = service.getClientByFullNameAndBirthDate(name, lastName, localDate);
+        assertTrue(clients.stream().allMatch(clientDto -> clientDto.getFirstName().equals(name)));
+        assertTrue(clients.stream().allMatch(clientDto -> clientDto.getLastName().equals(lastName)));
+        assertTrue(clients.stream().allMatch(clientDto -> clientDto.getBirthdate().equals(localDate)));
+        assertEquals(3, clients.size());
+    }
+
+    @Test
+    void shouldGetAllClientsAndAllActiveClients() {
+        ClientEntity clientEntity1 = new ClientEntity("Name1", "last1", "fdd", LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity2 = new ClientEntity("Name2", "last2", "ds", LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity3 = new ClientEntity("Name3", "last3", "asd", LocalDate.of(2000,1,1), false);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
+        clientRepo.save(clientEntity3);
+
+        List<ClientDto> allActiveClients = service.getAllActiveClients();
+        assertEquals(3, service.getAll().size());
+        assertEquals(2, allActiveClients.size());
+        assertTrue(allActiveClients.stream().allMatch(ClientDto::isActive));
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,8 +27,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -85,4 +85,77 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$.passport", equalTo("passport1")))
                 .andExpect(jsonPath("$.firstName", equalTo("Jack")));
     }
+
+    @Test
+    void shouldGetClientById() throws Exception {
+        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000,1,1), true);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+
+        mockMvc.perform(get("/api/client/get_by_id/"+id))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo("Paul")))
+                .andExpect(jsonPath("$.lastName", equalTo("Green")))
+                .andExpect(jsonPath("$.passport", equalTo("200")));
+    }
+
+    @Test
+    void shouldChangeIsActiveToFalseWhenDeleteById() throws Exception {
+        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000,1,1), true);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+
+        mockMvc.perform(post("/api/client/delete/"+id))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.active", equalTo(false)));
+    }
+
+    @Test
+    void shouldGetAllClientsWithTheSameFirstNameLastNameAndBirthdate() throws Exception {
+        String name = "Bob";
+        String lastName = "Lee";
+        LocalDate birthdate = LocalDate.of(2000,1,1);
+        ClientEntity clientEntity1 = new ClientEntity(name, lastName, "414141",
+                birthdate, true);
+        ClientEntity clientEntity2 = new ClientEntity(name, lastName, "3333",
+                birthdate, true);
+        ClientEntity clientEntity3 = new ClientEntity(name, lastName, "12111",
+                birthdate, true);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
+        clientRepo.save(clientEntity3);
+
+        String content = mockMvc.perform(
+                        get("/api/client/get_by_fullname_birthdate?firstName={name}&lastName={lastName}&birthdate={birthdate}",
+                                name, lastName, birthdate))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[*].firstName", containsInAnyOrder(name, name, name)))
+                .andExpect(jsonPath("$[*].lastName", containsInAnyOrder(lastName, lastName, lastName)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<ClientDto> clients = Arrays.asList(objectMapper.readValue(content, ClientDto[].class));
+        assertTrue(clients.stream().allMatch(clientDto -> clientDto.getBirthdate().isEqual(birthdate)));
+    }
+
+    @Test
+    void shouldGetClientByPassport() throws Exception {
+        String passport = "20120";
+        ClientEntity clientEntity = new ClientEntity("George", "Brown", passport, LocalDate.of(2000,1,1), true);
+        clientRepo.save(clientEntity);
+
+        mockMvc.perform(get("/api/client/get_by_passport?passport={passport}", passport))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo("George")))
+                .andExpect(jsonPath("$.lastName", equalTo("Brown")))
+                .andExpect(jsonPath("$.passport", equalTo(passport)));
+    }
+
+
 }
