@@ -25,6 +25,11 @@ public class ClientController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/client/all_active")
+    public ResponseEntity<List<ClientDto>> getAllActive(){
+        return ResponseEntity.ok().body(service.getAllActiveClients());
+    }
+
     @PostMapping("/client/save")
     public ResponseEntity<ClientDto> saveClientToDatabase(@RequestBody ClientDto clientDto) {
         ClientDto clientDtoResponse = service.saveClient(clientDto);

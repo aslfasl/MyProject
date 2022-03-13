@@ -59,6 +59,7 @@ public class InstructorEntity {
             throw new RuntimeException("тут должен быть кастомный эксепшн"); // TODO: 07.03.2022
         }
         instructorWorkouts.add(workout);
+        workout.getInstructors().add(this);
     }
 
     @Override

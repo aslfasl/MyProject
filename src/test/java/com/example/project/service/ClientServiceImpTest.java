@@ -4,6 +4,7 @@ import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.repo.ClientRepo;
+import com.example.project.repo.WorkoutRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,9 @@ class ClientServiceImpTest {
 
     @Autowired
     private ClientServiceImp service;
+
+    @Autowired
+    private WorkoutRepo workoutRepo;
 
     @Autowired
     private ClientRepo clientRepo;
@@ -121,6 +125,19 @@ class ClientServiceImpTest {
         assertEquals(3, service.getAll().size());
         assertEquals(2, allActiveClients.size());
         assertTrue(allActiveClients.stream().allMatch(ClientDto::isActive));
+    }
+
+    @Test
+    void shouldGetClientByPassport() {
+        String passport = "7777";
+        ClientEntity clientEntity = new ClientEntity("Name1", "last1", passport, LocalDate.of(2000,1,1), true);
+        clientRepo.save(clientEntity);
+
+        ClientDto clientDto = service.getClientByPassport(passport);
+
+        assertEquals(clientEntity.getPassport(), clientDto.getPassport());
+        assertEquals(clientEntity.getBirthdate(), clientDto.getBirthdate());
+        assertEquals(clientEntity.getFirstName(), clientDto.getFirstName());
     }
 
 }

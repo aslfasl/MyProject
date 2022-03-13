@@ -5,6 +5,7 @@ import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.repo.ClientRepo;
 import com.example.project.repo.WorkoutRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Transactional
-public class WorkoutServiceImp implements WorkoutService{
+public class WorkoutServiceImp implements WorkoutService {
 
     private final WorkoutRepo workoutRepo;
     private final Converter converter;
@@ -36,7 +37,9 @@ public class WorkoutServiceImp implements WorkoutService{
 
     @Override
     public WorkoutEntity save(WorkoutDto workoutDto) {
-        if (workoutRepo.existsByNameAndDurationInMinutes(workoutDto.getName(), workoutDto.getDurationInMinutes())){
+        if (workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(workoutDto.getName(),
+                workoutDto.getDurationInMinutes(),
+                workoutDto.getPeopleLimit())) {
             throw new RuntimeException("already exists"); // TODO: 10.03.2022
         }
         return workoutRepo.save(converter.convertWorkoutDto(workoutDto));
@@ -45,7 +48,7 @@ public class WorkoutServiceImp implements WorkoutService{
     @Override
     public WorkoutDto getByName(String name) {
         WorkoutEntity workoutEntity = workoutRepo.findByName(name);
-        if (workoutEntity!=null) {
+        if (workoutEntity != null) {
             return converter.convertWorkoutEntity(workoutEntity);
         } else {
             throw new RuntimeException("no workout with that name"); // TODO: 10.03.2022
@@ -79,11 +82,18 @@ public class WorkoutServiceImp implements WorkoutService{
         if (workoutById.isEmpty()) {
             throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
         }
-        workoutById.get().addClient(converter.convertClientDto(clientDto));
+        WorkoutEntity workoutEntity = workoutById.get();
+        workoutEntity.addClient(converter.convertClientDto(clientDto));
+
     }
 
     @Override
     public void addInstructorToWorkoutById(InstructorDto instructorDto, Long workoutId) {
-
+        Optional<WorkoutEntity> workoutById = workoutRepo.findById(workoutId);
+        if (workoutById.isEmpty()) {
+            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
+        }
+        WorkoutEntity workoutEntity = workoutById.get();
+        workoutEntity.addInstructor(converter.convertInstructorDto(instructorDto));
     }
 }

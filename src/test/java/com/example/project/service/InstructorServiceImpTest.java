@@ -132,7 +132,7 @@ class InstructorServiceImpTest {
     }
 
     @Test
-    void shouldGetAllandAllActive() {
+    void shouldGetAllAndAllActive() {
         InstructorEntity instructorEntity1 = new InstructorEntity();
         InstructorEntity instructorEntity2 = new InstructorEntity();
         InstructorEntity instructorEntity3 = new InstructorEntity();

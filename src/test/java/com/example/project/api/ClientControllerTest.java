@@ -4,10 +4,12 @@ import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.repo.ClientRepo;
+import com.example.project.repo.WorkoutRepo;
 import com.example.project.service.ClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,14 +41,34 @@ class ClientControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ClientService service;
-
-    @Autowired
     private ClientRepo clientRepo;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+        clientRepo.deleteAll();
+    }
+
+    @Test
+    void shouldGetListOfAllActiveClients() throws Exception {
+        ClientEntity clientEntity1 = new ClientEntity("Baron",
+                "Wulf", "qer", LocalDate.of(1950, 1, 1), true);
+        ClientEntity clientEntity2 = new ClientEntity("Lord",
+                "Bee", "3gq", LocalDate.of(1950, 1, 1), true);
+        ClientEntity clientEntity3 = new ClientEntity("Lord",
+                "Josh", "6hh", LocalDate.of(1950, 1, 1), false);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
+        clientRepo.save(clientEntity3);
+
+        mockMvc.perform(get("/api/client/all_active"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].active", contains(true, true)));
+    }
 
     @Test
     void shouldGetListOfAllClients() throws Exception {
@@ -88,11 +110,11 @@ class ClientControllerTest {
 
     @Test
     void shouldGetClientById() throws Exception {
-        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
 
-        mockMvc.perform(get("/api/client/get_by_id/"+id))
+        mockMvc.perform(get("/api/client/get_by_id/" + id))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.firstName", equalTo("Paul")))
@@ -102,11 +124,11 @@ class ClientControllerTest {
 
     @Test
     void shouldChangeIsActiveToFalseWhenDeleteById() throws Exception {
-        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
 
-        mockMvc.perform(post("/api/client/delete/"+id))
+        mockMvc.perform(post("/api/client/delete/" + id))
                 .andExpect(status().isAccepted())
                 .andDo(print())
                 .andExpect(jsonPath("$.active", equalTo(false)));
@@ -116,7 +138,7 @@ class ClientControllerTest {
     void shouldGetAllClientsWithTheSameFirstNameLastNameAndBirthdate() throws Exception {
         String name = "Bob";
         String lastName = "Lee";
-        LocalDate birthdate = LocalDate.of(2000,1,1);
+        LocalDate birthdate = LocalDate.of(2000, 1, 1);
         ClientEntity clientEntity1 = new ClientEntity(name, lastName, "414141",
                 birthdate, true);
         ClientEntity clientEntity2 = new ClientEntity(name, lastName, "3333",
@@ -146,7 +168,7 @@ class ClientControllerTest {
     @Test
     void shouldGetClientByPassport() throws Exception {
         String passport = "20120";
-        ClientEntity clientEntity = new ClientEntity("George", "Brown", passport, LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity = new ClientEntity("George", "Brown", passport, LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
 
         mockMvc.perform(get("/api/client/get_by_passport?passport={passport}", passport))
