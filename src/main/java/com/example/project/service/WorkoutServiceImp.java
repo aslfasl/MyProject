@@ -4,6 +4,7 @@ import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
+import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.WorkoutRepo;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class WorkoutServiceImp implements WorkoutService {
 
     private final WorkoutRepo workoutRepo;
+    private final ClientRepo clientRepo;
     private final Converter converter;
 
     // TODO: 08.03.2022 Begin with that class, need testing
@@ -76,24 +78,35 @@ public class WorkoutServiceImp implements WorkoutService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void addClientToWorkoutById(ClientDto clientDto, Long workoutId) {
-        Optional<WorkoutEntity> workoutById = workoutRepo.findById(workoutId);
-        if (workoutById.isEmpty()) {
-            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
-        }
-        WorkoutEntity workoutEntity = workoutById.get();
-        workoutEntity.addClient(converter.convertClientDto(clientDto));
-
-    }
-
-    @Override
-    public void addInstructorToWorkoutById(InstructorDto instructorDto, Long workoutId) {
-        Optional<WorkoutEntity> workoutById = workoutRepo.findById(workoutId);
-        if (workoutById.isEmpty()) {
-            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
-        }
-        WorkoutEntity workoutEntity = workoutById.get();
-        workoutEntity.addInstructor(converter.convertInstructorDto(instructorDto));
-    }
+//    @Override
+//    public void addClientToWorkoutByWorkoutNameAndClientPassport(String clientPassport, String workoutName) {
+//        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
+//        ClientEntity clientEntity = clientRepo.findClientEntityByPassport(clientPassport);
+//        if (workoutEntity==null) {
+//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
+//        }
+//        workoutEntity.addClient(clientEntity);
+//    }
+//
+//    @Override
+//    public void addInstructorToWorkoutByName(InstructorDto instructorDto, String workoutName) {
+//        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
+//        if (workoutEntity==null) {
+//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
+//        }
+//        workoutEntity.addInstructor(converter.convertInstructorDto(instructorDto));
+//    }
+//
+//    @Override
+//    public void deleteClientFromWorkoutByWorkoutIdAndClientPassport() {
+//        WorkoutEntity workoutEntity = workoutRepo.findByName();
+//        if (workoutEntity==null) {
+//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
+//        }
+//    }
+//
+//    @Override
+//    public void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId() {
+//        // TODO: 13.03.2022
+//    }
 }
