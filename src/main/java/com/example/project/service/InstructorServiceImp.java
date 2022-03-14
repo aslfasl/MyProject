@@ -3,13 +3,15 @@ package com.example.project.service;
 import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
-import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +24,12 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto getById(Long id) {
-        return converter.convertInstructorEntity(instructorRepo.getById(id));
+        Optional<InstructorEntity> instructorOpt = instructorRepo.findById(id);
+        if (instructorOpt.isEmpty()) {
+            throw new CustomException("Instructor with id " + id + " not found",
+                    ErrorType.NOT_FOUND);
+        }
+        return converter.convertInstructorEntity(instructorOpt.get());
     }
 
     @Override
@@ -33,10 +40,10 @@ public class InstructorServiceImp implements InstructorService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public InstructorDto deleteById(Long id) {
         InstructorEntity instructor = instructorRepo.getById(id);
         instructor.setActive(false);
-        instructorRepo.save(instructor);
+        return converter.convertInstructorEntity(instructorRepo.save(instructor));
     }
 
     @Override
@@ -45,18 +52,21 @@ public class InstructorServiceImp implements InstructorService {
     }
 
     @Override
-    public InstructorEntity save(InstructorDto instructor) {
+    public InstructorDto save(InstructorDto instructor) {
         if (instructorRepo.existsByPassport(instructor.getPassport())){
-            throw new RuntimeException("passport already taken..."); // TODO: 10.03.2022
+            throw new CustomException("Instructor with passport" + instructor.getPassport() + " already exists",
+                    ErrorType.ALREADY_EXISTS);
         }
-        return instructorRepo.save(converter.convertInstructorDto(instructor));
+        InstructorEntity instructorEntity = instructorRepo.save(converter.convertInstructorDto(instructor));
+        return converter.convertInstructorEntity(instructorEntity);
     }
 
     @Override
     public InstructorDto getByPassport(String passport) {
         InstructorEntity instructor = instructorRepo.findByPassport(passport);
         if (instructor==null){
-            throw new RuntimeException("no instructor"); // TODO: 10.03.2022 Custom Exception
+            throw new CustomException("Instructor with passport " + passport + " not found",
+                    ErrorType.NOT_FOUND);
         }
         return converter.convertInstructorEntity(instructor);
     }

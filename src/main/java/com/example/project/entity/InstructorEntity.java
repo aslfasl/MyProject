@@ -1,5 +1,7 @@
 package com.example.project.entity;
 
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -56,9 +58,10 @@ public class InstructorEntity {
 
     public void addWorkout(WorkoutEntity workout){
         if (instructorWorkouts.contains(workout)) {
-            throw new RuntimeException("тут должен быть кастомный эксепшн"); // TODO: 07.03.2022
+            throw new CustomException("This instructor already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
         instructorWorkouts.add(workout);
+        workout.getInstructors().add(this);
     }
 
     @Override

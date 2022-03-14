@@ -10,14 +10,21 @@ import java.util.List;
 public interface ClientService {
 
     ClientDto saveClient(ClientDto client);
+
     ClientDto getClientById(Long id);
-    void deleteClientById(Long id);
+
+    ClientDto deleteClientById(Long id);
+
     List<ClientDto> getAll();
 
     // TODO: 07.03.2022
 //    ClientEntity updateClientById(Long id);
 
     List<ClientDto> getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
+
     ClientDto getClientByPassport(String passport);
 
+    List<ClientDto> getAllActiveClients();
 }
+
+

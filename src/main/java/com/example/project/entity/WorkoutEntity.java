@@ -1,5 +1,7 @@
 package com.example.project.entity;
 
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -35,13 +37,15 @@ public class WorkoutEntity {
     private int peopleLimit;
 
     @ManyToMany(mappedBy = "clientWorkouts",
-            fetch = FetchType.EAGER)
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JsonIgnore
     @ToString.Exclude
     private Set<ClientEntity> clients = new HashSet<>();
 
     @ManyToMany(mappedBy = "instructorWorkouts",
-            fetch = FetchType.EAGER)
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @ToString.Exclude
     @JsonIgnore
     private Set<InstructorEntity> instructors = new HashSet<>();
@@ -53,24 +57,27 @@ public class WorkoutEntity {
         this.peopleLimit = peopleLimit;
     }
 
-    public void addInstructor(InstructorEntity instructor){
-        if (instructors.contains(instructor)){
-            throw new RuntimeException("Такой инструктор уже есть. потом напишу"); // TODO: 07.03.2022
+    public void addInstructor(InstructorEntity instructor) {
+        if (instructors.contains(instructor)) {
+            throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
         }
         instructors.add(instructor);
     }
 
     public void addClient(ClientEntity client) {
-        if (clients.contains(client)){
-            throw new RuntimeException("Такой клиент уже есть.потом напишу"); // TODO: 07.03.2022
+        if (clients.contains(client)) {
+            throw new CustomException("Client " + client.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
         }
-        if (showActiveClientsCounter() >= peopleLimit){
-            throw new RuntimeException("Все места заняты");
+        if (showActiveClientsCounter() >= peopleLimit) {
+            throw new CustomException("All free slots has been taken for this workout", ErrorType.ALREADY_EXISTS);
         }
         clients.add(client);
+        client.getClientWorkouts().add(this);
     }
 
-    public long showActiveClientsCounter(){
+    public long showActiveClientsCounter() {
         return clients.stream().filter(ClientEntity::isActive).count();
     }
 
@@ -83,21 +90,6 @@ public class WorkoutEntity {
                 ", isAvailable=" + isAvailable +
                 ", peopleLimit=" + peopleLimit +
                 '}';
-    }
-
-    public static void main(String[] args) {
-        WorkoutEntity workoutEntity = new WorkoutEntity("MyWorkout", 90, true, 3);
-        ClientEntity clientEntity1 = new ClientEntity("Anna", "Smith", "1", LocalDate.now(), true);
-        ClientEntity clientEntity2 = new ClientEntity("Foo", "Foofoo", "foofoofoo", LocalDate.now(), false);
-
-        workoutEntity.addClient(clientEntity1);
-        workoutEntity.addClient(clientEntity2);
-        System.out.println(workoutEntity);
-
-
-        System.out.println(workoutEntity.getClients().size());
-        System.out.println(workoutEntity.showActiveClientsCounter());
-
     }
 }
 
