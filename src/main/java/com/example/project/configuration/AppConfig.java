@@ -14,8 +14,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +64,7 @@ public class AppConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("Token Access", "Authorization", SecurityScheme.In.HEADER.name());
+        return new ApiKey("Token Access", AUTHORIZATION_HEADER, SecurityScheme.In.HEADER.name());
     }
 
     private SecurityContext securityContext() {

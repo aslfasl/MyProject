@@ -1,8 +1,6 @@
 package com.example.project.api;
 
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
-import com.example.project.dto.WorkoutDto;
 import com.example.project.service.InstructorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

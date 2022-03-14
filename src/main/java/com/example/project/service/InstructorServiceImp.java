@@ -3,7 +3,6 @@ package com.example.project.service;
 import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
-import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
