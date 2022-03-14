@@ -25,7 +25,6 @@ public class WorkoutServiceImp implements WorkoutService {
     private final ClientRepo clientRepo;
     private final Converter converter;
 
-    // TODO: 08.03.2022 Begin with that class, need testing
 
     @Override
     public WorkoutDto getById(Long id) {
@@ -38,13 +37,14 @@ public class WorkoutServiceImp implements WorkoutService {
     }
 
     @Override
-    public WorkoutEntity save(WorkoutDto workoutDto) {
+    public WorkoutDto save(WorkoutDto workoutDto) {
         if (workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(workoutDto.getName(),
                 workoutDto.getDurationInMinutes(),
                 workoutDto.getPeopleLimit())) {
             throw new RuntimeException("already exists"); // TODO: 10.03.2022
         }
-        return workoutRepo.save(converter.convertWorkoutDto(workoutDto));
+        WorkoutEntity workoutEntity = converter.convertWorkoutDto(workoutDto);
+        return converter.convertWorkoutEntity(workoutRepo.save(workoutEntity));
     }
 
     @Override
@@ -58,10 +58,11 @@ public class WorkoutServiceImp implements WorkoutService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public WorkoutDto deleteById(Long id) {
         WorkoutEntity workout = workoutRepo.getById(id);
         workout.setAvailable(false);
-        workoutRepo.save(workout);
+        WorkoutEntity workoutEntity = workoutRepo.save(workout);
+        return converter.convertWorkoutEntity(workoutEntity);
     }
 
     @Override

@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface WorkoutService {
     WorkoutDto getById(Long id);
-    WorkoutEntity save(WorkoutDto workout);
+    WorkoutDto save(WorkoutDto workout);
     WorkoutDto getByName(String name);
-    void deleteById(Long id);
+    WorkoutDto deleteById(Long id);
     List<WorkoutDto> getAllAvailable();
     List<WorkoutDto> getAll();
     // TODO: 13.03.2022  void addClientToWorkoutByWorkoutNameAndClientPassport(String clientPassport, String workoutName);

@@ -17,34 +17,34 @@ import java.util.List;
 @RequestMapping("api")
 public class ClientController {
 
-    private final ClientService service;
+    private final ClientService clientService;
 
     @GetMapping("/client/all")
     public ResponseEntity<List<ClientDto>> getAllClients() {
-        List<ClientDto> list = service.getAll();
+        List<ClientDto> list = clientService.getAll();
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping("/client/all_active")
     public ResponseEntity<List<ClientDto>> getAllActive(){
-        return ResponseEntity.ok().body(service.getAllActiveClients());
+        return ResponseEntity.ok().body(clientService.getAllActiveClients());
     }
 
     @PostMapping("/client/save")
     public ResponseEntity<ClientDto> saveClientToDatabase(@RequestBody ClientDto clientDto) {
-        ClientDto clientDtoResponse = service.saveClient(clientDto);
+        ClientDto clientDtoResponse = clientService.saveClient(clientDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/client/save").toUriString());
         return ResponseEntity.created(uri).body(clientDtoResponse);
     }
 
     @GetMapping("/client/get_by_id/{id}")
     public ResponseEntity<ClientDto> getClientById(@PathVariable long id) {
-        return ResponseEntity.ok().body(service.getClientById(id));
+        return ResponseEntity.ok().body(clientService.getClientById(id));
     }
 
     @PostMapping("/client/delete/{id}")
     public ResponseEntity<ClientDto> deleteClientById(@PathVariable long id) {
-        ClientDto clientDto = service.deleteClientById(id);
+        ClientDto clientDto = clientService.deleteClientById(id);
         return ResponseEntity.accepted().body(clientDto);
     }
 
@@ -54,13 +54,13 @@ public class ClientController {
                                                                         @RequestParam
                                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                                 LocalDate birthdate) {
-        List<ClientDto> clients = service.getClientByFullNameAndBirthDate(firstName, lastName, birthdate);
+        List<ClientDto> clients = clientService.getClientByFullNameAndBirthDate(firstName, lastName, birthdate);
         return ResponseEntity.ok().body(clients);
     }
 
     @GetMapping("/client/get_by_passport")
     public ResponseEntity<ClientDto> getByPassport(@RequestParam String passport){
-        return ResponseEntity.ok().body(service.getClientByPassport(passport));
+        return ResponseEntity.ok().body(clientService.getClientByPassport(passport));
     }
 }
 
