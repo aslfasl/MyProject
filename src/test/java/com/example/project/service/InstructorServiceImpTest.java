@@ -6,7 +6,6 @@ import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.InstructorRepo;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +25,7 @@ class InstructorServiceImpTest {
     private InstructorRepo instructorRepo;
 
     @Autowired
-    private InstructorServiceImp service;
+    private InstructorService instructorService;
 
     @AfterEach
     void after() {
@@ -48,7 +46,7 @@ class InstructorServiceImpTest {
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
-        InstructorDto instructorDto = service.getById(id);
+        InstructorDto instructorDto = instructorService.getById(id);
 
         assertEquals(instructorEntity.getPassport(), instructorDto.getPassport());
         assertEquals(instructorEntity.getBirthdate(), instructorDto.getBirthdate());
@@ -69,7 +67,7 @@ class InstructorServiceImpTest {
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
 
-        List<InstructorDto> instructorsWithTheSameName = service.getByFullName(firstName, lastName);
+        List<InstructorDto> instructorsWithTheSameName = instructorService.getByFullName(firstName, lastName);
         assertTrue(instructorsWithTheSameName.stream()
                 .allMatch(instructorDto -> instructorDto.getFirstName().equalsIgnoreCase(firstName)));
         assertTrue(instructorsWithTheSameName.stream()
@@ -84,7 +82,7 @@ class InstructorServiceImpTest {
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
-        service.deleteById(id);
+        instructorService.deleteById(id);
 
         assertFalse(instructorRepo.getById(id).isActive());
     }
@@ -104,13 +102,13 @@ class InstructorServiceImpTest {
         instructorDto.setInstructorWorkouts(workoutDtoSet);
         assertFalse(instructorRepo.existsByPassport(passport));
 
-        InstructorEntity instructorEntity = service.save(instructorDto);
+        InstructorDto savedInstructor = instructorService.save(instructorDto);
 
 
         assertTrue(instructorRepo.existsByPassport(passport));
-        assertEquals(instructorDto.getPassport(), instructorEntity.getPassport());
-        assertEquals(instructorDto.getFirstName(), instructorEntity.getFirstName());
-        assertEquals(instructorDto.getBirthdate(), instructorEntity.getBirthdate());
+        assertEquals(instructorDto.getPassport(), savedInstructor.getPassport());
+        assertEquals(instructorDto.getFirstName(), savedInstructor.getFirstName());
+        assertEquals(instructorDto.getBirthdate(), savedInstructor.getBirthdate());
     }
 
     @Test
@@ -123,7 +121,7 @@ class InstructorServiceImpTest {
         instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);
 
-        InstructorDto instructorDto = service.getByPassport(passport);
+        InstructorDto instructorDto = instructorService.getByPassport(passport);
 
         assertEquals(instructorEntity.getInstructorWorkouts().size(),
                 instructorDto.getInstructorWorkouts().size());
@@ -146,7 +144,7 @@ class InstructorServiceImpTest {
         instructorRepo.save(instructorEntity2);
         instructorRepo.save(instructorEntity3);
 
-        assertEquals(3, service.getAll().size());
-        assertEquals(1, service.getAllActive().size());
+        assertEquals(3, instructorService.getAll().size());
+        assertEquals(1, instructorService.getAllActive().size());
     }
 }

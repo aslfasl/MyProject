@@ -10,9 +10,9 @@ public interface InstructorService {
 
     InstructorDto getById(Long id);
     List<InstructorDto> getByFullName(String firstName, String lastName);
-    void deleteById(Long id);
+    InstructorDto deleteById(Long id);
     void update(); // TODO: 07.03.2022
-    InstructorEntity save(InstructorDto instructor);
+    InstructorDto save(InstructorDto instructor);
     InstructorDto getByPassport(String passport);
     List<InstructorDto> getAllActive();
     List<InstructorDto> getAll();
