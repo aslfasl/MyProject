@@ -4,6 +4,8 @@ import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,8 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientDto saveClient(ClientDto clientDto) {
         if (clientRepo.existsByPassport(clientDto.getPassport())) {
-            throw new RuntimeException("Client with that passport already exists");
+            throw new CustomException("Client with passport" + clientDto.getPassport() + " already exists",
+                    ErrorType.ALREADY_EXISTS);
         }
         ClientEntity clientEntity = clientRepo.save(converter.convertClientDto(clientDto));
         return converter.convertClientEntity(clientEntity);
@@ -34,7 +37,8 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientById(Long id) {
         ClientEntity clientEntity = clientRepo.findClientById(id);
         if (clientEntity == null) {
-            throw new RuntimeException("no such client"); // TODO: 12.03.2022
+            throw new CustomException("Client with id " + id + " not found",
+                    ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(clientEntity);
     }
@@ -67,7 +71,8 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientByPassport(String passport) {
         ClientEntity client = clientRepo.findClientEntityByPassport(passport);
         if (client == null) {
-            throw new RuntimeException("No client with that passport"); // TODO: 12.03.2022
+            throw new CustomException("Client with passport " + passport + " not found",
+                    ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(client);
     }

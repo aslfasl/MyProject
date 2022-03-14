@@ -4,6 +4,8 @@ import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,8 @@ public class InstructorServiceImp implements InstructorService {
     @Override
     public InstructorEntity save(InstructorDto instructor) {
         if (instructorRepo.existsByPassport(instructor.getPassport())){
-            throw new RuntimeException("passport already taken..."); // TODO: 10.03.2022
+            throw new CustomException("Instructor with passport" + instructor.getPassport() + " already exists",
+                    ErrorType.ALREADY_EXISTS);
         }
         return instructorRepo.save(converter.convertInstructorDto(instructor));
     }
@@ -56,7 +59,8 @@ public class InstructorServiceImp implements InstructorService {
     public InstructorDto getByPassport(String passport) {
         InstructorEntity instructor = instructorRepo.findByPassport(passport);
         if (instructor==null){
-            throw new RuntimeException("no instructor"); // TODO: 10.03.2022 Custom Exception
+            throw new CustomException("Instructor with passport " + passport + " not found",
+                    ErrorType.NOT_FOUND);
         }
         return converter.convertInstructorEntity(instructor);
     }

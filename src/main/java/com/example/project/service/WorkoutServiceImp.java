@@ -6,6 +6,8 @@ import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.WorkoutRepo;
 import lombok.AllArgsConstructor;
@@ -32,7 +34,8 @@ public class WorkoutServiceImp implements WorkoutService {
         if (byId.isPresent()) {
             return converter.convertWorkoutEntity(byId.get());
         } else {
-            throw new RuntimeException("no workout"); // TODO: 10.03.2022
+            throw new CustomException("Workout with id " + id + " not found",
+                    ErrorType.NOT_FOUND);
         }
     }
 
@@ -41,7 +44,8 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(workoutDto.getName(),
                 workoutDto.getDurationInMinutes(),
                 workoutDto.getPeopleLimit())) {
-            throw new RuntimeException("already exists"); // TODO: 10.03.2022
+            throw new CustomException("Workout " + workoutDto.getName() + " already exists",
+                    ErrorType.ALREADY_EXISTS);
         }
         WorkoutEntity workoutEntity = converter.convertWorkoutDto(workoutDto);
         return converter.convertWorkoutEntity(workoutRepo.save(workoutEntity));
@@ -53,7 +57,8 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutEntity != null) {
             return converter.convertWorkoutEntity(workoutEntity);
         } else {
-            throw new RuntimeException("no workout with that name"); // TODO: 10.03.2022
+            throw new CustomException("Workout with name " + name + " not found",
+                    ErrorType.NOT_FOUND);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.example.project.entity;
 
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -57,17 +59,19 @@ public class WorkoutEntity {
 
     public void addInstructor(InstructorEntity instructor) {
         if (instructors.contains(instructor)) {
-            throw new RuntimeException("Такой инструктор уже есть. потом напишу"); // TODO: 07.03.2022
+            throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
         }
         instructors.add(instructor);
     }
 
     public void addClient(ClientEntity client) {
         if (clients.contains(client)) {
-            throw new RuntimeException("Такой клиент уже есть.потом напишу"); // TODO: 07.03.2022
+            throw new CustomException("Client " + client.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
         }
         if (showActiveClientsCounter() >= peopleLimit) {
-            throw new RuntimeException("Все места заняты");
+            throw new CustomException("All free slots has been taken for this workout", ErrorType.ALREADY_EXISTS);
         }
         clients.add(client);
         client.getClientWorkouts().add(this);

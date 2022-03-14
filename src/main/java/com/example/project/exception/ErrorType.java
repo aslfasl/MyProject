@@ -8,9 +8,7 @@ public enum ErrorType {
 
     NOT_FOUND(-100, HttpStatus.BAD_REQUEST),
     UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR),
-    WRONG_AGE(HttpStatus.BAD_REQUEST),
-    NO_INSURANCE(HttpStatus.BAD_REQUEST),
-    ALREADY_EXISTS(HttpStatus.CONFLICT);
+    ALREADY_EXISTS(-200, HttpStatus.CONFLICT);
 
     private final HttpStatus status;
     private int code;
