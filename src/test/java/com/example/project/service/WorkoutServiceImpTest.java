@@ -55,8 +55,8 @@ class WorkoutServiceImpTest {
         WorkoutEntity workout = new WorkoutEntity("testOne", 60, true, 100);
         workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000, 1, 1), true));
         workout.addClient(new ClientEntity("one22", "one22", "10122010", LocalDate.of(2000, 1, 1), true));
-        workout.addInstructor(new InstructorEntity("one1", "one1", "00001", true, LocalDate.of(2001, 2, 2)));
-        workout.addInstructor(new InstructorEntity("one11", "one11", "100001", true, LocalDate.of(2001, 2, 2)));
+        workout.addInstructor(new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true));
+        workout.addInstructor(new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2),true));
         workoutRepo.save(workout);
         long id = workout.getId();
 

@@ -37,11 +37,8 @@ class InstructorServiceImpTest {
     void shouldGetInstructorById() {
         WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true, 100);
         InstructorEntity instructorEntity =
-                new InstructorEntity("testName",
-                        "testSurname",
-                        "1234",
-                        true,
-                        LocalDate.of(2000, 1, 1));
+                new InstructorEntity("testName", "testSurname", "1234",
+                        LocalDate.of(2000, 1, 1), true);
         instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
@@ -61,9 +58,9 @@ class InstructorServiceImpTest {
         String firstName = "InstructorName1";
         String lastName = "InstructorName1";
         InstructorEntity instructorEntity1 =
-                new InstructorEntity(firstName, lastName,";lkj",true, LocalDate.of(2000, 1, 1));
+                new InstructorEntity(firstName, lastName, ";lkj", LocalDate.of(2000, 1, 1), true);
         InstructorEntity instructorEntity2 =
-                new InstructorEntity(firstName, lastName,"x2xx2xj",true, LocalDate.of(2000, 1, 1));
+                new InstructorEntity(firstName, lastName, "x2xx2xj", LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
 
@@ -97,7 +94,7 @@ class InstructorServiceImpTest {
         String passport = "111160";
         InstructorDto instructorDto =
                 new InstructorDto("Bob", "Smith", passport, true,
-                        LocalDate.of(2000, 1,1), null);
+                        LocalDate.of(2000, 1, 1), null);
         Set<WorkoutDto> workoutDtoSet = new HashSet<>();
         instructorDto.setInstructorWorkouts(workoutDtoSet);
         assertFalse(instructorRepo.existsByPassport(passport));
@@ -115,8 +112,8 @@ class InstructorServiceImpTest {
     void shouldGetInstructorByPassport() {
         String passport = "4009";
         InstructorEntity instructorEntity = new InstructorEntity(
-                "Alex", "Boch", passport, true,
-                LocalDate.of(1989, 1, 1));
+                "Alex", "Boch", passport,
+                LocalDate.of(1989, 1, 1), true);
         WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true, 100);
         instructorEntity.addWorkout(workoutEntity);
         instructorRepo.save(instructorEntity);

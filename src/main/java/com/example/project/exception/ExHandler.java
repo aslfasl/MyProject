@@ -14,7 +14,8 @@ public class ExHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorMessage> handleRuntimeException(CustomException exception) {
         log.error(exception.getMessage());
         ErrorType errorType = exception.getErrorType();
-        return new ResponseEntity<>(new ErrorMessage(-10, errorType.name(), exception.getMessage()),
+        // TODO: 14.03.2022 Test exception handler
+        return new ResponseEntity<>(new ErrorMessage(errorType.getCode(), errorType.name(), exception.getMessage()),
                 errorType.getStatus());
     }
 
