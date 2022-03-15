@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j // TODO: 08.03.2022
+@Slf4j
 public class UserServiceImp implements UserService, UserDetailsService {
 
     private final UserRepo userRepo;
