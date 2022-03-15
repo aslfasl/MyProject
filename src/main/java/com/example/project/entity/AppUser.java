@@ -2,6 +2,7 @@ package com.example.project.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -21,5 +22,6 @@ public class AppUser {
     private String username;
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
     private List<Role> roles = new ArrayList<>();
 }

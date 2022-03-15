@@ -14,8 +14,8 @@ class WorkoutEntityTest {
     @Test
     void shouldAddInstructorToWorkout() {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Jim", "Bean", "15", true,
-                        LocalDate.of(2000, 1, 1));
+                new InstructorEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Jumping higher", 1, true, 5);
         assertFalse(workoutEntity.getInstructors().contains(instructorEntity));
@@ -28,8 +28,8 @@ class WorkoutEntityTest {
     @Test
     void shouldThrowCustomExceptionWhenAddingInstructorInSecondTime() {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Jim", "Bean", "15", true,
-                        LocalDate.of(2000, 1, 1));
+                new InstructorEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1),true);
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Jumping higher", 1, true, 5);
         workoutEntity.addInstructor(instructorEntity);
@@ -100,6 +100,7 @@ class WorkoutEntityTest {
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Jumping higher", 1, true, 11);
         workoutEntity.addClient(clientFirst);
+
         workoutEntity.addClient(clientSecond);
 
         assertEquals(1, workoutEntity.showActiveClientsCounter());

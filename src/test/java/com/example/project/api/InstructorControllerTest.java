@@ -53,7 +53,7 @@ class InstructorControllerTest {
     @Test
     void shouldGetInstructorById() throws Exception {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Paul", "Green", "200", true, LocalDate.of(2000, 1, 1));
+                new InstructorEntity("Paul", "Green", "200",  LocalDate.of(2000, 1, 1),true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
@@ -69,7 +69,7 @@ class InstructorControllerTest {
     @Test
     void shouldMakeInstructorInactiveWhenDeleteById() throws Exception {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Paul", "Green", "200", true, LocalDate.of(2000, 1, 1));
+                new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1),true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
@@ -106,7 +106,7 @@ class InstructorControllerTest {
     void shouldGetInstructorByPassport() throws Exception {
         String passport = "20120";
         InstructorEntity instructorEntity =
-                new InstructorEntity("George", "Brown", passport, true, LocalDate.of(2000, 1, 1));
+                new InstructorEntity("George", "Brown", passport,  LocalDate.of(2000, 1, 1),true);
         instructorRepo.save(instructorEntity);
 
         mockMvc.perform(get("/api/instructor/by_passport?passport={passport}", passport))
@@ -120,11 +120,11 @@ class InstructorControllerTest {
     @Test
     void shouldGetListOfAllActiveInstructors() throws Exception {
         InstructorEntity instructorEntity1 = new InstructorEntity("Baron",
-                "Wulf", "qer", true, LocalDate.of(1950, 1, 1));
+                "Wulf", "qer",  LocalDate.of(1950, 1, 1),true);
         InstructorEntity instructorEntity2 = new InstructorEntity("Lord",
-                "Bee", "3gq", true, LocalDate.of(1950, 1, 1));
+                "Bee", "3gq",  LocalDate.of(1950, 1, 1),true);
         InstructorEntity instructorEntity3 = new InstructorEntity("Lord",
-                "Josh", "6hh", false, LocalDate.of(1950, 1, 1));
+                "Josh", "6hh",  LocalDate.of(1950, 1, 1),false);
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
         instructorRepo.save(instructorEntity3);
@@ -139,11 +139,11 @@ class InstructorControllerTest {
     @Test
     void shouldGetListOfAllClients() throws Exception {
         InstructorEntity instructorEntity1 = new InstructorEntity("Baron",
-                "Wulf", "qer", true, LocalDate.of(1950, 1, 1));
+                "Wulf", "qer",  LocalDate.of(1950, 1, 1),true);
         InstructorEntity instructorEntity2 = new InstructorEntity("Lord",
-                "Bee", "3gq", true, LocalDate.of(1950, 1, 1));
+                "Bee", "3gq",  LocalDate.of(1950, 1, 1),true);
         InstructorEntity instructorEntity3 = new InstructorEntity("Pop",
-                "Josh", "6hh", false, LocalDate.of(1950, 1, 1));
+                "Josh", "6hh",  LocalDate.of(1950, 1, 1),false);
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
         instructorRepo.save(instructorEntity3);

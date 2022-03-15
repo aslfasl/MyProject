@@ -14,8 +14,8 @@ class InstructorEntityTest {
     @Test
     void shouldAddWorkoutToInstructorEntity() {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Jack", "Dogson", "890123", true,
-                        LocalDate.of(1989, 1, 1));
+                new InstructorEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1, 1), true);
         WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
         assertFalse(instructorEntity.getInstructorWorkouts().contains(workoutEntity));
 
@@ -27,8 +27,8 @@ class InstructorEntityTest {
     @Test
     void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Jack", "Dogson", "890123", true,
-                        LocalDate.of(1989, 1, 1));
+                new InstructorEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1, 1), true);
         assertEquals(0, instructorEntity.getInstructorWorkouts().size());
         WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
         instructorEntity.addWorkout(workoutEntity);
