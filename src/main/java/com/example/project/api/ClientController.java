@@ -26,7 +26,7 @@ public class ClientController {
     }
 
     @GetMapping("/client/all_active")
-    public ResponseEntity<List<ClientDto>> getAllActive(){
+    public ResponseEntity<List<ClientDto>> getAllActive() {
         return ResponseEntity.ok().body(clientService.getAllActiveClients());
     }
 
@@ -48,6 +48,19 @@ public class ClientController {
         return ResponseEntity.accepted().body(clientDto);
     }
 
+    @PatchMapping("/client/update")
+    public ResponseEntity<ClientDto> updateClientById(@RequestParam(name = "id") Long id,
+                                                      @RequestParam(name = "firstname", required = false) String newFirstname,
+                                                      @RequestParam(name = "lastname", required = false) String newLastname,
+                                                      @RequestParam(name = "passport", required = false) String newPassport,
+                                                      @RequestParam(name = "birthdate", required = false)
+                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newBirthdate,
+                                                      @RequestParam(name = "active", required = false) boolean newActive) {
+        ClientDto clientDto =
+                clientService.updateClientById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+        return ResponseEntity.accepted().body(clientDto);
+    }
+
     @GetMapping("/client/get_by_fullname_birthdate")
     public ResponseEntity<List<ClientDto>> getAllByFullNameAndBirthdate(@RequestParam String firstName,
                                                                         @RequestParam String lastName,
@@ -59,7 +72,7 @@ public class ClientController {
     }
 
     @GetMapping("/client/get_by_passport")
-    public ResponseEntity<ClientDto> getByPassport(@RequestParam String passport){
+    public ResponseEntity<ClientDto> getByPassport(@RequestParam String passport) {
         return ResponseEntity.ok().body(clientService.getClientByPassport(passport));
     }
 }

@@ -135,6 +135,33 @@ class ClientControllerTest {
     }
 
     @Test
+    void shouldUpdateClientById() throws Exception {
+        ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
+        boolean newActive = true;
+
+        String content = mockMvc.perform(patch("/api/client/update?" +
+                                "id={id}&firstname={newFirstname}&lastname={newLastname}&passport={newPassport}" +
+                                "&birthdate={newBirthdate}&active={newActive}",
+                        id, newFirstname, newLastname, newPassport, newBirthdate, newActive))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo(newFirstname)))
+                .andExpect(jsonPath("$.lastName", equalTo(newLastname)))
+                .andExpect(jsonPath("$.passport", equalTo(newPassport)))
+                .andExpect(jsonPath("$.active", equalTo(newActive)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        ClientDto clientDto = objectMapper.readValue(content, ClientDto.class);
+        assertEquals(newBirthdate, clientDto.getBirthdate());
+    }
+
+    @Test
     void shouldGetAllClientsWithTheSameFirstNameLastNameAndBirthdate() throws Exception {
         String name = "Bob";
         String lastName = "Lee";
