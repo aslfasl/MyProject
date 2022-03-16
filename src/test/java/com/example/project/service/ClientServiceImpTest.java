@@ -3,6 +3,8 @@ package com.example.project.service;
 import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
+import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.WorkoutRepo;
 import org.junit.jupiter.api.AfterEach;
@@ -91,10 +93,58 @@ class ClientServiceImpTest {
     }
 
     @Test
+    @Transactional
+    void shouldUpdateClientEntityById() {
+        ClientEntity clientEntity = new ClientEntity("NameFirst", "SurnameFirst", "414141",
+                LocalDate.of(2000, 1, 1), false);
+        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);
+        clientEntity.addWorkout(workoutEntity);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
+        boolean newActive = true;
+
+
+        service.updateClientById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+
+        ClientEntity clientSaved = clientRepo.getById(id);
+        assertEquals(newFirstname, clientSaved.getFirstName());
+        assertEquals(newLastname, clientSaved.getLastName());
+        assertEquals(newPassport, clientSaved.getPassport());
+        assertEquals(newBirthdate, clientSaved.getBirthdate());
+        assertEquals(newActive, clientSaved.isActive());
+        assertEquals(clientEntity.getClientWorkouts().size(), clientSaved.getClientWorkouts().size());
+        assertTrue(clientSaved.getClientWorkouts().contains(workoutEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenUpdateByIdWithAlreadyTakenPassport() {
+        String passport = "414141";
+        ClientEntity clientEntity = new ClientEntity("NameFirst", "SurnameFirst", passport,
+                LocalDate.of(2000, 1, 1), false);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> service.updateClientById(id, null, null, passport, null, false));
+
+        assertEquals("Client with passport " + passport + " already exists", exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenUpdateByIdNotFound() {
+        Long id = -22L;
+        CustomException exception = assertThrows(CustomException.class,
+                () -> service.updateClientById(id, null, null, "2131415", null, false));
+
+        assertEquals("Client with id " + id + " not found", exception.getMessage());
+    }
+    @Test
     void shouldGetAllClientsByFullNameAndBirthDate() {
         String name = "Bob";
         String lastName = "Lee";
-        LocalDate localDate = LocalDate.of(2000,1,1);
+        LocalDate localDate = LocalDate.of(2000, 1, 1);
         ClientEntity clientEntity1 = new ClientEntity(name, lastName, "414141",
                 localDate, true);
         ClientEntity clientEntity2 = new ClientEntity(name, lastName, "3333",
@@ -114,9 +164,9 @@ class ClientServiceImpTest {
 
     @Test
     void shouldGetAllClientsAndAllActiveClients() {
-        ClientEntity clientEntity1 = new ClientEntity("Name1", "last1", "fdd", LocalDate.of(2000,1,1), true);
-        ClientEntity clientEntity2 = new ClientEntity("Name2", "last2", "ds", LocalDate.of(2000,1,1), true);
-        ClientEntity clientEntity3 = new ClientEntity("Name3", "last3", "asd", LocalDate.of(2000,1,1), false);
+        ClientEntity clientEntity1 = new ClientEntity("Name1", "last1", "fdd", LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity2 = new ClientEntity("Name2", "last2", "ds", LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity3 = new ClientEntity("Name3", "last3", "asd", LocalDate.of(2000, 1, 1), false);
         clientRepo.save(clientEntity1);
         clientRepo.save(clientEntity2);
         clientRepo.save(clientEntity3);
@@ -130,7 +180,7 @@ class ClientServiceImpTest {
     @Test
     void shouldGetClientByPassport() {
         String passport = "7777";
-        ClientEntity clientEntity = new ClientEntity("Name1", "last1", passport, LocalDate.of(2000,1,1), true);
+        ClientEntity clientEntity = new ClientEntity("Name1", "last1", passport, LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
 
         ClientDto clientDto = service.getClientByPassport(passport);

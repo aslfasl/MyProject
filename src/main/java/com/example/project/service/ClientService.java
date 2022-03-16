@@ -17,8 +17,8 @@ public interface ClientService {
 
     List<ClientDto> getAll();
 
-    // TODO: 07.03.2022
-//    ClientEntity updateClientById(Long id);
+    ClientDto updateClientById(Long id, String newFirstName, String newLastName,
+                               String newPassport, LocalDate newBirthdate, boolean newActive);
 
     List<ClientDto> getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
 
