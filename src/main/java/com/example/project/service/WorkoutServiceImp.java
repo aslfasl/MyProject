@@ -5,10 +5,12 @@ import com.example.project.dto.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
+import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
+import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class WorkoutServiceImp implements WorkoutService {
 
     private final WorkoutRepo workoutRepo;
     private final ClientRepo clientRepo;
+    private final InstructorRepo instructorRepo;
     private final Converter converter;
 
 
@@ -98,15 +101,21 @@ public class WorkoutServiceImp implements WorkoutService {
         }
         workoutEntity.addClient(clientEntity);
     }
-//
-//    @Override
-//    public void addInstructorToWorkoutByName(InstructorDto instructorDto, String workoutName) {
-//        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
-//        if (workoutEntity==null) {
-//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
-//        }
-//        workoutEntity.addInstructor(converter.convertInstructorDto(instructorDto));
-//    }
+
+    @Override
+    public void addInstructorToWorkoutByWorkoutNameAndInstructorId(String workoutName, Long instructorId) {
+        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
+        Optional<InstructorEntity> instructorOptional = instructorRepo.findById(instructorId);
+        if (workoutEntity==null) {
+            throw new CustomException("Workout with name " + workoutName + " not found",
+                    ErrorType.NOT_FOUND);
+        }
+        if (instructorOptional.isEmpty()){
+            throw new CustomException("Instructor with id " + instructorId + " not found",
+                    ErrorType.NOT_FOUND);
+        }
+        workoutEntity.addInstructor(instructorOptional.get());
+    }
 //
 //    @Override
 //    public void deleteClientFromWorkoutByWorkoutIdAndClientPassport() {

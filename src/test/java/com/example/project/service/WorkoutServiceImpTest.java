@@ -1,12 +1,11 @@
 package com.example.project.service;
 
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
-import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +32,7 @@ class WorkoutServiceImpTest {
     WorkoutRepo workoutRepo;
 
     @Autowired
-    WorkoutServiceImp service;
+    WorkoutServiceImp workoutService;
 
     @Autowired
     ClientRepo clientRepo;
@@ -56,11 +54,11 @@ class WorkoutServiceImpTest {
         workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000, 1, 1), true));
         workout.addClient(new ClientEntity("one22", "one22", "10122010", LocalDate.of(2000, 1, 1), true));
         workout.addInstructor(new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true));
-        workout.addInstructor(new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2),true));
+        workout.addInstructor(new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2), true));
         workoutRepo.save(workout);
         long id = workout.getId();
 
-        WorkoutDto workoutDto = service.getById(id);
+        WorkoutDto workoutDto = workoutService.getById(id);
 
         assertEquals(workout.getName(), workoutDto.getName());
         assertEquals(2, workoutDto.getClients().size());
@@ -68,6 +66,14 @@ class WorkoutServiceImpTest {
         assertEquals(workout.getClients().size(), workoutDto.getClients().size());
         assertEquals(workout.getDurationInMinutes(), workoutDto.getDurationInMinutes());
         assertEquals(workout.getPeopleLimit(), workoutDto.getPeopleLimit());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenGetById() {
+        long workoutId = -11;
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.getById(workoutId));
+        assertEquals("Workout with id " + workoutId + " not found", exception.getMessage());
     }
 
     @Test
@@ -79,9 +85,20 @@ class WorkoutServiceImpTest {
                 new WorkoutDto(name, durationInMin, true, peopleLimit, new HashSet<>(), new HashSet<>());
         assertFalse(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, durationInMin, peopleLimit));
 
-        service.save(workoutDto);
+        workoutService.save(workoutDto);
 
         assertTrue(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, durationInMin, peopleLimit));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenTryingToSaveAlreadyExistingWorkout() {
+        WorkoutEntity workoutEntity = new WorkoutEntity("some workout", 99, true, 10);
+        workoutRepo.save(workoutEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.save(converter.convertWorkoutEntity(workoutEntity)));
+
+        assertEquals("Workout " + workoutEntity.getName() + " already exists", exception.getMessage());
     }
 
     @Test
@@ -90,10 +107,20 @@ class WorkoutServiceImpTest {
         WorkoutEntity workoutEntity = new WorkoutEntity(name, 90, true, 100);
         workoutRepo.save(workoutEntity);
 
-        WorkoutDto workoutDto = service.getByName(name);
+        WorkoutDto workoutDto = workoutService.getByName(name);
 
         assertEquals(workoutEntity.getName(), workoutDto.getName());
         assertEquals(workoutEntity.getDurationInMinutes(), workoutDto.getDurationInMinutes());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenGetByName() {
+        String name = "YOGA BY SOMEONE";
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.getByName(name));
+
+        assertEquals("Workout with name " + name + " not found", exception.getMessage());
     }
 
     @Test
@@ -103,7 +130,7 @@ class WorkoutServiceImpTest {
         workoutRepo.save(workoutEntity);
         Long id = workoutEntity.getId();
 
-        service.deleteById(id);
+        workoutService.deleteById(id);
 
         assertFalse(workoutRepo.getById(id).isAvailable());
     }
@@ -121,47 +148,97 @@ class WorkoutServiceImpTest {
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
 
-        assertEquals(2, service.getAllAvailable().size());
-        assertEquals(3, service.getAll().size());
+        assertEquals(2, workoutService.getAllAvailable().size());
+        assertEquals(3, workoutService.getAll().size());
     }
-    
+
     @Test
     @Transactional
     void shouldAddClientToWorkoutByWorkoutNameAndClientId() {
         String workoutName = "TestName";
         WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
         workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
         ClientEntity clientEntity =
                 new ClientEntity("Poly", "Gaz", "d;;lkj", LocalDate.of(1995, 2, 14), true);
         assertEquals(0, workoutEntity.getClients().size());
         clientRepo.save(clientEntity);
-        long id = clientEntity.getId();
+        long clientId = clientEntity.getId();
 
-        service.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id);
+        workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, clientId);
 
 
-        WorkoutEntity savedWorkout = workoutRepo.getById(id);
+        WorkoutEntity savedWorkout = workoutRepo.getById(workoutId);
         assertTrue(savedWorkout.getClients().contains(clientEntity));
         assertEquals(1, savedWorkout.getClients().size());
     }
 
-    // TODO: 16.03.2022  
-//    @Test
-//    @Transactional
-//    void shouldAddInstructorToWorkoutByWorkoutId() {
-//        String workoutName = "TestName22";
-//        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
-//        workoutRepo.save(workoutEntity);
-//        long id = workoutEntity.getId();
-//        InstructorDto instructorDto =
-//                new InstructorDto("Igor", "Komarov", "ddeqqw", true,
-//                        LocalDate.of(1955, 1,1),
-//                        new HashSet<>());
-//        assertEquals(0, workoutEntity.getInstructors().size());
-//
-//        service.addInstructorToWorkoutByName(instructorDto, workoutName);
-//
-//        assertTrue(workoutRepo.getById(id).getInstructors().contains(converter.convertInstructorDto(instructorDto)));
-//        assertEquals(1, workoutEntity.getInstructors().size());
-//    }
+    @Test
+    void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongName() {
+        String workoutName = "TestName";
+        long id = -123;
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
+
+        assertEquals("Workout with name " + workoutName + " not found", exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongId() {
+        String workoutName = "TestName";
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        workoutRepo.save(workoutEntity);
+        long id = -123;
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
+
+        assertEquals("Client with id " + id + " not found", exception.getMessage());
+    }
+
+
+    @Test
+    @Transactional
+    void shouldAddInstructorToWorkoutByWorkoutNameAndInstructorId() {
+        String workoutName = "TestName22";
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Igor", "Komarov", "ddeqqw",
+                        LocalDate.of(1955, 1, 1), true);
+        instructorRepo.save(instructorEntity);
+        long instructorId = instructorEntity.getId();
+
+        workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, instructorId);
+
+        WorkoutEntity savedWorkout = workoutRepo.getById(workoutId);
+        assertTrue(savedWorkout.getInstructors().contains(instructorEntity));
+        assertEquals(1, savedWorkout.getInstructors().size());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddInstructorToWorkoutWithWrongName() {
+        String workoutName = "TestName";
+        long id = -123;
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, id));
+
+        assertEquals("Workout with name " + workoutName + " not found", exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddInstructorToWorkoutWithWrongId() {
+        String workoutName = "TestName";
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        workoutRepo.save(workoutEntity);
+        long id = -123;
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, id));
+
+        assertEquals("Instructor with id " + id + " not found", exception.getMessage());
+    }
 }
