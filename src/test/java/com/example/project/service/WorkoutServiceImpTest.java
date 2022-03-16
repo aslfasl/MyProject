@@ -124,25 +124,28 @@ class WorkoutServiceImpTest {
         assertEquals(2, service.getAllAvailable().size());
         assertEquals(3, service.getAll().size());
     }
+    
+    @Test
+    @Transactional
+    void shouldAddClientToWorkoutByWorkoutNameAndClientId() {
+        String workoutName = "TestName";
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        workoutRepo.save(workoutEntity);
+        ClientEntity clientEntity =
+                new ClientEntity("Poly", "Gaz", "d;;lkj", LocalDate.of(1995, 2, 14), true);
+        assertEquals(0, workoutEntity.getClients().size());
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
 
-    // TODO: 13.03.2022 this two methods needs to be done
-//    @Test
-//    @Transactional
-//    void shouldAddClientToWorkoutByWorkoutId() {
-//        String workoutName = "TestName";
-//        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
-//        workoutRepo.save(workoutEntity);
-//        long id = workoutEntity.getId();
-//        ClientDto clientDto =
-//                new ClientDto("Poly", "Gaz", "d;;lkj", LocalDate.of(1995, 2, 14), true, new HashSet<>());
-//        assertEquals(0, workoutEntity.getClients().size());
-//
-//        service.addClientToWorkoutByName(clientDto, workoutName);
-//
-//        assertTrue(workoutRepo.getById(id).getClients().contains(converter.convertClientDto(clientDto)));
-//        assertEquals(1, workoutEntity.getClients().size());
-//    }
-//
+        service.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id);
+
+
+        WorkoutEntity savedWorkout = workoutRepo.getById(id);
+        assertTrue(savedWorkout.getClients().contains(clientEntity));
+        assertEquals(1, savedWorkout.getClients().size());
+    }
+
+    // TODO: 16.03.2022  
 //    @Test
 //    @Transactional
 //    void shouldAddInstructorToWorkoutByWorkoutId() {

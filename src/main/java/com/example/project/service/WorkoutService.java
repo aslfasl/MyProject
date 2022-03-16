@@ -14,7 +14,7 @@ public interface WorkoutService {
     WorkoutDto deleteById(Long id);
     List<WorkoutDto> getAllAvailable();
     List<WorkoutDto> getAll();
-    // TODO: 13.03.2022  void addClientToWorkoutByWorkoutNameAndClientPassport(String clientPassport, String workoutName);
+    void addClientToWorkoutByWorkoutNameAndClientId(String workoutName, Long clientId);
     // TODO: 13.03.2022  void addInstructorToWorkoutByName(InstructorDto instructorDto, String workoutName);
     // TODO: 13.03.2022  void deleteClientFromWorkoutByWorkoutIdAndClientPassport();
     // TODO: 13.03.2022   void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId();

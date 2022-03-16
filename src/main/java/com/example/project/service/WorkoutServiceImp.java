@@ -84,15 +84,20 @@ public class WorkoutServiceImp implements WorkoutService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public void addClientToWorkoutByWorkoutNameAndClientPassport(String clientPassport, String workoutName) {
-//        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
-//        ClientEntity clientEntity = clientRepo.findClientEntityByPassport(clientPassport);
-//        if (workoutEntity==null) {
-//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
-//        }
-//        workoutEntity.addClient(clientEntity);
-//    }
+    @Override
+    public void addClientToWorkoutByWorkoutNameAndClientId(String workoutName, Long clientId) {
+        WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
+        ClientEntity clientEntity = clientRepo.findClientById(clientId);
+        if (workoutEntity == null) {
+            throw new CustomException("Workout with name " + workoutName + " not found",
+                    ErrorType.NOT_FOUND);
+        }
+        if (clientEntity == null) {
+            throw new CustomException("Client with id " + clientId + " not found",
+                    ErrorType.NOT_FOUND);
+        }
+        workoutEntity.addClient(clientEntity);
+    }
 //
 //    @Override
 //    public void addInstructorToWorkoutByName(InstructorDto instructorDto, String workoutName) {
