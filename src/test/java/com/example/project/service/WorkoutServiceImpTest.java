@@ -117,9 +117,11 @@ class WorkoutServiceImpTest {
         workoutEntity2.setAvailable(true);
         workoutEntity3.setAvailable(false);
         assertEquals(0, workoutRepo.findAll().size());
-        workoutRepo.save(workoutEntity1);
+        WorkoutEntity saved = workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
+
+        // TODO: 16.03.2022 search by saved.getId() presence not by size
 
         assertEquals(2, service.getAllAvailable().size());
         assertEquals(3, service.getAll().size());
@@ -141,6 +143,7 @@ class WorkoutServiceImpTest {
 
 
         WorkoutEntity savedWorkout = workoutRepo.getById(id);
+        // FIXME: 16.03.2022 fix test javax.persistence.EntityNotFoundException: Unable to find com.example.project.entity.WorkoutEntity with id 19
         assertTrue(savedWorkout.getClients().contains(clientEntity));
         assertEquals(1, savedWorkout.getClients().size());
     }

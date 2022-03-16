@@ -32,6 +32,10 @@ public class Application {
         return new BCryptPasswordEncoder();
 
     }
+// TODO: 16.03.2022 cleanup mess and all commented code, it remains in VCS use it
+    // TODO: 16.03.2022 remove .mvn from repo and add to gitignore
+    // TODO: 16.03.2022 reduce sonar issues to a half from 75 currently
+
 
     // TODO: 08.03.2022 put it in ConfigClass
 	@Bean

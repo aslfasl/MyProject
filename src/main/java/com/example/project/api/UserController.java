@@ -60,6 +60,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    // TODO: 16.03.2022 move logic from controller to service
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
