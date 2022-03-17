@@ -1,6 +1,6 @@
 package com.example.project.configuration;
 
-import com.example.project.dto.Converter;
+import com.example.project.converter.Converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.v3.oas.models.security.SecurityScheme;

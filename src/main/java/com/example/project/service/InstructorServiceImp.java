@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.dto.Converter;
+import com.example.project.converter.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.exception.CustomException;

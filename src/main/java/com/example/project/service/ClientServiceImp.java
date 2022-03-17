@@ -1,7 +1,7 @@
 package com.example.project.service;
 
 import com.example.project.dto.ClientDto;
-import com.example.project.dto.Converter;
+import com.example.project.converter.Converter;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;

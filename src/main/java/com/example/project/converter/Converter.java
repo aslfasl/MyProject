@@ -1,5 +1,8 @@
-package com.example.project.dto;
+package com.example.project.converter;
 
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
+import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
@@ -9,7 +12,7 @@ import lombok.Setter;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO: 16.03.2022 converter is not dto, move to separate package
+
 public class Converter {
 
     @Setter
