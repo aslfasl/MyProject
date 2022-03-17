@@ -4,6 +4,7 @@ import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.exception.CustomException;
 import com.example.project.repo.InstructorRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +26,39 @@ class InstructorServiceImpTest {
     private InstructorRepo instructorRepo;
 
     @Autowired
-    private InstructorService instructorService;
+    private InstructorServiceImp instructorService;
 
     @AfterEach
     void after() {
         instructorRepo.deleteAll();
+    }
+
+    @Test
+    void shouldAddWorkoutToInstructorEntity() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1, 1), true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        assertFalse(instructorEntity.getInstructorWorkouts().contains(workoutEntity));
+
+        instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
+
+        assertTrue(instructorEntity.getInstructorWorkouts().contains(workoutEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1, 1), true);
+        assertEquals(0, instructorEntity.getInstructorWorkouts().size());
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity));
+
+        assertEquals("This instructor already signed for: " + workoutEntity.getName(), exception.getMessage());
     }
 
     @Test
@@ -39,7 +68,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity =
                 new InstructorEntity("testName", "testSurname", "1234",
                         LocalDate.of(2000, 1, 1), true);
-        instructorEntity.addWorkout(workoutEntity);
+        instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
@@ -115,7 +144,7 @@ class InstructorServiceImpTest {
                 "Alex", "Boch", passport,
                 LocalDate.of(1989, 1, 1), true);
         WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true, 100);
-        instructorEntity.addWorkout(workoutEntity);
+        instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
         instructorRepo.save(instructorEntity);
 
         InstructorDto instructorDto = instructorService.getByPassport(passport);

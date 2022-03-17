@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.converter.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.InstructorEntity;
+import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
@@ -21,6 +22,14 @@ public class InstructorServiceImp implements InstructorService {
 
     private final InstructorRepo instructorRepo;
     private final Converter converter;
+
+    public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity){
+        if (instructorEntity.getInstructorWorkouts().contains(workout)) {
+            throw new CustomException("This instructor already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
+        }
+        instructorEntity.getInstructorWorkouts().add(workout);
+        workout.getInstructors().add(instructorEntity);
+    }
 
     @Override
     public InstructorDto getById(Long id) {

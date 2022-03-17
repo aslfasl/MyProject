@@ -29,12 +29,4 @@ public class InstructorEntity extends BaseEntity{
     public InstructorEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
         super(firstName, lastName, passport, birthdate, isActive);
     }
-
-    public void addWorkout(WorkoutEntity workout){
-        if (instructorWorkouts.contains(workout)) {
-            throw new CustomException("This instructor already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
-        }
-        instructorWorkouts.add(workout);
-        workout.getInstructors().add(this);
-    }
 }

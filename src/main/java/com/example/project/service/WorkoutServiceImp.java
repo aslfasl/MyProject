@@ -28,7 +28,6 @@ public class WorkoutServiceImp implements WorkoutService {
     private final InstructorRepo instructorRepo;
     private final Converter converter;
 
-    // TODO: 16.03.2022 remove logic from entity
     public void addInstructorToWorkout(InstructorEntity instructor, WorkoutEntity workoutEntity) {
         if (workoutEntity.getInstructors().contains(instructor)) {
             throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
