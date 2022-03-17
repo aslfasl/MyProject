@@ -144,7 +144,7 @@ class WorkoutServiceImpTest {
         workoutEntity2.setAvailable(true);
         workoutEntity3.setAvailable(false);
         assertEquals(0, workoutRepo.findAll().size());
-        workoutRepo.save(workoutEntity1);
+        WorkoutEntity saved = workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
 

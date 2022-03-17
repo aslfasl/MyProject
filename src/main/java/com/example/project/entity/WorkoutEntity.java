@@ -23,6 +23,7 @@ public class WorkoutEntity {
     @JsonIgnore
     private long id;
 
+    // TODO: 16.03.2022 remove redundant annotations
     @Column(name = "name")
     private String name;
 
@@ -56,6 +57,7 @@ public class WorkoutEntity {
         this.peopleLimit = peopleLimit;
     }
 
+    // TODO: 16.03.2022 remove logic from entity
     public void addInstructor(InstructorEntity instructor) {
         if (instructors.contains(instructor)) {
             throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",

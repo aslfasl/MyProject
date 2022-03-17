@@ -33,6 +33,7 @@ public class ClientEntity extends BaseEntity{
     }
 
 
+    // TODO: 16.03.2022 remove logic from entity
     public void addWorkout(WorkoutEntity workout) {
         if (clientWorkouts.contains(workout)) {
             throw new CustomException("This client already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
