@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.project.exception.ExceptionMessage.*;
+import static com.example.project.exception.ExceptionMessageUtils.*;
 
 @Service
 @AllArgsConstructor

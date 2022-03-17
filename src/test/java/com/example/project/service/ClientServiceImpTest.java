@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.example.project.exception.ExceptionMessage.CLIENT_ALREADY_EXISTS_PASSPORT;
-import static com.example.project.exception.ExceptionMessage.CLIENT_NOT_FOUND_BY_ID;
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_BY_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
