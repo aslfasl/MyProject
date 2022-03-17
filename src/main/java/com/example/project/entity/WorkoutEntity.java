@@ -57,31 +57,6 @@ public class WorkoutEntity {
         this.peopleLimit = peopleLimit;
     }
 
-    // TODO: 16.03.2022 remove logic from entity
-    public void addInstructor(InstructorEntity instructor) {
-        if (instructors.contains(instructor)) {
-            throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
-                    ErrorType.ALREADY_EXISTS);
-        }
-        instructors.add(instructor);
-    }
-
-    public void addClient(ClientEntity client) {
-        if (clients.contains(client)) {
-            throw new CustomException("Client " + client.getFirstName() + " already signed for this workout",
-                    ErrorType.ALREADY_EXISTS);
-        }
-        if (showActiveClientsCounter() >= peopleLimit) {
-            throw new CustomException("All free slots has been taken for this workout", ErrorType.ALREADY_EXISTS);
-        }
-        clients.add(client);
-        client.getClientWorkouts().add(this);
-    }
-
-    public long showActiveClientsCounter() {
-        return clients.stream().filter(ClientEntity::isActive).count();
-    }
-
     @Override
     public String toString() {
         return "WorkoutEntity{" +

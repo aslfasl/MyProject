@@ -28,6 +28,31 @@ public class WorkoutServiceImp implements WorkoutService {
     private final InstructorRepo instructorRepo;
     private final Converter converter;
 
+    // TODO: 16.03.2022 remove logic from entity
+    public void addInstructorToWorkout(InstructorEntity instructor, WorkoutEntity workoutEntity) {
+        if (workoutEntity.getInstructors().contains(instructor)) {
+            throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
+        }
+        workoutEntity.getInstructors().add(instructor);
+        instructor.getInstructorWorkouts().add(workoutEntity);
+    }
+
+    public void addClientToWorkout(ClientEntity client, WorkoutEntity workoutEntity) {
+        if (workoutEntity.getClients().contains(client)) {
+            throw new CustomException("Client " + client.getFirstName() + " already signed for this workout",
+                    ErrorType.ALREADY_EXISTS);
+        }
+        if (showActiveClientsCounter(workoutEntity) >= workoutEntity.getPeopleLimit()) {
+            throw new CustomException("All free slots has been taken for this workout", ErrorType.ALREADY_EXISTS);
+        }
+        workoutEntity.getClients().add(client);
+        client.getClientWorkouts().add(workoutEntity);
+    }
+
+    public long showActiveClientsCounter(WorkoutEntity workoutEntity) {
+        return workoutEntity.getClients().stream().filter(ClientEntity::isActive).count();
+    }
 
     @Override
     public WorkoutDto getById(Long id) {
@@ -97,7 +122,7 @@ public class WorkoutServiceImp implements WorkoutService {
             throw new CustomException("Client with id " + clientId + " not found",
                     ErrorType.NOT_FOUND);
         }
-        workoutEntity.addClient(clientEntity);
+        addClientToWorkout(clientEntity, workoutEntity);
     }
 
     @Override
@@ -112,7 +137,7 @@ public class WorkoutServiceImp implements WorkoutService {
             throw new CustomException("Instructor with id " + instructorId + " not found",
                     ErrorType.NOT_FOUND);
         }
-        workoutEntity.addInstructor(instructorOptional.get());
+        addInstructorToWorkout(instructorOptional.get(), workoutEntity);
     }
 //
 //    @Override

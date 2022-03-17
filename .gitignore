@@ -36,3 +36,5 @@ build/
 /src/1231/
 /.mvn/
 
+/out/test/test/application.yml
+/out/

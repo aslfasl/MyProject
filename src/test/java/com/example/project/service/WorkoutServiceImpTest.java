@@ -48,13 +48,116 @@ class WorkoutServiceImpTest {
     }
 
     @Test
+    void shouldAddInstructorToWorkout() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 5);
+        assertFalse(workoutEntity.getInstructors().contains(instructorEntity));
+
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+
+        assertTrue(workoutEntity.getInstructors().contains(instructorEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddingInstructorInSecondTime() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 5);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addInstructorToWorkout(instructorEntity, workoutEntity));
+
+        assertEquals("Instructor " + instructorEntity.getFirstName() + " already signed for this workout",
+                exception.getMessage());
+    }
+
+    @Test
+    void shouldAddClientToWorkout() {
+        ClientEntity clientEntity =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 5);
+        assertFalse(workoutEntity.getClients().contains(clientEntity));
+
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+
+        assertTrue(workoutEntity.getClients().contains(clientEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddClientInSecondTime() {
+        ClientEntity clientEntity =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 5);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addClientToWorkout(clientEntity, workoutEntity));
+
+        assertEquals("Client " + clientEntity.getFirstName() + " already signed for this workout",
+                exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddingClientOverTheLimitToWorkout() {
+        ClientEntity clientFirst =
+                new ClientEntity("White", "Horse", "145125",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 1);
+        workoutService.addClientToWorkout(clientFirst, workoutEntity);
+
+        ClientEntity clientSecond =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addClientToWorkout(clientSecond, workoutEntity));
+
+        assertEquals("All free slots has been taken for this workout", exception.getMessage());
+    }
+
+    @Test
+    void shouldGetActiveClientsCounter() {
+        ClientEntity clientFirst =
+                new ClientEntity("White", "Horse", "145125",
+                        LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientSecond =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), false);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping higher", 1, true, 11);
+        workoutService.addClientToWorkout(clientFirst, workoutEntity);
+
+        workoutService.addClientToWorkout(clientSecond, workoutEntity);
+
+        assertEquals(1, workoutService.showActiveClientsCounter(workoutEntity));
+    }
+
+    @Test
     @Transactional
     void getById() {
         WorkoutEntity workout = new WorkoutEntity("testOne", 60, true, 100);
-        workout.addClient(new ClientEntity("one", "one", "101010", LocalDate.of(2000, 1, 1), true));
-        workout.addClient(new ClientEntity("one22", "one22", "10122010", LocalDate.of(2000, 1, 1), true));
-        workout.addInstructor(new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true));
-        workout.addInstructor(new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2), true));
+        ClientEntity clientEntity1 =
+                new ClientEntity("one", "one", "101010", LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity2 =
+                new ClientEntity("one22", "one22", "10122010", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity1 =
+                new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true);
+        InstructorEntity instructorEntity2 =
+                new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2), true);
+        workoutService.addClientToWorkout(clientEntity1, workout);
+        workoutService.addClientToWorkout(clientEntity2, workout);
+        workoutService.addInstructorToWorkout(instructorEntity1, workout);
+        workoutService.addInstructorToWorkout(instructorEntity2, workout);
         workoutRepo.save(workout);
         long id = workout.getId();
 
