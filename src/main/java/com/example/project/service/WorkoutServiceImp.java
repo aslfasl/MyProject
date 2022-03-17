@@ -143,7 +143,7 @@ public class WorkoutServiceImp implements WorkoutService {
     @Override
     public WorkoutDto updateById(Long id, String name, Integer duration, Boolean available, Integer limit) throws JsonMappingException {
         Optional<WorkoutEntity> workoutOptional = workoutRepo.findById(id);
-        WorkoutEntity workoutOverride = new WorkoutEntity();
+        WorkoutDto workoutOverride = new WorkoutDto();
         workoutOverride.setName(name);
         workoutOverride.setDurationInMinutes(duration);
         workoutOverride.setAvailable(available);

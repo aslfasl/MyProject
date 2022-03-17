@@ -12,9 +12,9 @@ import java.util.Set;
 public class WorkoutDto {
 
     private String name;
-    private int durationInMinutes;
+    private Integer durationInMinutes;
     private boolean isAvailable;
-    private int peopleLimit;
+    private Integer peopleLimit;
     private Set<ClientDto> clients;
     private Set<InstructorDto> instructors;
 }
