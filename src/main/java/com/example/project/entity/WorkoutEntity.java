@@ -22,18 +22,12 @@ public class WorkoutEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private long id;
-
-    // TODO: 16.03.2022 remove redundant annotations
-    @Column(name = "name")
+    @Column(name = "workout_name", unique = true)
     private String name;
-
     @Column(name = "duration")
     private int durationInMinutes;
-
     @Column(name = "available")
     private boolean isAvailable;
-
-    @Column(name = "people_limit")
     private int peopleLimit;
 
     @ManyToMany(mappedBy = "clientWorkouts",

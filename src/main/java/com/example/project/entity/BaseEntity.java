@@ -21,19 +21,12 @@ public class BaseEntity {
     @JsonIgnore
     private long id;
 
-    @Column(name = "first_name")
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
-
     @Column(name = "passport",
             unique = true)
     private String passport;
-
-    @Column(name = "birthdate")
     private LocalDate birthdate;
-
     @Column(name = "status")
     @EqualsAndHashCode.Exclude
     private boolean isActive;
