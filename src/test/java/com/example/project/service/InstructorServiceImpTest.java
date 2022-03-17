@@ -6,6 +6,7 @@ import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.repo.InstructorRepo;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,8 +115,30 @@ class InstructorServiceImpTest {
     }
 
     @Test
-    void update() {
-        // TODO: 07.03.2022
+    @Transactional
+    void shouldUpdateInstructorById() throws JsonMappingException {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("testName", "testSurname", "1234",
+                        LocalDate.of(2000, 1, 1), true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);
+        instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
+        instructorRepo.save(instructorEntity);
+        long id = instructorEntity.getId();
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
+        boolean newActive = true;
+
+
+        instructorService.updateById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+
+        InstructorEntity instructorSaved = instructorRepo.getById(id);
+        assertEquals(newFirstname, instructorSaved.getFirstName());
+        assertEquals(newLastname, instructorSaved.getLastName());
+        assertEquals(newPassport, instructorSaved.getPassport());
+        assertEquals(newBirthdate, instructorSaved.getBirthdate());
+        assertEquals(newActive, instructorSaved.isActive());
+        assertEquals(instructorEntity.getInstructorWorkouts().size(), instructorSaved.getInstructorWorkouts().size());
+        assertTrue(instructorSaved.getInstructorWorkouts().contains(workoutEntity));
     }
 
     @Test

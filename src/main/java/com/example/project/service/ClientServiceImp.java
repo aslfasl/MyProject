@@ -72,7 +72,6 @@ public class ClientServiceImp implements ClientService {
         Optional<ClientEntity> optionalClientEntity = clientRepo.findById(id);
         ClientEntity clientOverride =
                 new ClientEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         if (optionalClientEntity.isEmpty()) {
             throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);

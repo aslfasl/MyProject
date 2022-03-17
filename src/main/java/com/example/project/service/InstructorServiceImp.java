@@ -2,15 +2,20 @@ package com.example.project.service;
 
 import com.example.project.converter.Converter;
 import com.example.project.dto.InstructorDto;
+import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +29,7 @@ public class InstructorServiceImp implements InstructorService {
 
     private final InstructorRepo instructorRepo;
     private final Converter converter;
+    private final ObjectMapper objectMapper;
 
     public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity){
         if (instructorEntity.getInstructorWorkouts().contains(workout)) {
@@ -58,8 +64,24 @@ public class InstructorServiceImp implements InstructorService {
     }
 
     @Override
-    public void update() {
-// TODO: 07.03.2022
+    public InstructorDto updateById(Long id, String newFirstName, String newLastName, String newPassport,
+                                    LocalDate newBirthdate, boolean newActive) throws JsonMappingException{
+        Optional<InstructorEntity> optionalInstructor = instructorRepo.findById(id);
+        InstructorEntity instructorOverride =
+                new InstructorEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
+        if (optionalInstructor.isEmpty()) {
+            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
+                    ErrorType.NOT_FOUND);
+        }
+        InstructorEntity instructorToUpdate = optionalInstructor.get();
+        if (instructorRepo.existsByPassport(newPassport)) {
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + newPassport,
+                    ErrorType.ALREADY_EXISTS);
+        } else {
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            instructorToUpdate = objectMapper.updateValue(instructorToUpdate, instructorOverride);
+        }
+        return converter.convertInstructorEntity(instructorRepo.save(instructorToUpdate));
     }
 
     @Override
