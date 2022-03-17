@@ -30,7 +30,7 @@ public class InstructorServiceImp implements InstructorService {
     private final Converter converter;
     private final ObjectMapper objectMapper;
 
-    public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity){
+    public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity) {
         if (instructorEntity.getInstructorWorkouts().contains(workout)) {
             throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
@@ -64,10 +64,14 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto updateById(Long id, String newFirstName, String newLastName, String newPassport,
-                                    LocalDate newBirthdate, boolean newActive) throws JsonMappingException{
+                                    LocalDate newBirthdate, boolean newActive) throws JsonMappingException {
         Optional<InstructorEntity> optionalInstructor = instructorRepo.findById(id);
-        InstructorEntity instructorOverride =
-                new InstructorEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
+        InstructorEntity instructorOverride = new InstructorEntity();
+        instructorOverride.setFirstName(newFirstName);
+        instructorOverride.setLastName(newLastName);
+        instructorOverride.setPassport(newPassport);
+        instructorOverride.setBirthdate(newBirthdate);
+        instructorOverride.setActive(newActive);
         if (optionalInstructor.isEmpty()) {
             throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
@@ -85,7 +89,7 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto save(InstructorDto instructor) {
-        if (instructorRepo.existsByPassport(instructor.getPassport())){
+        if (instructorRepo.existsByPassport(instructor.getPassport())) {
             throw new CustomException(INSTRUCTOR_ALREADY_EXISTS_PASSPORT + instructor.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         }
@@ -96,7 +100,7 @@ public class InstructorServiceImp implements InstructorService {
     @Override
     public InstructorDto getByPassport(String passport) {
         InstructorEntity instructor = instructorRepo.findByPassport(passport);
-        if (instructor==null){
+        if (instructor == null) {
             throw new CustomException(INSTRUCTOR_NOT_FOUND_PASSPORT + passport,
                     ErrorType.NOT_FOUND);
         }

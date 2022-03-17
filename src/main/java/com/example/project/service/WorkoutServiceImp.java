@@ -143,12 +143,15 @@ public class WorkoutServiceImp implements WorkoutService {
     @Override
     public WorkoutDto updateById(Long id, String name, Integer duration, Boolean available, Integer limit) throws JsonMappingException {
         Optional<WorkoutEntity> workoutOptional = workoutRepo.findById(id);
-        WorkoutEntity workoutOverride =
-                new WorkoutEntity(name, duration, available, limit);
-        if(workoutOptional.isEmpty()){
+        WorkoutEntity workoutOverride = new WorkoutEntity();
+        workoutOverride.setName(name);
+        workoutOverride.setDurationInMinutes(duration);
+        workoutOverride.setAvailable(available);
+        workoutOverride.setPeopleLimit(limit);
+        if (workoutOptional.isEmpty()) {
             throw new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND);
         }
-        if(workoutRepo.existsByName(name)) {
+        if (workoutRepo.existsByName(name)) {
             throw new CustomException(WORKOUT_ALREADY_EXISTS_NAME + name, ErrorType.ALREADY_EXISTS);
         }
         WorkoutEntity workoutToUpdate = workoutOptional.get();

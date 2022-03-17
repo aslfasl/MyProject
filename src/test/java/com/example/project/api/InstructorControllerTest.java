@@ -25,8 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -154,5 +153,32 @@ class InstructorControllerTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[*].active", contains(true, true, false)))
                 .andExpect(jsonPath("$[*].firstName", contains("Baron", "Lord", "Pop")));
+    }
+
+    @Test
+    void shouldUpdateInstructorById() throws Exception {
+        InstructorEntity instructorEntity = new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
+        instructorRepo.save(instructorEntity);
+        long id = instructorEntity.getId();
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
+        boolean newActive = true;
+
+        String content = mockMvc.perform(patch("/api/instructor/update?" +
+                                "id={id}&firstname={newFirstname}&lastname={newLastname}&passport={newPassport}" +
+                                "&birthdate={newBirthdate}&active={newActive}",
+                        id, newFirstname, newLastname, newPassport, newBirthdate, newActive))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo(newFirstname)))
+                .andExpect(jsonPath("$.lastName", equalTo(newLastname)))
+                .andExpect(jsonPath("$.passport", equalTo(newPassport)))
+                .andExpect(jsonPath("$.active", equalTo(newActive)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        InstructorDto instructorDto = objectMapper.readValue(content, InstructorDto.class);
+        assertEquals(newBirthdate, instructorDto.getBirthdate());
     }
 }

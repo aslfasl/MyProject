@@ -1,10 +1,7 @@
 package com.example.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -19,12 +16,13 @@ public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private long id;
+    private Long id;
 
     private String firstName;
     private String lastName;
     @Column(name = "passport",
             unique = true)
+    @NonNull
     private String passport;
     private LocalDate birthdate;
     @Column(name = "status")

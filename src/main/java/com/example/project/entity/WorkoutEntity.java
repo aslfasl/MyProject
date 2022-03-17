@@ -19,14 +19,15 @@ public class WorkoutEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private long id;
+    private Long id;
     @Column(name = "workout_name", unique = true)
+    @NonNull
     private String name;
     @Column(name = "duration")
-    private int durationInMinutes;
+    private Integer durationInMinutes;
     @Column(name = "available")
     private boolean isAvailable;
-    private int peopleLimit;
+    private Integer peopleLimit;
 
     @ManyToMany(mappedBy = "clientWorkouts",
             fetch = FetchType.EAGER,

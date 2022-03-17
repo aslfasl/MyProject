@@ -1,13 +1,17 @@
 package com.example.project.api;
 
+import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
 import com.example.project.service.InstructorService;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,7 +32,7 @@ public class InstructorController {
     }
 
     @PostMapping("/instructor/delete/{id}")
-    public ResponseEntity<InstructorDto> makeInstructorInactive(@PathVariable Long id){
+    public ResponseEntity<InstructorDto> makeInstructorInactive(@PathVariable Long id) {
         return ResponseEntity.accepted().body(instructorService.deleteById(id));
     }
 
@@ -40,12 +44,12 @@ public class InstructorController {
     }
 
     @GetMapping("/instructor/by_passport")
-    public ResponseEntity<InstructorDto> getByPassport(@RequestParam String passport){
+    public ResponseEntity<InstructorDto> getByPassport(@RequestParam String passport) {
         return ResponseEntity.ok().body(instructorService.getByPassport(passport));
     }
 
     @GetMapping("/instructor/all_active")
-    public ResponseEntity<List<InstructorDto>> getAllActive(){
+    public ResponseEntity<List<InstructorDto>> getAllActive() {
         return ResponseEntity.ok().body(instructorService.getAllActive());
     }
 
@@ -53,5 +57,18 @@ public class InstructorController {
     public ResponseEntity<List<InstructorDto>> getAllClients() {
         List<InstructorDto> list = instructorService.getAll();
         return ResponseEntity.ok().body(list);
+    }
+
+    @PatchMapping("/instructor/update")
+    public ResponseEntity<InstructorDto> updateClientById(@RequestParam(name = "id") Long id,
+                                                          @RequestParam(name = "firstname", required = false) String newFirstname,
+                                                          @RequestParam(name = "lastname", required = false) String newLastname,
+                                                          @RequestParam(name = "passport", required = false) String newPassport,
+                                                          @RequestParam(name = "birthdate", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newBirthdate,
+                                                          @RequestParam(name = "active", required = false) boolean newActive) throws JsonMappingException {
+        InstructorDto instructorDto =
+                instructorService.updateById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+        return ResponseEntity.accepted().body(instructorDto);
     }
 }

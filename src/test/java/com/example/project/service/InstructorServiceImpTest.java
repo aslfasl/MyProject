@@ -142,6 +142,11 @@ class InstructorServiceImpTest {
     }
 
     @Test
+    void shouldThrowCustomExceptionWhenUpdateByIdNotFoundById() {
+        // TODO: 17.03.2022 Maybe it is time to put all exceptions in different class?
+    }
+
+    @Test
     void save() {
         String passport = "111160";
         InstructorDto instructorDto =

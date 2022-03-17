@@ -360,18 +360,19 @@ class WorkoutServiceImpTest {
         workoutService.addClientToWorkout(clientEntity, workoutEntity);
         workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
         workoutRepo.save(workoutEntity);
-        long id = workoutEntity.getId();
+        Long id = workoutEntity.getId();
         String name = "Regular workout";
-        int duration = 100;
-        boolean available = false;
-        int limit = 222;
+        Integer duration = null;
+        Boolean available = false;
+        Integer limit = 222;
 
         workoutService.updateById(id, name, duration, available, limit);
         WorkoutEntity checkWorkout = workoutRepo.getById(id);
 
+        System.out.println(checkWorkout);
         assertEquals(name, checkWorkout.getName());
         assertEquals(limit, checkWorkout.getPeopleLimit());
-        assertEquals(duration, checkWorkout.getDurationInMinutes());
+        assertEquals(workoutEntity.getDurationInMinutes(), checkWorkout.getDurationInMinutes());
         assertTrue(checkWorkout.getClients().contains(clientEntity));
         assertTrue(checkWorkout.getInstructors().contains(instructorEntity));
     }
