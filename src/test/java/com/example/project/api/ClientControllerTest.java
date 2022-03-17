@@ -123,6 +123,17 @@ class ClientControllerTest {
     }
 
     @Test
+    void shouldHandleException() throws Exception {
+        long id = -1204;
+
+        mockMvc.perform(get("/api/client/get_by_id/" + id))
+                .andExpect(jsonPath("$.code", equalTo(-100)))
+                .andExpect(jsonPath("$.name", equalTo("NOT_FOUND")))
+                .andExpect(jsonPath("$.message", equalTo("Could not client with id: -1204")))
+                .andDo(print());
+    }
+
+    @Test
     void shouldChangeIsActiveToFalseWhenDeleteById() throws Exception {
         ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
