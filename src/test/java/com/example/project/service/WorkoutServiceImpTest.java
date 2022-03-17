@@ -251,22 +251,20 @@ class WorkoutServiceImpTest {
         workoutEntity1.setAvailable(true);
         workoutEntity2.setAvailable(true);
         workoutEntity3.setAvailable(false);
-        workoutRepo.save(workoutEntity1);
-        workoutRepo.save(workoutEntity2);
-        workoutRepo.save(workoutEntity3);
-        long id1 = workoutEntity1.getId();
-        long id2 = workoutEntity2.getId();
-        long id3 = workoutEntity3.getId();
+        WorkoutEntity saved1 = workoutRepo.save(workoutEntity1);
+        WorkoutEntity saved2 = workoutRepo.save(workoutEntity2);
+        WorkoutEntity saved3 = workoutRepo.save(workoutEntity3);
 
-        //FIXED. I do not have an id in DTO's, so this is the only way i came up with.
+        //FIXED. workoutService.getAllAvailavle() and .getAll() returns DTOs
+        // And I do not have an id in DTO's, so this is the only way i came up with.
 // TODO: 16.03.2022 search by saved.getId() presence not by size
-        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id1))));
-        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id2))));
-        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id3))));
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved1)));
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved2)));
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved3)));
 
-        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id1))));
-        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id2))));
-        assertFalse(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id3))));
+        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(saved1)));
+        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(saved2)));
+        assertFalse(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(saved3)));
     }
 
     @Test
