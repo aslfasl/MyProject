@@ -12,7 +12,8 @@ import lombok.Setter;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+// FIXED. Created separated package for it.
+// TODO: 16.03.2022 converter is not dto, move to separate package
 public class Converter {
 
     @Setter

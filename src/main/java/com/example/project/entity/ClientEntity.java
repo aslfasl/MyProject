@@ -29,4 +29,7 @@ public class ClientEntity extends BaseEntity{
     public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
         super(firstName, lastName, passport, birthdate, isActive);
     }
+
+    // FIXED. Moved to ClientService
+    // TODO: 16.03.2022 remove logic from entity
 }

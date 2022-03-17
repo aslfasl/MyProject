@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -242,20 +243,30 @@ class WorkoutServiceImpTest {
     }
 
     @Test
-    void shouldGetAllAvailableAndAllWorkouts() {
+    @Transactional
+    void shouldGetAllAvailableWorkoutsAndAllWorkouts() {
         WorkoutEntity workoutEntity1 = new WorkoutEntity();
         WorkoutEntity workoutEntity2 = new WorkoutEntity();
         WorkoutEntity workoutEntity3 = new WorkoutEntity();
         workoutEntity1.setAvailable(true);
         workoutEntity2.setAvailable(true);
         workoutEntity3.setAvailable(false);
-        assertEquals(0, workoutRepo.findAll().size());
         workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
+        long id1 = workoutEntity1.getId();
+        long id2 = workoutEntity2.getId();
+        long id3 = workoutEntity3.getId();
 
-        assertEquals(2, workoutService.getAllAvailable().size());
-        assertEquals(3, workoutService.getAll().size());
+        //FIXED. I do not have an id in DTO's, so this is the only way i came up with.
+// TODO: 16.03.2022 search by saved.getId() presence not by size
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id1))));
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id2))));
+        assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(workoutRepo.getById(id3))));
+
+        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id1))));
+        assertTrue(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id2))));
+        assertFalse(workoutService.getAllAvailable().contains(converter.convertWorkoutEntity(workoutRepo.getById(id3))));
     }
 
     @Test
@@ -272,7 +283,6 @@ class WorkoutServiceImpTest {
         long clientId = clientEntity.getId();
 
         workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, clientId);
-
 
         WorkoutEntity savedWorkout = workoutRepo.getById(workoutId);
         assertTrue(savedWorkout.getClients().contains(clientEntity));
@@ -320,6 +330,8 @@ class WorkoutServiceImpTest {
         workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, instructorId);
 
         WorkoutEntity savedWorkout = workoutRepo.getById(workoutId);
+        // FIXED.
+        // FIXME: 16.03.2022 fix test javax.persistence.EntityNotFoundException: Unable to find com.example.project.entity.WorkoutEntity with id 19
         assertTrue(savedWorkout.getInstructors().contains(instructorEntity));
         assertEquals(1, savedWorkout.getInstructors().size());
     }
@@ -354,9 +366,9 @@ class WorkoutServiceImpTest {
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Super workout", 35, true, 12);
         ClientEntity clientEntity =
-                new ClientEntity("A", "B", "ccc", LocalDate.of(1997,6,7), true);
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
         InstructorEntity instructorEntity =
-                new InstructorEntity("Z", "X", "qqq", LocalDate.of(2000,1,1), true);
+                new InstructorEntity("Z", "X", "qqq", LocalDate.of(2000, 1, 1), true);
         workoutService.addClientToWorkout(clientEntity, workoutEntity);
         workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
         workoutRepo.save(workoutEntity);

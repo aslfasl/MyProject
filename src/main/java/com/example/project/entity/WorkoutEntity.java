@@ -27,6 +27,8 @@ public class WorkoutEntity {
     private Integer durationInMinutes;
     @Column(name = "available")
     private boolean isAvailable;
+    // FIXED
+    // TODO: 16.03.2022 remove redundant annotations
     private Integer peopleLimit;
 
     @ManyToMany(mappedBy = "clientWorkouts",
@@ -60,5 +62,8 @@ public class WorkoutEntity {
                 ", peopleLimit=" + peopleLimit +
                 '}';
     }
+
+    // FIXED. Moved to WorkoutService
+    // TODO: 16.03.2022 remove logic from entity
 }
 

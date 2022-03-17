@@ -62,6 +62,8 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    // FIXED. Created SecurityService and special method.
+    // TODO: 16.03.2022 move logic from controller to service
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         securityService.refreshToken(request, response);
