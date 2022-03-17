@@ -33,6 +33,9 @@ class ClientServiceImpTest {
     private WorkoutRepo workoutRepo;
 
     @Autowired
+    private ClientServiceImp clientServiceImp;
+
+    @Autowired
     private ClientRepo clientRepo;
 
     ExampleMatcher modelMatcher = ExampleMatcher.matching()
@@ -42,6 +45,34 @@ class ClientServiceImpTest {
     @AfterEach
     void after() {
         clientRepo.deleteAll();
+    }
+
+    @Test
+    void shouldAddWorkoutToClientEntity() {
+        ClientEntity clientEntity =
+                new ClientEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1,1), true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        assertFalse(clientEntity.getClientWorkouts().contains(workoutEntity));
+
+        clientServiceImp.addWorkoutToClient(clientEntity, workoutEntity);
+
+        assertEquals(1, clientEntity.getClientWorkouts().size());
+        assertTrue(clientEntity.getClientWorkouts().contains(workoutEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
+        ClientEntity clientEntity =
+                new ClientEntity("Jack", "Dogson", "890123",
+                        LocalDate.of(1989, 1,1), true);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        clientServiceImp.addWorkoutToClient(clientEntity, workoutEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> clientServiceImp.addWorkoutToClient(clientEntity, workoutEntity));
+
+        assertEquals("This client already signed for: " + workoutEntity.getName(), exception.getMessage());
     }
 
     @Test
@@ -98,7 +129,7 @@ class ClientServiceImpTest {
         ClientEntity clientEntity = new ClientEntity("NameFirst", "SurnameFirst", "414141",
                 LocalDate.of(2000, 1, 1), false);
         WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);
-        clientEntity.addWorkout(workoutEntity);
+        clientServiceImp.addWorkoutToClient(clientEntity, workoutEntity);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";

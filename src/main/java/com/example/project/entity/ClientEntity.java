@@ -31,14 +31,4 @@ public class ClientEntity extends BaseEntity{
     public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
         super(firstName, lastName, passport, birthdate, isActive);
     }
-
-
-    // TODO: 16.03.2022 remove logic from entity
-    public void addWorkout(WorkoutEntity workout) {
-        if (clientWorkouts.contains(workout)) {
-            throw new CustomException("This client already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
-        }
-        clientWorkouts.add(workout);
-        workout.getClients().add(this);
-    }
 }

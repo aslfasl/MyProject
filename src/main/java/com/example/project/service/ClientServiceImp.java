@@ -24,6 +24,14 @@ public class ClientServiceImp implements ClientService {
     private final ClientRepo clientRepo;
     private final Converter converter;
 
+    public void addWorkoutToClient(ClientEntity clientEntity, WorkoutEntity workout) {
+        if (clientEntity.getClientWorkouts().contains(workout)) {
+            throw new CustomException("This client already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
+        }
+        clientEntity.getClientWorkouts().add(workout);
+        workout.getClients().add(clientEntity);
+    }
+
     @Override
     public ClientDto saveClient(ClientDto clientDto) {
         if (clientRepo.existsByPassport(clientDto.getPassport())) {
