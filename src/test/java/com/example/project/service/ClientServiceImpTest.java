@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
-import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_BY_ID;
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -170,7 +170,7 @@ class ClientServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> service.updateClientById(id, null, null, "2131415", null, false));
 
-        assertEquals(CLIENT_NOT_FOUND_BY_ID + id, exception.getMessage());
+        assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
     }
     @Test
     void shouldGetAllClientsByFullNameAndBirthDate() {

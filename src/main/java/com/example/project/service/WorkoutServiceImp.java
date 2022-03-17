@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.project.exception.ExceptionMessageUtils.*;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -59,8 +61,7 @@ public class WorkoutServiceImp implements WorkoutService {
         if (byId.isPresent()) {
             return converter.convertWorkoutEntity(byId.get());
         } else {
-            throw new CustomException("Workout with id " + id + " not found",
-                    ErrorType.NOT_FOUND);
+            throw new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND);
         }
     }
 
@@ -69,7 +70,7 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(workoutDto.getName(),
                 workoutDto.getDurationInMinutes(),
                 workoutDto.getPeopleLimit())) {
-            throw new CustomException("Workout " + workoutDto.getName() + " already exists",
+            throw new CustomException(WORKOUT_ALREADY_EXISTS_NAME + workoutDto.getName(),
                     ErrorType.ALREADY_EXISTS);
         }
         WorkoutEntity workoutEntity = converter.convertWorkoutDto(workoutDto);
@@ -82,8 +83,7 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutEntity != null) {
             return converter.convertWorkoutEntity(workoutEntity);
         } else {
-            throw new CustomException("Workout with name " + name + " not found",
-                    ErrorType.NOT_FOUND);
+            throw new CustomException(WORKOUT_NOT_FOUND_NAME + name, ErrorType.NOT_FOUND);
         }
     }
 
@@ -114,11 +114,10 @@ public class WorkoutServiceImp implements WorkoutService {
         WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
         ClientEntity clientEntity = clientRepo.findClientById(clientId);
         if (workoutEntity == null) {
-            throw new CustomException("Workout with name " + workoutName + " not found",
-                    ErrorType.NOT_FOUND);
+            throw new CustomException(WORKOUT_NOT_FOUND_NAME + workoutName, ErrorType.NOT_FOUND);
         }
         if (clientEntity == null) {
-            throw new CustomException("Client with id " + clientId + " not found",
+            throw new CustomException(CLIENT_NOT_FOUND_ID + clientId,
                     ErrorType.NOT_FOUND);
         }
         addClientToWorkout(clientEntity, workoutEntity);
@@ -128,13 +127,11 @@ public class WorkoutServiceImp implements WorkoutService {
     public void addInstructorToWorkoutByWorkoutNameAndInstructorId(String workoutName, Long instructorId) {
         WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
         Optional<InstructorEntity> instructorOptional = instructorRepo.findById(instructorId);
-        if (workoutEntity==null) {
-            throw new CustomException("Workout with name " + workoutName + " not found",
-                    ErrorType.NOT_FOUND);
+        if (workoutEntity == null) {
+            throw new CustomException(WORKOUT_NOT_FOUND_NAME + workoutName, ErrorType.NOT_FOUND);
         }
-        if (instructorOptional.isEmpty()){
-            throw new CustomException("Instructor with id " + instructorId + " not found",
-                    ErrorType.NOT_FOUND);
+        if (instructorOptional.isEmpty()) {
+            throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + instructorId, ErrorType.NOT_FOUND);
         }
         addInstructorToWorkout(instructorOptional.get(), workoutEntity);
     }

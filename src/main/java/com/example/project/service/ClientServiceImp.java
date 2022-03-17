@@ -32,7 +32,7 @@ public class ClientServiceImp implements ClientService {
 
     public void addWorkoutToClient(ClientEntity clientEntity, WorkoutEntity workout) {
         if (clientEntity.getClientWorkouts().contains(workout)) {
-            throw new CustomException("This client already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
+            throw new CustomException(CLIENT_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
         clientEntity.getClientWorkouts().add(workout);
         workout.getClients().add(clientEntity);
@@ -52,7 +52,7 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientById(Long id) {
         ClientEntity clientEntity = clientRepo.findClientById(id);
         if (clientEntity == null) {
-            throw new CustomException(CLIENT_NOT_FOUND_BY_ID + id,
+            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(clientEntity);
@@ -74,7 +74,7 @@ public class ClientServiceImp implements ClientService {
                 new ClientEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         if (optionalClientEntity.isEmpty()) {
-            throw new CustomException(CLIENT_NOT_FOUND_BY_ID + id,
+            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
         }
         ClientEntity clientToUpdate = optionalClientEntity.get();
@@ -103,7 +103,7 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientByPassport(String passport) {
         ClientEntity client = clientRepo.findClientEntityByPassport(passport);
         if (client == null) {
-            throw new CustomException(CLIENT_NOT_FOUND_BY_PASSPORT + passport,
+            throw new CustomException(CLIENT_NOT_FOUND_PASSPORT + passport,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(client);

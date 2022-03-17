@@ -52,8 +52,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception exception) {
                     log.error("Error logging in: {}", exception.getMessage());
                     response.setHeader("error", exception.getMessage());
-//                    response.sendError(FORBIDDEN.value());
-                    //todo Do i need an error or the code below:
                     response.setStatus(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>();
                     error.put("error_message", exception.getMessage());

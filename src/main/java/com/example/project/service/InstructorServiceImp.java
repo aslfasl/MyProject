@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.project.exception.ExceptionMessageUtils.*;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -25,7 +27,7 @@ public class InstructorServiceImp implements InstructorService {
 
     public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity){
         if (instructorEntity.getInstructorWorkouts().contains(workout)) {
-            throw new CustomException("This instructor already signed for: " + workout.getName(), ErrorType.ALREADY_EXISTS);
+            throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
         instructorEntity.getInstructorWorkouts().add(workout);
         workout.getInstructors().add(instructorEntity);
@@ -35,7 +37,7 @@ public class InstructorServiceImp implements InstructorService {
     public InstructorDto getById(Long id) {
         Optional<InstructorEntity> instructorOpt = instructorRepo.findById(id);
         if (instructorOpt.isEmpty()) {
-            throw new CustomException("Instructor with id " + id + " not found",
+            throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertInstructorEntity(instructorOpt.get());
@@ -63,7 +65,7 @@ public class InstructorServiceImp implements InstructorService {
     @Override
     public InstructorDto save(InstructorDto instructor) {
         if (instructorRepo.existsByPassport(instructor.getPassport())){
-            throw new CustomException("Instructor with passport" + instructor.getPassport() + " already exists",
+            throw new CustomException(INSTRUCTOR_ALREADY_EXISTS_PASSPORT + instructor.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         }
         InstructorEntity instructorEntity = instructorRepo.save(converter.convertInstructorDto(instructor));
@@ -74,7 +76,7 @@ public class InstructorServiceImp implements InstructorService {
     public InstructorDto getByPassport(String passport) {
         InstructorEntity instructor = instructorRepo.findByPassport(passport);
         if (instructor==null){
-            throw new CustomException("Instructor with passport " + passport + " not found",
+            throw new CustomException(INSTRUCTOR_NOT_FOUND_PASSPORT + passport,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertInstructorEntity(instructor);

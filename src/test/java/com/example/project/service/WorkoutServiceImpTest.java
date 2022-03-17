@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 
+import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -176,7 +177,7 @@ class WorkoutServiceImpTest {
         long workoutId = -11;
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.getById(workoutId));
-        assertEquals("Workout with id " + workoutId + " not found", exception.getMessage());
+        assertEquals(WORKOUT_NOT_FOUND_ID + workoutId, exception.getMessage());
     }
 
     @Test
@@ -202,7 +203,7 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.save(workoutDto));
 
-        assertEquals("Workout " + workoutEntity.getName() + " already exists", exception.getMessage());
+        assertEquals(WORKOUT_ALREADY_EXISTS_NAME + workoutEntity.getName(), exception.getMessage());
     }
 
     @Test
@@ -224,7 +225,7 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.getByName(name));
 
-        assertEquals("Workout with name " + name + " not found", exception.getMessage());
+        assertEquals(WORKOUT_NOT_FOUND_NAME + name, exception.getMessage());
     }
 
     @Test
@@ -285,7 +286,7 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
 
-        assertEquals("Workout with name " + workoutName + " not found", exception.getMessage());
+        assertEquals(WORKOUT_NOT_FOUND_NAME + workoutName, exception.getMessage());
     }
 
     @Test
@@ -298,7 +299,7 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
 
-        assertEquals("Client with id " + id + " not found", exception.getMessage());
+        assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
     }
 
 
@@ -330,7 +331,7 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, id));
 
-        assertEquals("Workout with name " + workoutName + " not found", exception.getMessage());
+        assertEquals(WORKOUT_NOT_FOUND_NAME + workoutName, exception.getMessage());
     }
 
     @Test
@@ -343,6 +344,6 @@ class WorkoutServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, id));
 
-        assertEquals("Instructor with id " + id + " not found", exception.getMessage());
+        assertEquals(INSTRUCTOR_NOT_FOUND_ID + id, exception.getMessage());
     }
 }

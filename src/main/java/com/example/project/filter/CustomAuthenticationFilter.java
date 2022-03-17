@@ -27,8 +27,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public static final int durationOfRefreshedTokenInMillis = 600 * 60 * 10000;
-    public static final int durationOfAccessTokenInMillis = 60 * 1000;
+    public static final int DURATION_OF_REFRESHED_TOKEN_IN_MILLIS = 600 * 60 * 10000;
+    public static final int DURATION_OF_ACCESS_TOKEN_IN_MILLIS = 60 * 1000;
     private final AuthenticationManager authenticationManager;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -52,7 +52,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + durationOfAccessTokenInMillis))
+                .withExpiresAt(new Date(System.currentTimeMillis() + DURATION_OF_ACCESS_TOKEN_IN_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
@@ -60,7 +60,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + durationOfRefreshedTokenInMillis))
+                .withExpiresAt(new Date(System.currentTimeMillis() + DURATION_OF_REFRESHED_TOKEN_IN_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         Map<String, String> tokens = new HashMap<>();
