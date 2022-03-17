@@ -1,7 +1,7 @@
 package com.example.project.service;
 
 import com.example.project.dto.ClientDto;
-import com.example.project.entity.ClientEntity;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +18,7 @@ public interface ClientService {
     List<ClientDto> getAll();
 
     ClientDto updateClientById(Long id, String newFirstName, String newLastName,
-                               String newPassport, LocalDate newBirthdate, boolean newActive);
+                               String newPassport, LocalDate newBirthdate, boolean newActive) throws JsonMappingException;
 
     List<ClientDto> getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
 

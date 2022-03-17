@@ -1,8 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
-import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;

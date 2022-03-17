@@ -7,9 +7,8 @@ import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.WorkoutRepo;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -125,7 +124,7 @@ class ClientServiceImpTest {
 
     @Test
     @Transactional
-    void shouldUpdateClientEntityById() {
+    void shouldUpdateClientEntityById() throws JsonMappingException {
         ClientEntity clientEntity = new ClientEntity("NameFirst", "SurnameFirst", "414141",
                 LocalDate.of(2000, 1, 1), false);
         WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);

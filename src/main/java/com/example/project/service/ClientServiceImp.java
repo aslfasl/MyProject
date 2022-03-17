@@ -7,6 +7,9 @@ import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class ClientServiceImp implements ClientService {
 
     private final ClientRepo clientRepo;
     private final Converter converter;
+    private final ObjectMapper objectMapper;
 
     public void addWorkoutToClient(ClientEntity clientEntity, WorkoutEntity workout) {
         if (clientEntity.getClientWorkouts().contains(workout)) {
@@ -62,36 +66,26 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto updateClientById(Long id, String newFirstName, String newLastName,
-                                      String newPassport, LocalDate newBirthdate, boolean newActive) {
+                                      String newPassport, LocalDate newBirthdate, boolean newActive) throws JsonMappingException {
         Optional<ClientEntity> optionalClientEntity = clientRepo.findById(id);
-        if (optionalClientEntity.isPresent()) {
-            ClientEntity clientEntity = optionalClientEntity.get();
-            if (newFirstName != null) {
-                clientEntity.setFirstName(newFirstName);
-            }
-            if (newLastName != null) {
-                clientEntity.setLastName(newLastName);
-            }
-            if (newPassport != null) {
-                if (!clientRepo.existsByPassport(newPassport)) {
-                    clientEntity.setPassport(newPassport);
-                } else {
-                    throw new CustomException("Client with passport " + newPassport + " already exists",
-                            ErrorType.ALREADY_EXISTS);
-                }
-            }
-            if (newBirthdate != null) {
-                clientEntity.setBirthdate(newBirthdate);
-            }
-            if (newActive != clientEntity.isActive()) {
-                clientEntity.setActive(newActive);
-            }
-            return converter.convertClientEntity(clientRepo.save(clientEntity));
-        } else {
+        ClientEntity clientOverride =
+                new ClientEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        if (optionalClientEntity.isEmpty()) {
             throw new CustomException("Client with id " + id + " not found",
                     ErrorType.NOT_FOUND);
         }
+        ClientEntity clientToUpdate = optionalClientEntity.get();
+        if (clientRepo.existsByPassport(newPassport)) {
+            throw new CustomException("Client with passport " + newPassport + " already exists",
+                    ErrorType.ALREADY_EXISTS);
+        } else {
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            clientToUpdate = objectMapper.updateValue(clientToUpdate, clientOverride);
+        }
+        return converter.convertClientEntity(clientRepo.save(clientToUpdate));
     }
+
 
     @Override
     public List<ClientDto> getClientByFullNameAndBirthDate(String firstName,

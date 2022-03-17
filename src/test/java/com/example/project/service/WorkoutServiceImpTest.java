@@ -94,9 +94,10 @@ class WorkoutServiceImpTest {
     void shouldThrowCustomExceptionWhenTryingToSaveAlreadyExistingWorkout() {
         WorkoutEntity workoutEntity = new WorkoutEntity("some workout", 99, true, 10);
         workoutRepo.save(workoutEntity);
+        WorkoutDto workoutDto = converter.convertWorkoutEntity(workoutEntity);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> workoutService.save(converter.convertWorkoutEntity(workoutEntity)));
+                () -> workoutService.save(workoutDto));
 
         assertEquals("Workout " + workoutEntity.getName() + " already exists", exception.getMessage());
     }
@@ -144,7 +145,7 @@ class WorkoutServiceImpTest {
         workoutEntity2.setAvailable(true);
         workoutEntity3.setAvailable(false);
         assertEquals(0, workoutRepo.findAll().size());
-        WorkoutEntity saved = workoutRepo.save(workoutEntity1);
+        workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
 

@@ -2,6 +2,7 @@ package com.example.project.api;
 
 import com.example.project.dto.ClientDto;
 import com.example.project.service.ClientService;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class ClientController {
                                                       @RequestParam(name = "passport", required = false) String newPassport,
                                                       @RequestParam(name = "birthdate", required = false)
                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newBirthdate,
-                                                      @RequestParam(name = "active", required = false) boolean newActive) {
+                                                      @RequestParam(name = "active", required = false) boolean newActive) throws JsonMappingException {
         ClientDto clientDto =
                 clientService.updateClientById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
         return ResponseEntity.accepted().body(clientDto);

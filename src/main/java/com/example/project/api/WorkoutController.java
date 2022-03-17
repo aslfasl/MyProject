@@ -1,17 +1,14 @@
 package com.example.project.api;
 
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.Converter;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.service.WorkoutService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
