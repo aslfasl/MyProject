@@ -62,6 +62,7 @@ class ClientEntityTest {
         System.out.println("b1 = " + b1);
     }
 
+    // TODO: 17.03.2022 testing git
     @Data
     class A{
         String present = "from A";
