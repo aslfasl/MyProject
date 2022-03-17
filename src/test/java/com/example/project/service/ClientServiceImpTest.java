@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
+import static com.example.project.exception.ExceptionMessage.CLIENT_ALREADY_EXISTS_PASSPORT;
+import static com.example.project.exception.ExceptionMessage.CLIENT_NOT_FOUND_BY_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -159,7 +161,7 @@ class ClientServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> service.updateClientById(id, null, null, passport, null, false));
 
-        assertEquals("Client with passport " + passport + " already exists", exception.getMessage());
+        assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + passport, exception.getMessage());
     }
 
     @Test
@@ -168,7 +170,7 @@ class ClientServiceImpTest {
         CustomException exception = assertThrows(CustomException.class,
                 () -> service.updateClientById(id, null, null, "2131415", null, false));
 
-        assertEquals("Client with id " + id + " not found", exception.getMessage());
+        assertEquals(CLIENT_NOT_FOUND_BY_ID + id, exception.getMessage());
     }
     @Test
     void shouldGetAllClientsByFullNameAndBirthDate() {

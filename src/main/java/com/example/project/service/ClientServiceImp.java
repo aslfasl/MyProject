@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.project.exception.ExceptionMessage.*;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -39,7 +41,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientDto saveClient(ClientDto clientDto) {
         if (clientRepo.existsByPassport(clientDto.getPassport())) {
-            throw new CustomException("Client with passport" + clientDto.getPassport() + " already exists",
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         }
         ClientEntity clientEntity = clientRepo.save(converter.convertClientDto(clientDto));
@@ -50,7 +52,7 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientById(Long id) {
         ClientEntity clientEntity = clientRepo.findClientById(id);
         if (clientEntity == null) {
-            throw new CustomException("Client with id " + id + " not found",
+            throw new CustomException(CLIENT_NOT_FOUND_BY_ID + id,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(clientEntity);
@@ -72,12 +74,12 @@ public class ClientServiceImp implements ClientService {
                 new ClientEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         if (optionalClientEntity.isEmpty()) {
-            throw new CustomException("Client with id " + id + " not found",
+            throw new CustomException(CLIENT_NOT_FOUND_BY_ID + id,
                     ErrorType.NOT_FOUND);
         }
         ClientEntity clientToUpdate = optionalClientEntity.get();
         if (clientRepo.existsByPassport(newPassport)) {
-            throw new CustomException("Client with passport " + newPassport + " already exists",
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + newPassport,
                     ErrorType.ALREADY_EXISTS);
         } else {
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -101,7 +103,7 @@ public class ClientServiceImp implements ClientService {
     public ClientDto getClientByPassport(String passport) {
         ClientEntity client = clientRepo.findClientEntityByPassport(passport);
         if (client == null) {
-            throw new CustomException("Client with passport " + passport + " not found",
+            throw new CustomException(CLIENT_NOT_FOUND_BY_PASSPORT + passport,
                     ErrorType.NOT_FOUND);
         }
         return converter.convertClientEntity(client);
