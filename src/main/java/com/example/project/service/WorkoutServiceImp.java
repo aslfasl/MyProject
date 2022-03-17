@@ -10,6 +10,9 @@ import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ public class WorkoutServiceImp implements WorkoutService {
     private final ClientRepo clientRepo;
     private final InstructorRepo instructorRepo;
     private final Converter converter;
+    private final ObjectMapper objectMapper;
 
     public void addInstructorToWorkout(InstructorEntity instructor, WorkoutEntity workoutEntity) {
         if (workoutEntity.getInstructors().contains(instructor)) {
@@ -134,6 +138,23 @@ public class WorkoutServiceImp implements WorkoutService {
             throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + instructorId, ErrorType.NOT_FOUND);
         }
         addInstructorToWorkout(instructorOptional.get(), workoutEntity);
+    }
+
+    @Override
+    public WorkoutDto updateById(Long id, String name, Integer duration, Boolean available, Integer limit) throws JsonMappingException {
+        Optional<WorkoutEntity> workoutOptional = workoutRepo.findById(id);
+        WorkoutEntity workoutOverride =
+                new WorkoutEntity(name, duration, available, limit);
+        if(workoutOptional.isEmpty()){
+            throw new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND);
+        }
+        if(workoutRepo.existsByName(name)) {
+            throw new CustomException(WORKOUT_ALREADY_EXISTS_NAME + name, ErrorType.ALREADY_EXISTS);
+        }
+        WorkoutEntity workoutToUpdate = workoutOptional.get();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        workoutToUpdate = objectMapper.updateValue(workoutToUpdate, workoutOverride);
+        return converter.convertWorkoutEntity(workoutRepo.save(workoutToUpdate));
     }
 //
 //    @Override

@@ -9,6 +9,7 @@ import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -345,5 +346,33 @@ class WorkoutServiceImpTest {
                 () -> workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, id));
 
         assertEquals(INSTRUCTOR_NOT_FOUND_ID + id, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void shouldUpdateWorkoutById() throws JsonMappingException {
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", 35, true, 12);
+        ClientEntity clientEntity =
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997,6,7), true);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Z", "X", "qqq", LocalDate.of(2000,1,1), true);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long id = workoutEntity.getId();
+        String name = "Regular workout";
+        int duration = 100;
+        boolean available = false;
+        int limit = 222;
+
+        workoutService.updateById(id, name, duration, available, limit);
+        WorkoutEntity checkWorkout = workoutRepo.getById(id);
+
+        assertEquals(name, checkWorkout.getName());
+        assertEquals(limit, checkWorkout.getPeopleLimit());
+        assertEquals(duration, checkWorkout.getDurationInMinutes());
+        assertTrue(checkWorkout.getClients().contains(clientEntity));
+        assertTrue(checkWorkout.getInstructors().contains(instructorEntity));
     }
 }

@@ -12,4 +12,5 @@ public interface WorkoutRepo extends JpaRepository<WorkoutEntity, Long> {
     List<WorkoutEntity> findAllByIsAvailableFalse(); // TODO: 10.03.2022  
     WorkoutEntity findByName(String name);
     boolean existsByNameAndDurationInMinutesAndPeopleLimit(String name, int duration, int limit);
+    boolean existsByName(String name);
 }

@@ -55,13 +55,10 @@ public class AppConfig {
                 .tags(new Tag("Gym Service", "All APIs from project"));
     }
 
-
-
-    // TODO: 13.03.2022 Change names
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "TITLE",
-                "Description",
+                "Gym management system",
+                "Simple CRUD project with a little bit of logic",
                 "1.0",
                 "Free",
                 new springfox.documentation.service.Contact("Andrey Volkov", "url@url.url", "soupec@yandex.ru"),
