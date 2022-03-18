@@ -18,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -87,7 +88,7 @@ class InstructorControllerTest {
                         true,
                         LocalDate.of(1999, 1, 1),
                         new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto("sport", 45, true, 15, null, null);
+        WorkoutDto workoutDto = new WorkoutDto("sport", Duration.ofMinutes(45), true, 15, null, null);
         instructorDto.getInstructorWorkouts().add(workoutDto);
 
         mockMvc.perform(post("/api/instructor/save")

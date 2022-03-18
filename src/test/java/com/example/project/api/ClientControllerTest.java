@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -94,7 +95,7 @@ class ClientControllerTest {
                         LocalDate.of(1999, 1, 1),
                         true,
                         new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto("sport", 45, true, 15, null, null);
+        WorkoutDto workoutDto = new WorkoutDto("sport", Duration.ofMinutes(45), true, 15, null, null);
         clientDto.getClientWorkouts().add(workoutDto);
 
         mockMvc.perform(post("/api/client/save")

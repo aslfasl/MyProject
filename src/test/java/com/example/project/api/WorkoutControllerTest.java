@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
@@ -51,7 +52,7 @@ class WorkoutControllerTest {
     @Test
     void shouldGetWorkoutById() throws Exception {
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("some sport", 60, true, 10);
+                new WorkoutEntity("some sport", Duration.ofMinutes(90), true, 10);
         workoutRepo.save(workoutEntity);
         long id = workoutEntity.getId();
 
@@ -59,14 +60,14 @@ class WorkoutControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo("some sport")))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(60)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(60*90d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(10)));
     }
 
     @Test
     void shouldSaveClientToDatabase() throws Exception {
         String name = "dto save test";
-        int duration = 90;
+        Duration duration = Duration.ofMinutes(15);
         int limit = 5;
         WorkoutDto workoutDto =
                 new WorkoutDto(name, duration, true, limit, new HashSet<>(), new HashSet<>());
@@ -78,7 +79,7 @@ class WorkoutControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo(name)))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(duration)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(15*60d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(limit)));
         assertTrue(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, duration, limit));
     }
@@ -87,15 +88,15 @@ class WorkoutControllerTest {
     void shouldGetWorkoutByName() throws Exception {
         String name = "workout123";
         WorkoutEntity workoutEntity =
-                new WorkoutEntity(name, 30, true, 15);
-        assertFalse(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, 30, 15));
+                new WorkoutEntity(name, Duration.ofMinutes(90), true, 15);
+        assertFalse(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, Duration.ofMinutes(30), 15));
         workoutRepo.save(workoutEntity);
 
         mockMvc.perform(get("/api/workout/by_name?name={name}", name))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo(name)))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(30)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(90*60d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(15)));
     }
 
@@ -103,7 +104,7 @@ class WorkoutControllerTest {
     @Transactional
     void shouldMakeWorkoutUnavailableWhenDeleteById() throws Exception {
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("123name", 30, true, 15);
+                new WorkoutEntity("123name", Duration.ofMinutes(90), true, 15);
         workoutRepo.save(workoutEntity);
         long id = workoutEntity.getId();
 
@@ -118,11 +119,11 @@ class WorkoutControllerTest {
     @Test
     void shouldGetListOfAllAvailableWorkouts() throws Exception {
         WorkoutEntity workoutEntity1 =
-                new WorkoutEntity("workout1", 30, true, 15);
+                new WorkoutEntity("workout1", Duration.ofMinutes(90), true, 15);
         WorkoutEntity workoutEntity2 =
-                new WorkoutEntity("workout11", 44, true, 15);
+                new WorkoutEntity("workout11", Duration.ofMinutes(60), true, 15);
         WorkoutEntity workoutEntity3 =
-                new WorkoutEntity("workout111", 22, false, 15);
+                new WorkoutEntity("workout111", Duration.ofMinutes(40), false, 15);
         workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);
@@ -137,11 +138,11 @@ class WorkoutControllerTest {
     @Test
     void shouldGetListOfAllWorkouts() throws Exception {
         WorkoutEntity workoutEntity1 =
-                new WorkoutEntity("workout1", 30, true, 15);
+                new WorkoutEntity("workout1", Duration.ofMinutes(40), true, 15);
         WorkoutEntity workoutEntity2 =
-                new WorkoutEntity("workout11", 44, true, 15);
+                new WorkoutEntity("workout11", Duration.ofMinutes(60), true, 15);
         WorkoutEntity workoutEntity3 =
-                new WorkoutEntity("workout111", 22, false, 15);
+                new WorkoutEntity("workout111", Duration.ofMinutes(90), false, 15);
         workoutRepo.save(workoutEntity1);
         workoutRepo.save(workoutEntity2);
         workoutRepo.save(workoutEntity3);

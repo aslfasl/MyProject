@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class WorkoutEntity {
     @NonNull
     private String name;
     @Column(name = "duration")
-    private Integer durationInMinutes;
+    private Duration durationInMinutes;
     @Column(name = "available")
     private boolean isAvailable;
     // FIXED
@@ -45,7 +46,7 @@ public class WorkoutEntity {
     @JsonIgnore
     private Set<InstructorEntity> instructors = new HashSet<>();
 
-    public WorkoutEntity(String name, int durationInMinutes, boolean isAvailable, int peopleLimit) {
+    public WorkoutEntity(String name, Duration durationInMinutes, boolean isAvailable, int peopleLimit) {
         this.name = name;
         this.durationInMinutes = durationInMinutes;
         this.isAvailable = isAvailable;

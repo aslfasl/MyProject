@@ -17,9 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
+
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @RequiredArgsConstructor
 class WorkoutServiceImpTest {
+    private final Duration durationTest = Duration.ofMinutes(45);
 
     @Autowired
     Converter converter;
@@ -56,7 +58,7 @@ class WorkoutServiceImpTest {
                 new InstructorEntity("Jim", "Bean", "15",
                         LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 5);
+                new WorkoutEntity("Jumping higher", durationTest, true, 5);
         assertFalse(workoutEntity.getInstructors().contains(instructorEntity));
 
         workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
@@ -70,7 +72,7 @@ class WorkoutServiceImpTest {
                 new InstructorEntity("Jim", "Bean", "15",
                         LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 5);
+                new WorkoutEntity("Jumping higher", durationTest, true, 5);
         workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
 
         CustomException exception = assertThrows(CustomException.class,
@@ -86,7 +88,7 @@ class WorkoutServiceImpTest {
                 new ClientEntity("Jim", "Bean", "15",
                         LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 5);
+                new WorkoutEntity("Jumping higher", durationTest, true, 5);
         assertFalse(workoutEntity.getClients().contains(clientEntity));
 
         workoutService.addClientToWorkout(clientEntity, workoutEntity);
@@ -100,7 +102,7 @@ class WorkoutServiceImpTest {
                 new ClientEntity("Jim", "Bean", "15",
                         LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 5);
+                new WorkoutEntity("Jumping higher", durationTest, true, 5);
         workoutService.addClientToWorkout(clientEntity, workoutEntity);
 
         CustomException exception = assertThrows(CustomException.class,
@@ -116,7 +118,7 @@ class WorkoutServiceImpTest {
                 new ClientEntity("White", "Horse", "145125",
                         LocalDate.of(2000, 1, 1), true);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 1);
+                new WorkoutEntity("Jumping higher", durationTest, true, 1);
         workoutService.addClientToWorkout(clientFirst, workoutEntity);
 
         ClientEntity clientSecond =
@@ -137,7 +139,7 @@ class WorkoutServiceImpTest {
                 new ClientEntity("Jim", "Bean", "15",
                         LocalDate.of(2000, 1, 1), false);
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Jumping higher", 1, true, 11);
+                new WorkoutEntity("Jumping higher", durationTest, true, 11);
         workoutService.addClientToWorkout(clientFirst, workoutEntity);
 
         workoutService.addClientToWorkout(clientSecond, workoutEntity);
@@ -148,7 +150,7 @@ class WorkoutServiceImpTest {
     @Test
     @Transactional
     void getById() {
-        WorkoutEntity workout = new WorkoutEntity("testOne", 60, true, 100);
+        WorkoutEntity workout = new WorkoutEntity("testOne", durationTest, true, 100);
         ClientEntity clientEntity1 =
                 new ClientEntity("one", "one", "101010", LocalDate.of(2000, 1, 1), true);
         ClientEntity clientEntity2 =
@@ -185,7 +187,7 @@ class WorkoutServiceImpTest {
     @Test
     void shouldSaveWorkoutToDatabase() {
         String name = "TestWorkout";
-        int durationInMin = 60;
+        Duration durationInMin = durationTest;
         int peopleLimit = 10;
         WorkoutDto workoutDto =
                 new WorkoutDto(name, durationInMin, true, peopleLimit, new HashSet<>(), new HashSet<>());
@@ -198,7 +200,7 @@ class WorkoutServiceImpTest {
 
     @Test
     void shouldThrowCustomExceptionWhenTryingToSaveAlreadyExistingWorkout() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("some workout", 99, true, 10);
+        WorkoutEntity workoutEntity = new WorkoutEntity("some workout", durationTest, true, 10);
         workoutRepo.save(workoutEntity);
         WorkoutDto workoutDto = converter.convertWorkoutEntity(workoutEntity);
 
@@ -211,7 +213,7 @@ class WorkoutServiceImpTest {
     @Test
     void shouldGetWorkoutByName() {
         String name = "YOGA BY SOMEONE";
-        WorkoutEntity workoutEntity = new WorkoutEntity(name, 90, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity(name, durationTest, true, 100);
         workoutRepo.save(workoutEntity);
 
         WorkoutDto workoutDto = workoutService.getByName(name);
@@ -233,7 +235,7 @@ class WorkoutServiceImpTest {
     @Test
     @Transactional
     void shouldChangeAvailableInWorkoutWhenDeleteById() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("name", 90, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("name", durationTest, true, 100);
         workoutRepo.save(workoutEntity);
         Long id = workoutEntity.getId();
 
@@ -271,7 +273,7 @@ class WorkoutServiceImpTest {
     @Transactional
     void shouldAddClientToWorkoutByWorkoutNameAndClientId() {
         String workoutName = "TestName";
-        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, durationTest, true, 10);
         workoutRepo.save(workoutEntity);
         long workoutId = workoutEntity.getId();
         ClientEntity clientEntity =
@@ -301,7 +303,7 @@ class WorkoutServiceImpTest {
     @Test
     void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongId() {
         String workoutName = "TestName";
-        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, durationTest, true, 10);
         workoutRepo.save(workoutEntity);
         long id = -123;
 
@@ -316,7 +318,7 @@ class WorkoutServiceImpTest {
     @Transactional
     void shouldAddInstructorToWorkoutByWorkoutNameAndInstructorId() {
         String workoutName = "TestName22";
-        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, durationTest, true, 10);
         workoutRepo.save(workoutEntity);
         long workoutId = workoutEntity.getId();
         InstructorEntity instructorEntity =
@@ -348,7 +350,7 @@ class WorkoutServiceImpTest {
     @Test
     void shouldThrowCustomExceptionWhenAddInstructorToWorkoutWithWrongId() {
         String workoutName = "TestName";
-        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, 90, true, 10);
+        WorkoutEntity workoutEntity = new WorkoutEntity(workoutName, durationTest, true, 10);
         workoutRepo.save(workoutEntity);
         long id = -123;
 
@@ -362,7 +364,7 @@ class WorkoutServiceImpTest {
     @Transactional
     void shouldUpdateWorkoutById() throws JsonMappingException {
         WorkoutEntity workoutEntity =
-                new WorkoutEntity("Super workout", 35, true, 12);
+                new WorkoutEntity("Super workout", durationTest, true, 12);
         ClientEntity clientEntity =
                 new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
         InstructorEntity instructorEntity =
@@ -372,7 +374,7 @@ class WorkoutServiceImpTest {
         workoutRepo.save(workoutEntity);
         Long id = workoutEntity.getId();
         String name = "Regular workout";
-        Integer duration = null;
+        Duration duration = null;
         Boolean available = false;
         Integer limit = 222;
 

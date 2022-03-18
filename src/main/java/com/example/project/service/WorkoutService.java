@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.dto.WorkoutDto;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import java.time.Duration;
 import java.util.List;
 
 public interface WorkoutService {
@@ -16,5 +17,5 @@ public interface WorkoutService {
     void addInstructorToWorkoutByWorkoutNameAndInstructorId(String workoutName, Long instructorId);
     // TODO: 13.03.2022  void deleteClientFromWorkoutByWorkoutIdAndClientPassport();
     // TODO: 13.03.2022   void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId();
-    WorkoutDto updateById(Long id, String name, Integer duration, Boolean available, Integer limit) throws JsonMappingException;
+    WorkoutDto updateById(Long id, String name, Duration duration, Boolean available, Integer limit) throws JsonMappingException;
 }

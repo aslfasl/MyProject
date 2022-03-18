@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class InstructorServiceImpTest {
+    private final Duration durationTest = Duration.ofMinutes(45);
 
     @Autowired
     private InstructorRepo instructorRepo;
@@ -39,7 +41,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity =
                 new InstructorEntity("Jack", "Dogson", "890123",
                         LocalDate.of(1989, 1, 1), true);
-        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         assertFalse(instructorEntity.getInstructorWorkouts().contains(workoutEntity));
 
         instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
@@ -53,7 +55,7 @@ class InstructorServiceImpTest {
                 new InstructorEntity("Jack", "Dogson", "890123",
                         LocalDate.of(1989, 1, 1), true);
         assertEquals(0, instructorEntity.getInstructorWorkouts().size());
-        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
 
         CustomException exception = assertThrows(CustomException.class,
@@ -65,7 +67,7 @@ class InstructorServiceImpTest {
     @Test
     @Transactional
     void shouldGetInstructorById() {
-        WorkoutEntity workoutEntity = new WorkoutEntity("asd", 12, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("asd", durationTest, true, 100);
         InstructorEntity instructorEntity =
                 new InstructorEntity("testName", "testSurname", "1234",
                         LocalDate.of(2000, 1, 1), true);
@@ -120,7 +122,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity =
                 new InstructorEntity("testName", "testSurname", "1234",
                         LocalDate.of(2000, 1, 1), true);
-        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);
+        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", durationTest, true, 12);
         instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
@@ -171,7 +173,7 @@ class InstructorServiceImpTest {
         InstructorEntity instructorEntity = new InstructorEntity(
                 "Alex", "Boch", passport,
                 LocalDate.of(1989, 1, 1), true);
-        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", 45, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("crossfit", durationTest, true, 100);
         instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
         instructorRepo.save(instructorEntity);
 

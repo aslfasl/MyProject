@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.Set;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.Set;
 public class WorkoutDto {
 
     private String name;
-    private Integer durationInMinutes;
+    private Duration durationInMinutes;
     private boolean isAvailable;
     private Integer peopleLimit;
     private Set<ClientDto> clients;

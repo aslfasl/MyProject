@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -141,7 +142,7 @@ public class WorkoutServiceImp implements WorkoutService {
     }
 
     @Override
-    public WorkoutDto updateById(Long id, String name, Integer duration, Boolean available, Integer limit) throws JsonMappingException {
+    public WorkoutDto updateById(Long id, String name, Duration duration, Boolean available, Integer limit) throws JsonMappingException {
         Optional<WorkoutEntity> workoutOptional = workoutRepo.findById(id);
         WorkoutDto workoutOverride = new WorkoutDto();
         workoutOverride.setName(name);

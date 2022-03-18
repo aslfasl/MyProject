@@ -16,6 +16,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -26,12 +27,10 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 
 @SpringBootTest
 class ClientServiceImpTest {
+    private final Duration durationTest = Duration.ofMinutes(45);
 
     @Autowired
     private ClientServiceImp service;
-
-    @Autowired
-    private WorkoutRepo workoutRepo;
 
     @Autowired
     private ClientServiceImp clientService;
@@ -53,7 +52,7 @@ class ClientServiceImpTest {
         ClientEntity clientEntity =
                 new ClientEntity("Jack", "Dogson", "890123",
                         LocalDate.of(1989, 1,1), true);
-        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         assertFalse(clientEntity.getClientWorkouts().contains(workoutEntity));
 
         clientService.addWorkoutToClient(clientEntity, workoutEntity);
@@ -67,7 +66,7 @@ class ClientServiceImpTest {
         ClientEntity clientEntity =
                 new ClientEntity("Jack", "Dogson", "890123",
                         LocalDate.of(1989, 1,1), true);
-        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", 999, true, 100);
+        WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         clientService.addWorkoutToClient(clientEntity, workoutEntity);
 
         CustomException exception = assertThrows(CustomException.class,
@@ -129,7 +128,7 @@ class ClientServiceImpTest {
     void shouldUpdateClientEntityById() throws JsonMappingException {
         ClientEntity clientEntity = new ClientEntity("NameFirst", "SurnameFirst", "414141",
                 LocalDate.of(2000, 1, 1), false);
-        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", 45, true, 12);
+        WorkoutEntity workoutEntity = new WorkoutEntity("basketball", durationTest, true, 12);
         clientService.addWorkoutToClient(clientEntity, workoutEntity);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
