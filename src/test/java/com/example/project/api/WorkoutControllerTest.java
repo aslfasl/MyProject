@@ -1,6 +1,8 @@
 package com.example.project.api;
 
+import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
+import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.WorkoutRepo;
 import com.example.project.service.WorkoutService;
@@ -19,13 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -152,5 +154,27 @@ class WorkoutControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$[*]", hasSize(3)))
                 .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, true, false)));
+    }
+
+    @Test
+    void shouldUpdateWorkoutById() throws Exception {
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("workout1", Duration.ofMinutes(40), true, 15);
+        workoutRepo.save(workoutEntity);
+        long id = workoutEntity.getId();
+        WorkoutDto workoutDto = new WorkoutDto("Dancing Queen", Duration.ofMinutes(35), false, 25, null, null);
+
+        mockMvc.perform((patch("/api/workout/update?id={id}", id))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(workoutDto)))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.name", equalTo("Dancing Queen")))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(35*60d)))
+                .andExpect(jsonPath("$.available", equalTo(false)))
+                .andExpect(jsonPath("$.peopleLimit", equalTo(25)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
     }
 }

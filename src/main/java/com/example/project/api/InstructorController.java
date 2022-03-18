@@ -61,14 +61,9 @@ public class InstructorController {
 
     @PatchMapping("/instructor/update")
     public ResponseEntity<InstructorDto> updateClientById(@RequestParam(name = "id") Long id,
-                                                          @RequestParam(name = "firstname", required = false) String newFirstname,
-                                                          @RequestParam(name = "lastname", required = false) String newLastname,
-                                                          @RequestParam(name = "passport", required = false) String newPassport,
-                                                          @RequestParam(name = "birthdate", required = false)
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newBirthdate,
-                                                          @RequestParam(name = "active", required = false) boolean newActive) throws JsonMappingException {
-        InstructorDto instructorDto =
-                instructorService.updateById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
-        return ResponseEntity.accepted().body(instructorDto);
+                                                          @RequestBody InstructorDto instructor) throws JsonMappingException {
+        InstructorDto instructorUpdated =
+                instructorService.updateById(id, instructor);
+        return ResponseEntity.accepted().body(instructorUpdated);
     }
 }

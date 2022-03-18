@@ -1,8 +1,10 @@
 package com.example.project.api;
 
 import com.example.project.converter.Converter;
+import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.service.WorkoutService;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,17 +39,24 @@ public class WorkoutController {
     }
 
     @PostMapping("/workout/delete/{id}")
-    public ResponseEntity<WorkoutDto> makeWorkoutUnavailable(@PathVariable Long id){
+    public ResponseEntity<WorkoutDto> makeWorkoutUnavailable(@PathVariable Long id) {
         return ResponseEntity.accepted().body(workoutService.deleteById(id));
     }
 
     @GetMapping("/workout/available")
-    public ResponseEntity<List<WorkoutDto>> getAllAvailable(){
+    public ResponseEntity<List<WorkoutDto>> getAllAvailable() {
         return ResponseEntity.ok().body(workoutService.getAllAvailable());
     }
 
     @GetMapping("/workout/all")
-    public ResponseEntity<List<WorkoutDto>> getAll(){
+    public ResponseEntity<List<WorkoutDto>> getAll() {
         return ResponseEntity.ok().body(workoutService.getAll());
+    }
+
+    @PatchMapping("/workout/update")
+    public ResponseEntity<WorkoutDto> updateWorkoutById(@RequestParam(name = "id") Long id,
+                                                        @RequestBody WorkoutDto workoutDto) throws JsonMappingException {
+        WorkoutDto workoutReturned = workoutService.updateById(id, workoutDto);
+        return ResponseEntity.accepted().body(workoutReturned);
     }
 }

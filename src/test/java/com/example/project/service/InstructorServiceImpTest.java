@@ -129,9 +129,11 @@ class InstructorServiceImpTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
+        InstructorDto instructorDto =
+                new InstructorDto(newFirstname, newLastname, newPassport, newActive, newBirthdate, null);
 
 
-        instructorService.updateById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+        instructorService.updateById(id, instructorDto);
 
         InstructorEntity instructorSaved = instructorRepo.getById(id);
         assertEquals(newFirstname, instructorSaved.getFirstName());

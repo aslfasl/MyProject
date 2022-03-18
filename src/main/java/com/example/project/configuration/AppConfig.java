@@ -1,6 +1,7 @@
 package com.example.project.configuration;
 
 import com.example.project.converter.Converter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -32,6 +33,7 @@ public class AppConfig {
     @Bean
     public ObjectMapper mapper() {
         return JsonMapper.builder()
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .findAndAddModules()
                 .build();
     }

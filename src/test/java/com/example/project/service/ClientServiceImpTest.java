@@ -51,7 +51,7 @@ class ClientServiceImpTest {
     void shouldAddWorkoutToClientEntity() {
         ClientEntity clientEntity =
                 new ClientEntity("Jack", "Dogson", "890123",
-                        LocalDate.of(1989, 1,1), true);
+                        LocalDate.of(1989, 1, 1), true);
         WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         assertFalse(clientEntity.getClientWorkouts().contains(workoutEntity));
 
@@ -65,7 +65,7 @@ class ClientServiceImpTest {
     void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
         ClientEntity clientEntity =
                 new ClientEntity("Jack", "Dogson", "890123",
-                        LocalDate.of(1989, 1,1), true);
+                        LocalDate.of(1989, 1, 1), true);
         WorkoutEntity workoutEntity = new WorkoutEntity("circle running", durationTest, true, 100);
         clientService.addWorkoutToClient(clientEntity, workoutEntity);
 
@@ -135,9 +135,10 @@ class ClientServiceImpTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
+        ClientDto clientOverride = new ClientDto(newFirstname, newLastname, newPassport, newBirthdate, newActive, null);
 
 
-        service.updateClientById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
+        service.updateClientById(id, clientOverride);
 
         ClientEntity clientSaved = clientRepo.getById(id);
         assertEquals(newFirstname, clientSaved.getFirstName());
@@ -158,7 +159,7 @@ class ClientServiceImpTest {
         long id = clientEntity.getId();
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, null, null, passport, null, false));
+                () -> service.updateClientById(id, new ClientDto(null, null, passport, null, true, null)));
 
         assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + passport, exception.getMessage());
     }
@@ -167,10 +168,11 @@ class ClientServiceImpTest {
     void shouldThrowCustomExceptionWhenUpdateByIdNotFound() {
         Long id = -22L;
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, null, null, "2131415", null, false));
+                () -> service.updateClientById(id, new ClientDto()));
 
         assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
     }
+
     @Test
     void shouldGetAllClientsByFullNameAndBirthDate() {
         String name = "Bob";

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,11 +153,11 @@ class ClientControllerTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
+        ClientDto clientDto = new ClientDto(newFirstname, newLastname, newPassport, newBirthdate, newActive, null);
 
-        String content = mockMvc.perform(patch("/api/client/update?" +
-                                "id={id}&firstname={newFirstname}&lastname={newLastname}&passport={newPassport}" +
-                                "&birthdate={newBirthdate}&active={newActive}",
-                        id, newFirstname, newLastname, newPassport, newBirthdate, newActive))
+        String content = mockMvc.perform((patch("/api/client/update?id={id}", id))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clientDto)))
                 .andExpect(status().isAccepted())
                 .andDo(print())
                 .andExpect(jsonPath("$.firstName", equalTo(newFirstname)))
@@ -167,8 +168,8 @@ class ClientControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        ClientDto clientDto = objectMapper.readValue(content, ClientDto.class);
-        assertEquals(newBirthdate, clientDto.getBirthdate());
+        ClientDto clientReturned = objectMapper.readValue(content, ClientDto.class);
+        assertEquals(newBirthdate, clientReturned.getBirthdate());
     }
 
     @Test

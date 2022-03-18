@@ -53,7 +53,7 @@ class InstructorControllerTest {
     @Test
     void shouldGetInstructorById() throws Exception {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Paul", "Green", "200",  LocalDate.of(2000, 1, 1),true);
+                new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
@@ -69,7 +69,7 @@ class InstructorControllerTest {
     @Test
     void shouldMakeInstructorInactiveWhenDeleteById() throws Exception {
         InstructorEntity instructorEntity =
-                new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1),true);
+                new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
 
@@ -80,7 +80,7 @@ class InstructorControllerTest {
     }
 
     @Test
-    void saveInstructorToDatabase() throws Exception {
+    void shouldSaveInstructorToDatabase() throws Exception {
         InstructorDto instructorDto =
                 new InstructorDto("Jack",
                         "Black",
@@ -106,7 +106,7 @@ class InstructorControllerTest {
     void shouldGetInstructorByPassport() throws Exception {
         String passport = "20120";
         InstructorEntity instructorEntity =
-                new InstructorEntity("George", "Brown", passport,  LocalDate.of(2000, 1, 1),true);
+                new InstructorEntity("George", "Brown", passport, LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
 
         mockMvc.perform(get("/api/instructor/by_passport?passport={passport}", passport))
@@ -120,11 +120,11 @@ class InstructorControllerTest {
     @Test
     void shouldGetListOfAllActiveInstructors() throws Exception {
         InstructorEntity instructorEntity1 = new InstructorEntity("Baron",
-                "Wulf", "qer",  LocalDate.of(1950, 1, 1),true);
+                "Wulf", "qer", LocalDate.of(1950, 1, 1), true);
         InstructorEntity instructorEntity2 = new InstructorEntity("Lord",
-                "Bee", "3gq",  LocalDate.of(1950, 1, 1),true);
+                "Bee", "3gq", LocalDate.of(1950, 1, 1), true);
         InstructorEntity instructorEntity3 = new InstructorEntity("Lord",
-                "Josh", "6hh",  LocalDate.of(1950, 1, 1),false);
+                "Josh", "6hh", LocalDate.of(1950, 1, 1), false);
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
         instructorRepo.save(instructorEntity3);
@@ -139,11 +139,11 @@ class InstructorControllerTest {
     @Test
     void shouldGetListOfAllClients() throws Exception {
         InstructorEntity instructorEntity1 = new InstructorEntity("Baron",
-                "Wulf", "qer",  LocalDate.of(1950, 1, 1),true);
+                "Wulf", "qer", LocalDate.of(1950, 1, 1), true);
         InstructorEntity instructorEntity2 = new InstructorEntity("Lord",
-                "Bee", "3gq",  LocalDate.of(1950, 1, 1),true);
+                "Bee", "3gq", LocalDate.of(1950, 1, 1), true);
         InstructorEntity instructorEntity3 = new InstructorEntity("Pop",
-                "Josh", "6hh",  LocalDate.of(1950, 1, 1),false);
+                "Josh", "6hh", LocalDate.of(1950, 1, 1), false);
         instructorRepo.save(instructorEntity1);
         instructorRepo.save(instructorEntity2);
         instructorRepo.save(instructorEntity3);
@@ -164,11 +164,12 @@ class InstructorControllerTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
+        InstructorDto instructorDto =
+                new InstructorDto(newFirstname, newLastname, newPassport, newActive, newBirthdate, null);
 
-        String content = mockMvc.perform(patch("/api/instructor/update?" +
-                                "id={id}&firstname={newFirstname}&lastname={newLastname}&passport={newPassport}" +
-                                "&birthdate={newBirthdate}&active={newActive}",
-                        id, newFirstname, newLastname, newPassport, newBirthdate, newActive))
+        String content = mockMvc.perform((patch("/api/instructor/update?id={id}", id))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(instructorDto)))
                 .andExpect(status().isAccepted())
                 .andDo(print())
                 .andExpect(jsonPath("$.firstName", equalTo(newFirstname)))
@@ -179,7 +180,7 @@ class InstructorControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        InstructorDto instructorDto = objectMapper.readValue(content, InstructorDto.class);
-        assertEquals(newBirthdate, instructorDto.getBirthdate());
+        InstructorDto instructorContent = objectMapper.readValue(content, InstructorDto.class);
+        assertEquals(newBirthdate, instructorContent.getBirthdate());
     }
 }

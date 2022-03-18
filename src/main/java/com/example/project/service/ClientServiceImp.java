@@ -69,21 +69,17 @@ public class ClientServiceImp implements ClientService {
     // TODO: 16.03.2022 use this approach to reduce verbose in com.example.project.service.ClientServiceImp.updateClientById
     // FIXED. This is how it looks now.
     @Override
-    public ClientDto updateClientById(Long id, String newFirstName, String newLastName,
-                                      String newPassport, LocalDate newBirthdate, boolean newActive) throws JsonMappingException {
+    public ClientDto updateClientById(Long id, ClientDto clientOverride) throws JsonMappingException {
         Optional<ClientEntity> optionalClientEntity = clientRepo.findById(id);
-        ClientEntity clientOverride =
-                new ClientEntity(newFirstName, newLastName, newPassport, newBirthdate, newActive);
         if (optionalClientEntity.isEmpty()) {
             throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
         }
         ClientEntity clientToUpdate = optionalClientEntity.get();
-        if (clientRepo.existsByPassport(newPassport)) {
-            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + newPassport,
+        if (clientRepo.existsByPassport(clientOverride.getPassport())) {
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientOverride.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         } else {
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             clientToUpdate = objectMapper.updateValue(clientToUpdate, clientOverride);
         }
         return converter.convertClientEntity(clientRepo.save(clientToUpdate));

@@ -14,8 +14,7 @@ public interface InstructorService {
 
     InstructorDto deleteById(Long id);
 
-    InstructorDto updateById(Long id, String newFirstName, String newLastName, String newPassport,
-                             LocalDate newBirthdate, boolean newActive) throws JsonMappingException;
+    InstructorDto updateById(Long id, InstructorDto instructorDto) throws JsonMappingException;
 
     InstructorDto save(InstructorDto instructor);
 

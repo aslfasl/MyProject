@@ -17,8 +17,7 @@ public interface ClientService {
 
     List<ClientDto> getAll();
 
-    ClientDto updateClientById(Long id, String newFirstName, String newLastName, String newPassport,
-                               LocalDate newBirthdate, boolean newActive) throws JsonMappingException;
+    ClientDto updateClientById(Long id, ClientDto clientDto) throws JsonMappingException;
 
     List<ClientDto> getClientByFullNameAndBirthDate(String firstName, String lastName, LocalDate birthDate);
 

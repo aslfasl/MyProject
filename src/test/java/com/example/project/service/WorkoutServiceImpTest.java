@@ -377,8 +377,9 @@ class WorkoutServiceImpTest {
         Duration duration = null;
         Boolean available = false;
         Integer limit = 222;
+        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
 
-        workoutService.updateById(id, name, duration, available, limit);
+        workoutService.updateById(id, workoutDto);
         WorkoutEntity checkWorkout = workoutRepo.getById(id);
 
         System.out.println(checkWorkout);

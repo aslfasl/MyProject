@@ -63,25 +63,17 @@ public class InstructorServiceImp implements InstructorService {
     }
 
     @Override
-    public InstructorDto updateById(Long id, String newFirstName, String newLastName, String newPassport,
-                                    LocalDate newBirthdate, boolean newActive) throws JsonMappingException {
+    public InstructorDto updateById(Long id, InstructorDto instructorOverride) throws JsonMappingException {
         Optional<InstructorEntity> optionalInstructor = instructorRepo.findById(id);
-        InstructorEntity instructorOverride = new InstructorEntity();
-        instructorOverride.setFirstName(newFirstName);
-        instructorOverride.setLastName(newLastName);
-        instructorOverride.setPassport(newPassport);
-        instructorOverride.setBirthdate(newBirthdate);
-        instructorOverride.setActive(newActive);
         if (optionalInstructor.isEmpty()) {
             throw new CustomException(CLIENT_NOT_FOUND_ID + id,
                     ErrorType.NOT_FOUND);
         }
         InstructorEntity instructorToUpdate = optionalInstructor.get();
-        if (instructorRepo.existsByPassport(newPassport)) {
-            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + newPassport,
+        if (instructorRepo.existsByPassport(instructorOverride.getPassport())) {
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + instructorOverride.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         } else {
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             instructorToUpdate = objectMapper.updateValue(instructorToUpdate, instructorOverride);
         }
         return converter.convertInstructorEntity(instructorRepo.save(instructorToUpdate));

@@ -51,15 +51,10 @@ public class ClientController {
 
     @PatchMapping("/client/update")
     public ResponseEntity<ClientDto> updateClientById(@RequestParam(name = "id") Long id,
-                                                      @RequestParam(name = "firstname", required = false) String newFirstname,
-                                                      @RequestParam(name = "lastname", required = false) String newLastname,
-                                                      @RequestParam(name = "passport", required = false) String newPassport,
-                                                      @RequestParam(name = "birthdate", required = false)
-                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newBirthdate,
-                                                      @RequestParam(name = "active", required = false) boolean newActive) throws JsonMappingException {
-        ClientDto clientDto =
-                clientService.updateClientById(id, newFirstname, newLastname, newPassport, newBirthdate, newActive);
-        return ResponseEntity.accepted().body(clientDto);
+                                                      @RequestBody ClientDto clientDto) throws JsonMappingException {
+        ClientDto clientReturned =
+                clientService.updateClientById(id, clientDto);
+        return ResponseEntity.accepted().body(clientReturned);
     }
 
     @GetMapping("/client/get_by_fullname_birthdate")
