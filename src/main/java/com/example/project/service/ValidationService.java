@@ -1,7 +1,8 @@
 package com.example.project.service;
 
-import com.example.project.entity.ClientEntity;
-import com.example.project.entity.InstructorEntity;
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
+import com.example.project.entity.BaseEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
@@ -10,39 +11,59 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import static com.example.project.exception.ExceptionMessageUtils.WRONG_AGE;
+
 @Service
 public class ValidationService {
 
-    int minAge = 14;
+    int minAge = 7;
     int maxAge = 90;
 
-    boolean checkClientStatus(ClientEntity clientEntity){
-        return clientEntity.isActive();
+    void checkClientStatus(ClientDto client) {
+        if (!client.isActive()) {
+            throw new CustomException("Client is not active", ErrorType.INACTIVE);
+        }
     }
 
-    boolean checkInstructorStatus(InstructorEntity instructorEntity){
-        return instructorEntity.isActive();
+    void checkInstructorStatus(InstructorDto instructor) {
+        if (!instructor.isActive()) {
+            throw new CustomException("Instructor is not active", ErrorType.INACTIVE);
+        }
     }
 
-    boolean checkIsWorkoutAvailable(WorkoutEntity workoutEntity){
-        return workoutEntity.isAvailable();
+    void checkIsWorkoutAvailable(WorkoutEntity workoutEntity) {
+        if (!workoutEntity.isAvailable()) {
+            throw new CustomException("Workout is not available", ErrorType.INACTIVE);
+        }
     }
 
-    // TODO: 15.03.2022
-    boolean checkClientAge(ClientEntity clientEntity){
-//        LocalDate today = LocalDate.now();
-//        if (clientEntity.getBirthdate().isAfter(today)) {
-//            throw new CustomException("This age is not allowed", ErrorType.WRONG_AGE);
-//        } else {
-//            int age = (int) ChronoUnit.YEARS.between(birthDate, today);
-//            if (age < minAge || age > maxAge) {
-//                throw new CustomException("This age is not allowed", ErrorType.WRONG_AGE);
-//            }
-//        }
-        return true;
+    void checkClientAge(ClientDto client) {
+        LocalDate today = LocalDate.now();
+        int age = (int) ChronoUnit.YEARS.between(client.getBirthdate(), today);
+        if (client.getBirthdate().isAfter(today) || age < minAge || age > maxAge) {
+            throw new CustomException(WRONG_AGE, ErrorType.WRONG_AGE);
+        }
     }
 
-    boolean checkInstructoAge(InstructorEntity instructorEntity){
-        return false;
+    void checkInstructorAge(InstructorDto instructor) {
+        LocalDate today = LocalDate.now();
+        int age = (int) ChronoUnit.YEARS.between(instructor.getBirthdate(), today);
+        if (instructor.getBirthdate().isAfter(today) || age < minAge || age > maxAge) {
+            throw new CustomException(WRONG_AGE, ErrorType.WRONG_AGE);
+        }
+    }
+
+    void checkEntityAge(BaseEntity entity) {
+        LocalDate today = LocalDate.now();
+        int age = (int) ChronoUnit.YEARS.between(entity.getBirthdate(), today);
+        if (entity.getBirthdate().isAfter(today) || age < minAge || age > maxAge) {
+            throw new CustomException(WRONG_AGE, ErrorType.WRONG_AGE);
+        }
+    }
+
+    void checkEntityStatus(BaseEntity entity) {
+        if (!entity.isActive()) {
+            throw new CustomException("Instructor is not active", ErrorType.INACTIVE);
+        }
     }
 }

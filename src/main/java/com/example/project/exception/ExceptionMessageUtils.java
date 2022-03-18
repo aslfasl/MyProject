@@ -17,6 +17,8 @@ public class ExceptionMessageUtils {
     public static final String INSTRUCTOR_ALREADY_EXISTS_PASSPORT = "Instructor with this passport already exists. Passport: ";
     public static final String INSTRUCTOR_NOT_FOUND_PASSPORT = "Instructor with this passport already exists. Passport: ";
 
+    public static final String WRONG_AGE = "This age is not allowed";
+
     private ExceptionMessageUtils() {
     }
 }

@@ -7,7 +7,6 @@ import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -29,8 +28,10 @@ public class ClientServiceImp implements ClientService {
     private final ClientRepo clientRepo;
     private final Converter converter;
     private final ObjectMapper objectMapper;
+    private final ValidationService validationService;
 
     public void addWorkoutToClient(ClientEntity clientEntity, WorkoutEntity workout) {
+        validationService.checkIsWorkoutAvailable(workout);
         if (clientEntity.getClientWorkouts().contains(workout)) {
             throw new CustomException(CLIENT_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
@@ -40,6 +41,8 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto saveClient(ClientDto clientDto) {
+        validationService.checkClientAge(clientDto);
+        validationService.checkClientStatus(clientDto);
         if (clientRepo.existsByPassport(clientDto.getPassport())) {
             throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(),
                     ErrorType.ALREADY_EXISTS);

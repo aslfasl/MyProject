@@ -10,14 +10,12 @@ import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,8 +32,11 @@ public class WorkoutServiceImp implements WorkoutService {
     private final InstructorRepo instructorRepo;
     private final Converter converter;
     private final ObjectMapper objectMapper;
+    private final ValidationService validationService;
 
     public void addInstructorToWorkout(InstructorEntity instructor, WorkoutEntity workoutEntity) {
+        validationService.checkEntityAge(instructor);
+        validationService.checkEntityStatus(instructor);
         if (workoutEntity.getInstructors().contains(instructor)) {
             throw new CustomException("Instructor " + instructor.getFirstName() + " already signed for this workout",
                     ErrorType.ALREADY_EXISTS);
@@ -45,6 +46,8 @@ public class WorkoutServiceImp implements WorkoutService {
     }
 
     public void addClientToWorkout(ClientEntity client, WorkoutEntity workoutEntity) {
+        validationService.checkEntityStatus(client);
+        validationService.checkEntityAge(client);
         if (workoutEntity.getClients().contains(client)) {
             throw new CustomException("Client " + client.getFirstName() + " already signed for this workout",
                     ErrorType.ALREADY_EXISTS);
@@ -118,12 +121,10 @@ public class WorkoutServiceImp implements WorkoutService {
     public void addClientToWorkoutByWorkoutNameAndClientId(String workoutName, Long clientId) {
         WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
         ClientEntity clientEntity = clientRepo.findClientById(clientId);
+        validationService.checkEntityAge(clientEntity);
+        validationService.checkEntityStatus(clientEntity);
         if (workoutEntity == null) {
             throw new CustomException(WORKOUT_NOT_FOUND_NAME + workoutName, ErrorType.NOT_FOUND);
-        }
-        if (clientEntity == null) {
-            throw new CustomException(CLIENT_NOT_FOUND_ID + clientId,
-                    ErrorType.NOT_FOUND);
         }
         addClientToWorkout(clientEntity, workoutEntity);
     }
@@ -155,17 +156,36 @@ public class WorkoutServiceImp implements WorkoutService {
         workoutToUpdate = objectMapper.updateValue(workoutToUpdate, workoutOverride);
         return converter.convertWorkoutEntity(workoutRepo.save(workoutToUpdate));
     }
-//
-//    @Override
-//    public void deleteClientFromWorkoutByWorkoutIdAndClientPassport() {
-//        WorkoutEntity workoutEntity = workoutRepo.findByName();
-//        if (workoutEntity==null) {
-//            throw new RuntimeException("no such workout..."); // TODO: 11.03.2022
-//        }
-//    }
-//
-//    @Override
-//    public void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId() {
-//        // TODO: 13.03.2022
-//    }
+
+    @Override
+    public void deleteClientFromWorkoutByWorkoutIdAndClientId(Long workoutId, Long clientId) {
+        Optional<WorkoutEntity> workoutOpt = workoutRepo.findById(workoutId);
+        Optional<ClientEntity> clientOpt = clientRepo.findById(clientId);
+        if (workoutOpt.isEmpty()) {
+            throw new CustomException(WORKOUT_NOT_FOUND_ID + workoutId, ErrorType.NOT_FOUND);
+        }
+        if (clientOpt.isEmpty()){
+            throw new CustomException(CLIENT_NOT_FOUND_ID + clientId, ErrorType.NOT_FOUND);
+        }
+        WorkoutEntity workoutEntity = workoutOpt.get();
+        ClientEntity clientEntity = clientOpt.get();
+        workoutEntity.getClients().remove(clientEntity);
+        clientEntity.getClientWorkouts().remove(workoutEntity);
+    }
+
+    @Override
+    public void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(Long workoutId, Long instructorId) {
+        Optional<WorkoutEntity> workoutOpt = workoutRepo.findById(workoutId);
+        Optional<InstructorEntity> instructorOpt = instructorRepo.findById(instructorId);
+        if (workoutOpt.isEmpty()) {
+            throw new CustomException(WORKOUT_NOT_FOUND_ID + workoutId, ErrorType.NOT_FOUND);
+        }
+        if (instructorOpt.isEmpty()){
+            throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + instructorId, ErrorType.NOT_FOUND);
+        }
+        WorkoutEntity workoutEntity = workoutOpt.get();
+        InstructorEntity instructorEntity = instructorOpt.get();
+        workoutEntity.getInstructors().remove(instructorEntity);
+        instructorEntity.getInstructorWorkouts().remove(workoutEntity);
+    }
 }

@@ -157,9 +157,10 @@ class ClientServiceImpTest {
                 LocalDate.of(2000, 1, 1), false);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
+        ClientDto clientDto = new ClientDto(null, null, passport, null, true, null);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, new ClientDto(null, null, passport, null, true, null)));
+                () -> service.updateClientById(id, clientDto));
 
         assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + passport, exception.getMessage());
     }
@@ -167,8 +168,10 @@ class ClientServiceImpTest {
     @Test
     void shouldThrowCustomExceptionWhenUpdateByIdNotFound() {
         Long id = -22L;
+        ClientDto clientDto = new ClientDto();
+
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, new ClientDto()));
+                () -> service.updateClientById(id, clientDto));
 
         assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
     }

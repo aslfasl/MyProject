@@ -389,4 +389,40 @@ class WorkoutServiceImpTest {
         assertTrue(checkWorkout.getClients().contains(clientEntity));
         assertTrue(checkWorkout.getInstructors().contains(instructorEntity));
     }
+
+    @Test
+    @Transactional
+    void shouldDeleteClientFromWorkoutByIds(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        ClientEntity clientEntity =
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long clientId = clientEntity.getId();
+
+        workoutService.deleteClientFromWorkoutByWorkoutIdAndClientId(workoutId, clientId);
+
+        assertFalse(workoutRepo.getById(workoutId).getClients().contains(clientEntity));
+        assertFalse(clientRepo.getById(clientId).getClientWorkouts().contains(workoutEntity));
+    }
+
+    @Test
+    @Transactional
+    void shouldDeleteInstructorFromWorkoutByIds(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long instructorId = instructorEntity.getId();
+
+        workoutService.deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(workoutId, instructorId);
+
+        assertFalse(workoutRepo.getById(workoutId).getInstructors().contains(instructorEntity));
+        assertFalse(instructorRepo.getById(instructorId).getInstructorWorkouts().contains(workoutEntity));
+    }
 }

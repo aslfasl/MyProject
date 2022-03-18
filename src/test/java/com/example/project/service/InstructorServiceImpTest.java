@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -147,7 +149,27 @@ class InstructorServiceImpTest {
 
     @Test
     void shouldThrowCustomExceptionWhenUpdateByIdNotFoundById() {
-        // TODO: 17.03.2022 Maybe it is time to put all exceptions in different class?
+        InstructorDto instructorDto = new InstructorDto();
+        long id = -1224;
+
+        CustomException exception =
+                assertThrows(CustomException.class, () -> instructorService.updateById(id, instructorDto));
+
+        assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenUpdateByIdPassportAlreadyExists() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("Jack", "White", "12", LocalDate.of(2000, 1, 2), true);
+        instructorRepo.save(instructorEntity);
+        long id = instructorEntity.getId();
+        InstructorDto instructorDto = new InstructorDto(null, null, "12", true, null, null);
+
+        CustomException exception =
+                assertThrows(CustomException.class, () -> instructorService.updateById(id, instructorDto));
+
+        assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + instructorDto.getPassport(), exception.getMessage());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.example.project.api;
 
 import com.example.project.converter.Converter;
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.service.WorkoutService;
 import com.fasterxml.jackson.databind.JsonMappingException;

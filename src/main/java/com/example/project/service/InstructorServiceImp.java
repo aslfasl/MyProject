@@ -7,14 +7,12 @@ import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorRepo;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,8 +27,10 @@ public class InstructorServiceImp implements InstructorService {
     private final InstructorRepo instructorRepo;
     private final Converter converter;
     private final ObjectMapper objectMapper;
+    private final ValidationService validationService;
 
     public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity) {
+        validationService.checkIsWorkoutAvailable(workout);
         if (instructorEntity.getInstructorWorkouts().contains(workout)) {
             throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
@@ -81,6 +81,8 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto save(InstructorDto instructor) {
+        validationService.checkInstructorAge(instructor);
+        validationService.checkInstructorStatus(instructor);
         if (instructorRepo.existsByPassport(instructor.getPassport())) {
             throw new CustomException(INSTRUCTOR_ALREADY_EXISTS_PASSPORT + instructor.getPassport(),
                     ErrorType.ALREADY_EXISTS);
