@@ -1,6 +1,8 @@
 package com.example.project.api;
 
 import com.example.project.converter.Converter;
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.service.WorkoutService;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -57,5 +59,20 @@ public class WorkoutController {
                                                         @RequestBody WorkoutDto workoutDto) throws JsonMappingException {
         WorkoutDto workoutReturned = workoutService.updateById(id, workoutDto);
         return ResponseEntity.accepted().body(workoutReturned);
+    }
+
+    @PatchMapping("/workout/delete_client")
+    public ResponseEntity<ClientDto> deleteClientFromWorkout(@RequestParam(name = "workoutId") Long workoutId,
+                                                             @RequestParam(name = "clientId") Long clientId){
+        ClientDto clientDto = workoutService.deleteClientFromWorkoutByWorkoutIdAndClientId(workoutId, clientId);
+        return ResponseEntity.accepted().body(clientDto);
+    }
+
+    @PatchMapping("/workout/delete_instructor")
+    public ResponseEntity<InstructorDto> deleteInstructorFromWorkout(@RequestParam(name = "workoutId") Long workoutId,
+                                                                     @RequestParam(name = "instructorId") Long instructorId){
+        InstructorDto instructorDto =
+                workoutService.deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(workoutId, instructorId);
+        return ResponseEntity.accepted().body(instructorDto);
     }
 }

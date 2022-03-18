@@ -1,6 +1,8 @@
 package com.example.project.service;
 
 import com.example.project.converter.Converter;
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
@@ -158,7 +160,7 @@ public class WorkoutServiceImp implements WorkoutService {
     }
 
     @Override
-    public void deleteClientFromWorkoutByWorkoutIdAndClientId(Long workoutId, Long clientId) {
+    public ClientDto deleteClientFromWorkoutByWorkoutIdAndClientId(Long workoutId, Long clientId) {
         Optional<WorkoutEntity> workoutOpt = workoutRepo.findById(workoutId);
         Optional<ClientEntity> clientOpt = clientRepo.findById(clientId);
         if (workoutOpt.isEmpty()) {
@@ -171,10 +173,11 @@ public class WorkoutServiceImp implements WorkoutService {
         ClientEntity clientEntity = clientOpt.get();
         workoutEntity.getClients().remove(clientEntity);
         clientEntity.getClientWorkouts().remove(workoutEntity);
+        return converter.convertClientEntity(clientEntity);
     }
 
     @Override
-    public void deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(Long workoutId, Long instructorId) {
+    public InstructorDto deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(Long workoutId, Long instructorId) {
         Optional<WorkoutEntity> workoutOpt = workoutRepo.findById(workoutId);
         Optional<InstructorEntity> instructorOpt = instructorRepo.findById(instructorId);
         if (workoutOpt.isEmpty()) {
@@ -187,5 +190,6 @@ public class WorkoutServiceImp implements WorkoutService {
         InstructorEntity instructorEntity = instructorOpt.get();
         workoutEntity.getInstructors().remove(instructorEntity);
         instructorEntity.getInstructorWorkouts().remove(workoutEntity);
+        return converter.convertInstructorEntity(instructorEntity);
     }
 }

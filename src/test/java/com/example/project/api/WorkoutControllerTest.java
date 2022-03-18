@@ -1,8 +1,11 @@
 package com.example.project.api;
 
 import com.example.project.dto.WorkoutDto;
+import com.example.project.entity.ClientEntity;
+import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.repo.WorkoutRepo;
+import com.example.project.service.WorkoutServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
@@ -32,6 +36,9 @@ class WorkoutControllerTest {
 
     @Autowired
     WorkoutRepo workoutRepo;
+
+    @Autowired
+    WorkoutServiceImp workoutService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +62,7 @@ class WorkoutControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo("some sport")))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(60*90d)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(60 * 90d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(10)));
     }
 
@@ -74,7 +81,7 @@ class WorkoutControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo(name)))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(15*60d)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(15 * 60d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(limit)));
         assertTrue(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, duration, limit));
     }
@@ -91,7 +98,7 @@ class WorkoutControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo(name)))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(90*60d)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(90 * 60d)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(15)));
     }
 
@@ -163,11 +170,49 @@ class WorkoutControllerTest {
                 .andExpect(status().isAccepted())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", equalTo("Dancing Queen")))
-                .andExpect(jsonPath("$.durationInMinutes", equalTo(35*60d)))
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(35 * 60d)))
                 .andExpect(jsonPath("$.available", equalTo(false)))
                 .andExpect(jsonPath("$.peopleLimit", equalTo(25)))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+    }
+
+    @Test
+    void shouldDeleteClientFromWorkoutById() throws Exception {
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", Duration.ofMinutes(30), true, 12);
+        ClientEntity clientEntity =
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long clientId = clientEntity.getId();
+
+        mockMvc.perform((patch("/api/workout/delete_client?workoutId={workoutId}&clientId={clientId}", workoutId, clientId)))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo("A")))
+                .andExpect(jsonPath("$.lastName", equalTo("B")))
+                .andExpect(jsonPath("$.passport", equalTo("ccc")));
+    }
+
+    @Test
+    void shouldDeleteInstructorFromWorkoutById() throws Exception {
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", Duration.ofMinutes(30), true, 12);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long instructorId = instructorEntity.getId();
+
+        mockMvc.perform((patch("/api/workout/delete_instructor?workoutId={workoutId}&instructorId={instructorId}", workoutId, instructorId)))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", equalTo("A")))
+                .andExpect(jsonPath("$.lastName", equalTo("B")))
+                .andExpect(jsonPath("$.passport", equalTo("ccc")));
     }
 }
