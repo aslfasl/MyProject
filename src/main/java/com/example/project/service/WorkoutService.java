@@ -29,4 +29,8 @@ public interface WorkoutService {
     InstructorDto deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(Long workoutId, Long instructorId);
 
     WorkoutDto updateById(Long id, WorkoutDto workoutDto) throws JsonMappingException;
+
+    List<ClientDto> getActiveClientsByWorkoutName(String name);
+
+    List<InstructorDto> getActiveInstructorsByWorkoutName(String name);
 }

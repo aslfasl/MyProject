@@ -63,16 +63,28 @@ public class WorkoutController {
 
     @PatchMapping("/workout/delete_client")
     public ResponseEntity<ClientDto> deleteClientFromWorkout(@RequestParam(name = "workoutId") Long workoutId,
-                                                             @RequestParam(name = "clientId") Long clientId){
+                                                             @RequestParam(name = "clientId") Long clientId) {
         ClientDto clientDto = workoutService.deleteClientFromWorkoutByWorkoutIdAndClientId(workoutId, clientId);
         return ResponseEntity.accepted().body(clientDto);
     }
 
     @PatchMapping("/workout/delete_instructor")
     public ResponseEntity<InstructorDto> deleteInstructorFromWorkout(@RequestParam(name = "workoutId") Long workoutId,
-                                                                     @RequestParam(name = "instructorId") Long instructorId){
+                                                                     @RequestParam(name = "instructorId") Long instructorId) {
         InstructorDto instructorDto =
                 workoutService.deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(workoutId, instructorId);
         return ResponseEntity.accepted().body(instructorDto);
+    }
+
+    @GetMapping("/workout/active_clients")
+    public ResponseEntity<List<ClientDto>> showActiveClientsCounter(@RequestParam String name) {
+        List<ClientDto> clients = workoutService.getActiveClientsByWorkoutName(name);
+        return ResponseEntity.ok().body(clients);
+    }
+
+    @GetMapping("/workout/active_instructors")
+    public ResponseEntity<List<InstructorDto>> showActiveInstructorsCounter(@RequestParam String name) {
+        List<InstructorDto> instructors = workoutService.getActiveInstructorsByWorkoutName(name);
+        return ResponseEntity.ok().body(instructors);
     }
 }

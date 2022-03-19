@@ -215,4 +215,55 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.lastName", equalTo("B")))
                 .andExpect(jsonPath("$.passport", equalTo("ccc")));
     }
+
+    @Test
+    void shouldGetAllActiveClientsFromWorkoutByWorkoutName() throws Exception {
+        String name = "Jumping lower";
+        ClientEntity clientEntity1 =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity2 =
+                new ClientEntity("Bill", "Bean", "154",
+                        LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity3 =
+                new ClientEntity("Will", "Bean", "156",
+                        LocalDate.of(2000, 1, 1), false);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity(name, Duration.ofMinutes(45), true, 5);
+        workoutService.addClientToWorkout(clientEntity1, workoutEntity);
+        workoutService.addClientToWorkout(clientEntity2, workoutEntity);
+        workoutEntity.getClients().add(clientEntity3);
+        clientEntity3.getClientWorkouts().add(workoutEntity);
+        workoutRepo.save(workoutEntity);
+
+        mockMvc.perform(get("/api/workout/active_clients?name={name}", name))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$[*]", hasSize(2)))
+                .andExpect(jsonPath("$[*].active", containsInAnyOrder(true, true)));
+    }
+
+    @Test
+    void shouldGetActiveInstructorsFromWorkoutByName() throws Exception {
+        String name = "Jumping lower";
+        InstructorEntity instructorEntity1 =
+                new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true);
+        InstructorEntity instructorEntity2 =
+                new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2), true);
+        InstructorEntity instructorEntity3 =
+                new InstructorEntity("one111", "one111", "1000011", LocalDate.of(2001, 2, 2), false);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity(name, Duration.ofMinutes(45), true, 5);
+        workoutService.addInstructorToWorkout(instructorEntity1, workoutEntity);
+        workoutService.addInstructorToWorkout(instructorEntity2, workoutEntity);
+        workoutEntity.getInstructors().add(instructorEntity3);
+        instructorEntity3.getInstructorWorkouts().add(workoutEntity);
+        workoutRepo.save(workoutEntity);
+
+        mockMvc.perform(get("/api/workout/active_instructors?name={name}", name))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$[*]", hasSize(2)))
+                .andExpect(jsonPath("$[*].active", containsInAnyOrder(true, true)));
+    }
 }
