@@ -4,10 +4,13 @@ import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
+import com.example.project.repo.ClientRepo;
+import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutRepo;
 import com.example.project.service.WorkoutServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,7 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -32,10 +38,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser
+@RequiredArgsConstructor
 class WorkoutControllerTest {
 
     @Autowired
     WorkoutRepo workoutRepo;
+
+    @Autowired
+    ClientRepo clientRepo;
+
+    @Autowired
+    InstructorRepo instructorRepo;
 
     @Autowired
     WorkoutServiceImp workoutService;
@@ -46,9 +59,11 @@ class WorkoutControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @AfterEach
-    void clean() {
+    @BeforeEach
+    public void setup() {
         workoutRepo.deleteAll();
+        clientRepo.deleteAll();
+        instructorRepo.deleteAll();
     }
 
     @Test
@@ -234,6 +249,7 @@ class WorkoutControllerTest {
         workoutService.addClientToWorkout(clientEntity2, workoutEntity);
         workoutEntity.getClients().add(clientEntity3);
         clientEntity3.getClientWorkouts().add(workoutEntity);
+
         workoutRepo.save(workoutEntity);
 
         mockMvc.perform(get("/api/workout/active_clients?name={name}", name))
@@ -258,6 +274,7 @@ class WorkoutControllerTest {
         workoutService.addInstructorToWorkout(instructorEntity2, workoutEntity);
         workoutEntity.getInstructors().add(instructorEntity3);
         instructorEntity3.getInstructorWorkouts().add(workoutEntity);
+
         workoutRepo.save(workoutEntity);
 
         mockMvc.perform(get("/api/workout/active_instructors?name={name}", name))
