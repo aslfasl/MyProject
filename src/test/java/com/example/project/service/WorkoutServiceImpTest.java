@@ -1,7 +1,10 @@
 package com.example.project.service;
 
 import com.example.project.converter.Converter;
+import com.example.project.dto.ClientDto;
+import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
+import com.example.project.entity.BaseEntity;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
@@ -97,6 +101,55 @@ class WorkoutServiceImpTest {
     }
 
     @Test
+    void shouldGetActiveClientsFromWorkoutByName() {
+        ClientEntity clientEntity1 =
+                new ClientEntity("Jim", "Bean", "15",
+                        LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity2 =
+                new ClientEntity("Bill", "Bean", "154",
+                        LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity3 =
+                new ClientEntity("Will", "Bean", "156",
+                        LocalDate.of(2000, 1, 1), false);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping lower", durationTest, true, 5);
+        workoutService.addClientToWorkout(clientEntity1, workoutEntity);
+        workoutService.addClientToWorkout(clientEntity2, workoutEntity);
+        workoutEntity.getClients().add(clientEntity3);
+        clientEntity3.getClientWorkouts().add(workoutEntity);
+        workoutRepo.save(workoutEntity);
+
+        List<ClientDto> activeClients = workoutService.getActiveClientsByWorkoutName("Jumping lower");
+
+        assertTrue(activeClients.stream().allMatch(ClientDto::isActive));
+        assertEquals(2, activeClients.size());
+        assertEquals(workoutService.getByName("Jumping lower").getClients().size(), workoutEntity.getClients().size());
+    }
+
+    @Test
+    void shouldGetActiveInstructorsFromWorkoutByName() {
+        InstructorEntity instructorEntity1 =
+                new InstructorEntity("one1", "one1", "00001", LocalDate.of(2001, 2, 2), true);
+        InstructorEntity instructorEntity2 =
+                new InstructorEntity("one11", "one11", "100001", LocalDate.of(2001, 2, 2), true);
+        InstructorEntity instructorEntity3 =
+                new InstructorEntity("one111", "one111", "1000011", LocalDate.of(2001, 2, 2), false);
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Jumping lower", durationTest, true, 5);
+        workoutService.addInstructorToWorkout(instructorEntity1, workoutEntity);
+        workoutService.addInstructorToWorkout(instructorEntity2, workoutEntity);
+        workoutEntity.getInstructors().add(instructorEntity3);
+        instructorEntity3.getInstructorWorkouts().add(workoutEntity);
+        workoutRepo.save(workoutEntity);
+
+        List<InstructorDto> activeInstructors = workoutService.getActiveInstructorsByWorkoutName("Jumping lower");
+
+        assertTrue(activeInstructors.stream().allMatch(InstructorDto::isActive));
+        assertEquals(2, activeInstructors.size());
+        assertEquals(workoutService.getByName("Jumping lower").getClients().size(), workoutEntity.getClients().size());
+    }
+
+    @Test
     void shouldThrowCustomExceptionWhenAddClientInSecondTime() {
         ClientEntity clientEntity =
                 new ClientEntity("Jim", "Bean", "15",
@@ -141,10 +194,12 @@ class WorkoutServiceImpTest {
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Jumping higher", durationTest, true, 11);
         workoutService.addClientToWorkout(clientFirst, workoutEntity);
-
-        workoutService.addClientToWorkout(clientSecond, workoutEntity);
+        workoutEntity.getClients().add(clientSecond);
 
         assertEquals(1, workoutService.showActiveClientsCounter(workoutEntity));
+        assertTrue(workoutEntity.getClients().stream().
+                filter(BaseEntity::isActive).
+                allMatch(clientEntity -> clientEntity.equals(clientFirst)));
     }
 
     @Test
@@ -290,9 +345,23 @@ class WorkoutServiceImpTest {
     }
 
     @Test
-    void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongName() {
+    void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongClientId() {
         String workoutName = "TestName";
         long id = -123;
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
+
+        assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddClientToWorkoutWithWrongWorkoutName() {
+        String workoutName = "TestName";
+        ClientEntity clientEntity =
+                new ClientEntity("Bob", "Nebob", "asdfg", LocalDate.of(1991, 5, 5), true);
+        clientRepo.save(clientEntity);
+        long id = clientEntity.getId();
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> workoutService.addClientToWorkoutByWorkoutNameAndClientId(workoutName, id));
@@ -375,19 +444,51 @@ class WorkoutServiceImpTest {
         Long id = workoutEntity.getId();
         String name = "Regular workout";
         Duration duration = null;
-        Boolean available = false;
+        boolean available = false;
         Integer limit = 222;
         WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
 
         workoutService.updateById(id, workoutDto);
         WorkoutEntity checkWorkout = workoutRepo.getById(id);
 
-        System.out.println(checkWorkout);
         assertEquals(name, checkWorkout.getName());
         assertEquals(limit, checkWorkout.getPeopleLimit());
         assertEquals(workoutEntity.getDurationInMinutes(), checkWorkout.getDurationInMinutes());
         assertTrue(checkWorkout.getClients().contains(clientEntity));
         assertTrue(checkWorkout.getInstructors().contains(instructorEntity));
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowCustomExceptionWhenUpdateWorkoutByIdWithWrongId() {
+        String name = "Regular workout";
+        Duration duration = null;
+        boolean available = false;
+        Integer limit = 222;
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity(name, durationTest, true, 12);
+        workoutRepo.save(workoutEntity);
+        Long id = workoutEntity.getId();
+        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.updateById(id, workoutDto));
+
+        assertEquals(WORKOUT_ALREADY_EXISTS_NAME + name, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowCustomExceptionWhenUpdateWorkoutByIdWithWrongName() throws JsonMappingException {
+        Long id = -1000L;
+        String name = "Regular workout";
+        Duration duration = null;
+        boolean available = false;
+        Integer limit = 222;
+        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.updateById(id, workoutDto));
+
+        assertEquals(WORKOUT_NOT_FOUND_ID + id, exception.getMessage());
     }
 
     @Test
@@ -410,6 +511,40 @@ class WorkoutServiceImpTest {
 
     @Test
     @Transactional
+    void shouldThrowExceptionWhenDeleteClientFromWorkoutByIdsWithWrongWorkoutId(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        ClientEntity clientEntity =
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = -1250L;
+        long clientId = clientEntity.getId();
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.deleteClientFromWorkoutByWorkoutIdAndClientId(workoutId, clientId));
+
+        assertEquals(WORKOUT_NOT_FOUND_ID + workoutId, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowExceptionWhenDeleteClientFromWorkoutByIdsWithWrongClientId(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        ClientEntity clientEntity =
+                new ClientEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addClientToWorkout(clientEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long clientId = -540L;
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.deleteClientFromWorkoutByWorkoutIdAndClientId(workoutId, clientId));
+
+        assertEquals(CLIENT_NOT_FOUND_ID + clientId, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
     void shouldDeleteInstructorFromWorkoutByIds(){
         WorkoutEntity workoutEntity =
                 new WorkoutEntity("Super workout", durationTest, true, 12);
@@ -424,5 +559,39 @@ class WorkoutServiceImpTest {
 
         assertFalse(workoutRepo.getById(workoutId).getInstructors().contains(instructorEntity));
         assertFalse(instructorRepo.getById(instructorId).getInstructorWorkouts().contains(workoutEntity));
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowExceptionWhenDeleteInstructorFromWorkoutByIdsWithWrongWorkoutId(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = -1250L;
+        long instructorId = instructorEntity.getId();
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(workoutId, instructorId));
+
+        assertEquals(WORKOUT_NOT_FOUND_ID + workoutId, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowExceptionWhenDeleteInstructorFromWorkoutByIdsWithWrongInstructorId(){
+        WorkoutEntity workoutEntity =
+                new WorkoutEntity("Super workout", durationTest, true, 12);
+        InstructorEntity instructorEntity =
+                new InstructorEntity("A", "B", "ccc", LocalDate.of(1997, 6, 7), true);
+        workoutService.addInstructorToWorkout(instructorEntity, workoutEntity);
+        workoutRepo.save(workoutEntity);
+        long workoutId = workoutEntity.getId();
+        long instructorId = -540L;
+
+        CustomException exception = assertThrows(CustomException.class, () -> workoutService.deleteInstructorFromWorkoutByWorkoutIdAndInstructorId(workoutId, instructorId));
+
+        assertEquals(INSTRUCTOR_NOT_FOUND_ID + instructorId, exception.getMessage());
     }
 }

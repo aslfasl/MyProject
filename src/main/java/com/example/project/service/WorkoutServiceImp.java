@@ -65,6 +65,20 @@ public class WorkoutServiceImp implements WorkoutService {
         return workoutEntity.getClients().stream().filter(ClientEntity::isActive).count();
     }
 
+    public List<ClientDto> getActiveClientsByWorkoutName(String name) {
+        WorkoutDto workoutDto = getByName(name);
+        return workoutDto.getClients().stream()
+                .filter(ClientDto::isActive)
+                .collect(Collectors.toList());
+    }
+
+    public List<InstructorDto> getActiveInstructorsByWorkoutName(String name) {
+        WorkoutDto workoutDto = getByName(name);
+        return workoutDto.getInstructors().stream()
+                .filter(InstructorDto::isActive)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public WorkoutDto getById(Long id) {
         Optional<WorkoutEntity> byId = workoutRepo.findById(id);
@@ -123,6 +137,10 @@ public class WorkoutServiceImp implements WorkoutService {
     public void addClientToWorkoutByWorkoutNameAndClientId(String workoutName, Long clientId) {
         WorkoutEntity workoutEntity = workoutRepo.findByName(workoutName);
         ClientEntity clientEntity = clientRepo.findClientById(clientId);
+        if (clientEntity == null) {
+            throw new CustomException(CLIENT_NOT_FOUND_ID + clientId,
+                    ErrorType.NOT_FOUND);
+        }
         validationService.checkEntityAge(clientEntity);
         validationService.checkEntityStatus(clientEntity);
         if (workoutEntity == null) {
@@ -166,7 +184,7 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutOpt.isEmpty()) {
             throw new CustomException(WORKOUT_NOT_FOUND_ID + workoutId, ErrorType.NOT_FOUND);
         }
-        if (clientOpt.isEmpty()){
+        if (clientOpt.isEmpty()) {
             throw new CustomException(CLIENT_NOT_FOUND_ID + clientId, ErrorType.NOT_FOUND);
         }
         WorkoutEntity workoutEntity = workoutOpt.get();
@@ -183,7 +201,7 @@ public class WorkoutServiceImp implements WorkoutService {
         if (workoutOpt.isEmpty()) {
             throw new CustomException(WORKOUT_NOT_FOUND_ID + workoutId, ErrorType.NOT_FOUND);
         }
-        if (instructorOpt.isEmpty()){
+        if (instructorOpt.isEmpty()) {
             throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + instructorId, ErrorType.NOT_FOUND);
         }
         WorkoutEntity workoutEntity = workoutOpt.get();

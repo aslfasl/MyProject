@@ -19,8 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
-import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_ID;
+import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -85,6 +84,31 @@ class InstructorServiceImpTest {
         assertEquals(instructorEntity.getLastName(), instructorDto.getLastName());
         assertEquals(instructorEntity.getInstructorWorkouts().size(),
                 instructorDto.getInstructorWorkouts().size());
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowCustomExceptionWhenGetInstructorByIdWithWrongId() {
+        long id = -90L;
+
+        CustomException exception = assertThrows(CustomException.class, () -> instructorService.getById(id));
+
+        assertEquals(INSTRUCTOR_NOT_FOUND_ID + id, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void shouldThrowCustomExceptionWhenSaveInstructorWithPassportAlreadyExists() {
+        InstructorEntity instructorEntity =
+                new InstructorEntity("testName", "testSurname", "1234",
+                        LocalDate.of(2000, 1, 1), true);
+        instructorRepo.save(instructorEntity);
+        InstructorDto instructorDto =
+                new InstructorDto("test", "test", "1234", true, LocalDate.of(2000,1,1), new HashSet<>());
+
+        CustomException exception = assertThrows(CustomException.class, () -> instructorService.save(instructorDto));
+
+        assertEquals(INSTRUCTOR_ALREADY_EXISTS_PASSPORT + instructorDto.getPassport(), exception.getMessage());
     }
 
     @Test
@@ -207,6 +231,15 @@ class InstructorServiceImpTest {
                 instructorDto.getInstructorWorkouts().size());
         assertEquals(instructorEntity.getPassport(), instructorDto.getPassport());
         assertEquals(instructorEntity.getLastName(), instructorDto.getLastName());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenGetInstructorByPassportNotFound() {
+        String passport = "4009";
+
+        CustomException exception = assertThrows(CustomException.class, () -> instructorService.getByPassport(passport));
+
+        assertEquals(INSTRUCTOR_NOT_FOUND_PASSPORT + passport, exception.getMessage());
     }
 
     @Test

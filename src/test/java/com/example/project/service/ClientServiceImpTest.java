@@ -20,8 +20,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
-import static com.example.project.exception.ExceptionMessageUtils.CLIENT_NOT_FOUND_ID;
+import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -86,6 +85,18 @@ class ClientServiceImpTest {
         assertTrue(clientRepo.existsByPassport("123"));
         assertEquals(clientDto.getBirthdate(), client.getBirthdate());
         assertEquals(clientDto.getClientWorkouts().size(), client.getClientWorkouts().size());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenSaveClientAlreadyExists() {
+        ClientDto clientDto = new ClientDto("Clint", "Eastwood", "123",
+                LocalDate.of(2000, 1, 1), true, new HashSet<>());
+        clientRepo.save(new ClientEntity("Clint", "Eastwood", "123",
+                LocalDate.of(2000, 1, 1), true));
+
+        CustomException exception = assertThrows(CustomException.class, () -> service.saveClient(clientDto));
+
+        assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(), exception.getMessage());
     }
 
     @Test
@@ -224,6 +235,15 @@ class ClientServiceImpTest {
         assertEquals(clientEntity.getPassport(), clientDto.getPassport());
         assertEquals(clientEntity.getBirthdate(), clientDto.getBirthdate());
         assertEquals(clientEntity.getFirstName(), clientDto.getFirstName());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenGetClientByPassportNotFound() {
+        String passport = "7777";
+
+        CustomException exception = assertThrows(CustomException.class, () -> service.getClientByPassport(passport));
+
+        assertEquals(CLIENT_NOT_FOUND_PASSPORT + passport, exception.getMessage());
     }
 
 }

@@ -23,7 +23,6 @@ public interface ClientRepo extends JpaRepository<ClientEntity, Long> {
     ClientEntity findClientEntityByPassport(String passport);
 
     List<ClientEntity> findAllByIsActiveTrue();
-    List<ClientEntity> findAllByIsActiveFalse(); // TODO: 10.03.2022
     boolean existsByPassport(String passport);
     
 
