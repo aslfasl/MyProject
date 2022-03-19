@@ -63,7 +63,7 @@ public class ValidationService {
 
     void checkEntityStatus(BaseEntity entity) {
         if (!entity.isActive()) {
-            throw new CustomException("Instructor is not active", ErrorType.INACTIVE);
+            throw new CustomException("Person is not active", ErrorType.INACTIVE);
         }
     }
 }
