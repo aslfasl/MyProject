@@ -1,9 +1,13 @@
 package com.example.project.api;
 
 import com.example.project.dto.ClientDto;
+import com.example.project.dto.ClientPage;
+import com.example.project.dto.ClientSearchCriteria;
+import com.example.project.entity.ClientEntity;
 import com.example.project.service.ClientService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,6 +74,12 @@ public class ClientController {
     @GetMapping("/client/get_by_passport")
     public ResponseEntity<ClientDto> getByPassport(@RequestParam String passport) {
         return ResponseEntity.ok().body(clientService.getClientByPassport(passport));
+    }
+
+    @GetMapping("/client/search")
+    public ResponseEntity<Page<ClientEntity>> getClientsPageFilter(ClientPage clientPage,
+                                                                   ClientSearchCriteria clientSearchCriteria) {
+        return ResponseEntity.ok().body(clientService.getClientsFilterPage(clientPage, clientSearchCriteria));
     }
 }
 

@@ -2,14 +2,18 @@ package com.example.project.service;
 
 import com.example.project.dto.ClientDto;
 import com.example.project.converter.Converter;
+import com.example.project.dto.ClientPage;
+import com.example.project.dto.ClientSearchCriteria;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
+import com.example.project.repo.ClientCriteriaRepo;
 import com.example.project.repo.ClientRepo;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ import static com.example.project.exception.ExceptionMessageUtils.*;
 public class ClientServiceImp implements ClientService {
 
     private final ClientRepo clientRepo;
+    private final ClientCriteriaRepo clientCriteriaRepo;
     private final Converter converter;
     private final ObjectMapper objectMapper;
     private final ValidationService validationService;
@@ -123,4 +128,10 @@ public class ClientServiceImp implements ClientService {
                 .map(converter::convertClientEntity)
                 .collect(Collectors.toList());
     }
+
+    public Page<ClientEntity> getClientsFilterPage(ClientPage clientPage,
+                                                ClientSearchCriteria clientSearchCriteria) {
+        return clientCriteriaRepo.findAllWithFilters(clientPage, clientSearchCriteria);
+    }
+
 }
