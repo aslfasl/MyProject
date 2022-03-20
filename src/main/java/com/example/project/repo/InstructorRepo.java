@@ -10,8 +10,11 @@ import java.util.List;
 public interface InstructorRepo extends JpaRepository<InstructorEntity, Long> {
     List<InstructorEntity> getInstructorEntityByFirstNameAndLastName(String firstName,
                                                                      String lastName);
+
     InstructorEntity findByPassport(String passport);
+
     boolean existsByPassport(String passport);
+
     List<InstructorEntity> findAllByIsActiveTrue();
     
 
