@@ -1,6 +1,8 @@
 package com.example.project.service;
 
 import com.example.project.dto.ClientDto;
+import com.example.project.dto.ClientPage;
+import com.example.project.dto.ClientSearchCriteria;
 import com.example.project.dto.WorkoutDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -246,4 +250,27 @@ class ClientServiceImpTest {
         assertEquals(CLIENT_NOT_FOUND_PASSPORT + passport, exception.getMessage());
     }
 
+    @Test
+    void shouldGetFilteredAndSortedClients() {
+        ClientPage clientPage = new ClientPage();
+        clientPage.setPageNumber(0);
+        clientPage.setPageSize(5);
+        clientPage.setSortDirection(Sort.Direction.DESC);
+        clientPage.setSortBy("firstName");
+        ClientSearchCriteria clientSearchCriteria = new ClientSearchCriteria();
+        clientSearchCriteria.setFirstName("dre");
+        clientSearchCriteria.setLastName("lko");
+
+        ClientEntity clientEntity1 = new ClientEntity("Andrey", "Volkov", "passport", LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity2 = new ClientEntity("Odrei", "Bolkob", "passport1", LocalDate.of(2000, 1, 1), true);
+        ClientEntity clientEntity3 = new ClientEntity("Asdf", "Qwer", "passport2", LocalDate.of(2000, 1, 1), true);
+        clientRepo.save(clientEntity1);
+        clientRepo.save(clientEntity2);
+        clientRepo.save(clientEntity3);
+
+        Page<ClientDto> resultPage = clientService.getClientsFilterPage(clientPage, clientSearchCriteria);
+        assertEquals(2, resultPage.getTotalElements());
+        assertEquals("Odrei", resultPage.getContent().get(0).getFirstName());
+        assertEquals("Andrey", resultPage.getContent().get(1).getFirstName());
+    }
 }

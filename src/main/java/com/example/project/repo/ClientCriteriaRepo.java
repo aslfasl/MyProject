@@ -1,5 +1,7 @@
 package com.example.project.repo;
 
+import com.example.project.converter.Converter;
+import com.example.project.dto.ClientDto;
 import com.example.project.dto.ClientPage;
 import com.example.project.dto.ClientSearchCriteria;
 import com.example.project.entity.ClientEntity;
@@ -15,19 +17,22 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 public class ClientCriteriaRepo {
 
     private final EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
+    private final Converter converter;
 
-    public ClientCriteriaRepo(EntityManager entityManager) {
+    public ClientCriteriaRepo(EntityManager entityManager, Converter converter) {
         this.entityManager = entityManager;
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
+        this.converter = converter;
     }
 
-    public Page<ClientEntity> findAllWithFilters(ClientPage clientPage,
+    public Page<ClientDto> findAllWithFilters(ClientPage clientPage,
                                                  ClientSearchCriteria clientSearchCriteria) {
         CriteriaQuery<ClientEntity> criteriaQuery = criteriaBuilder.createQuery(ClientEntity.class);
         Root<ClientEntity> clientRoot = criteriaQuery.from(ClientEntity.class);
@@ -43,7 +48,10 @@ public class ClientCriteriaRepo {
 
         long clientsCount = getClientsCount(predicate);
 
-        return new PageImpl<>(typedQuery.getResultList(), pageable, clientsCount);
+        List<ClientDto> convertedQueryResult = typedQuery.getResultList().stream()
+                .map(converter::convertClientEntity)
+                .collect(Collectors.toList());
+        return new PageImpl<>(convertedQueryResult, pageable, clientsCount);
     }
 
     private Predicate getPredicate(ClientSearchCriteria clientSearchCriteria,

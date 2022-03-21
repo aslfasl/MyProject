@@ -129,7 +129,7 @@ public class ClientServiceImp implements ClientService {
                 .collect(Collectors.toList());
     }
 
-    public Page<ClientEntity> getClientsFilterPage(ClientPage clientPage,
+    public Page<ClientDto> getClientsFilterPage(ClientPage clientPage,
                                                 ClientSearchCriteria clientSearchCriteria) {
         return clientCriteriaRepo.findAllWithFilters(clientPage, clientSearchCriteria);
     }

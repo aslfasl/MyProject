@@ -29,7 +29,7 @@ public interface ClientService {
 
     List<ClientDto> getAllActiveClients();
 
-    Page<ClientEntity> getClientsFilterPage(ClientPage clientPage,
+    Page<ClientDto> getClientsFilterPage(ClientPage clientPage,
                                             ClientSearchCriteria clientSearchCriteria);
 }
 

@@ -77,7 +77,7 @@ public class ClientController {
     }
 
     @GetMapping("/client/search")
-    public ResponseEntity<Page<ClientEntity>> getClientsPageFilter(ClientPage clientPage,
+    public ResponseEntity<Page<ClientDto>> getClientsPageFilter(ClientPage clientPage,
                                                                    ClientSearchCriteria clientSearchCriteria) {
         return ResponseEntity.ok().body(clientService.getClientsFilterPage(clientPage, clientSearchCriteria));
     }
