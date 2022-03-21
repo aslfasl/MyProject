@@ -1,9 +1,10 @@
 package com.example.project.api;
 
-import com.example.project.dto.InstructorDto;
+import com.example.project.dto.*;
 import com.example.project.service.InstructorService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -62,5 +63,11 @@ public class InstructorController {
         InstructorDto instructorUpdated =
                 instructorService.updateById(id, instructor);
         return ResponseEntity.accepted().body(instructorUpdated);
+    }
+
+    @GetMapping("/instructor/search")
+    public ResponseEntity<Page<InstructorDto>> getClientsPageFilter(InstructorPage instructorPage,
+                                                                    InstructorSearchCriteria instructorSearchCriteria) {
+        return ResponseEntity.ok().body(instructorService.findAllWithFilters(instructorPage, instructorSearchCriteria));
     }
 }

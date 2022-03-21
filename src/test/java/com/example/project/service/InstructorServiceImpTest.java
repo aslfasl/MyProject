@@ -1,7 +1,7 @@
 package com.example.project.service;
 
-import com.example.project.dto.InstructorDto;
-import com.example.project.dto.WorkoutDto;
+import com.example.project.dto.*;
+import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -259,5 +261,40 @@ class InstructorServiceImpTest {
 
         assertEquals(3, instructorService.getAll().size());
         assertEquals(1, instructorService.getAllActive().size());
+    }
+
+    @Test
+    void shouldGetFilteredAndSortedClients() {
+        InstructorPage instructorPage = new InstructorPage();
+        instructorPage.setPageNumber(0);
+        instructorPage.setPageSize(5);
+        instructorPage.setSortDirection(Sort.Direction.DESC);
+        instructorPage.setSortBy("firstName");
+        InstructorSearchCriteria instructorSearchCriteria = new InstructorSearchCriteria();
+        instructorSearchCriteria.setFirstName("dre");
+        instructorSearchCriteria.setLastName("lko");
+
+        InstructorEntity instructorEntity1 = new InstructorEntity("Andrey", "Volkov", "passport", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity2 = new InstructorEntity("Odrei", "Bolkob", "passport1", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity3 = new InstructorEntity("Asdf", "Qwer", "passport2", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity4 = new InstructorEntity("5wefAndrey123123", "faVolkovfa", "passport3", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity5 = new InstructorEntity("1drey", "Volkov", "passport4", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity6 = new InstructorEntity("Andrey", "Volkov", "passport5", LocalDate.of(2000, 1, 1), true);
+        InstructorEntity instructorEntity7 = new InstructorEntity("Andrey", "Volkov", "passport8", LocalDate.of(2000, 1, 1), true);
+        instructorRepo.save(instructorEntity1);
+        instructorRepo.save(instructorEntity2);
+        instructorRepo.save(instructorEntity3);
+        instructorRepo.save(instructorEntity4);
+        instructorRepo.save(instructorEntity5);
+        instructorRepo.save(instructorEntity6);
+        instructorRepo.save(instructorEntity7);
+
+
+        Page<InstructorDto> resultPage = instructorService.findAllWithFilters(instructorPage, instructorSearchCriteria);
+
+        assertEquals(6, resultPage.getTotalElements());
+        assertEquals(5, resultPage.getSize());
+        assertEquals("Odrei", resultPage.getContent().get(0).getFirstName());
+        assertEquals("Andrey", resultPage.getContent().get(1).getFirstName());
     }
 }

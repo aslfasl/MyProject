@@ -2,14 +2,18 @@ package com.example.project.service;
 
 import com.example.project.converter.Converter;
 import com.example.project.dto.InstructorDto;
+import com.example.project.dto.InstructorPage;
+import com.example.project.dto.InstructorSearchCriteria;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
+import com.example.project.repo.InstructorCriteriaRepo;
 import com.example.project.repo.InstructorRepo;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class InstructorServiceImp implements InstructorService {
     private final Converter converter;
     private final ObjectMapper objectMapper;
     private final ValidationService validationService;
+    private final InstructorCriteriaRepo instructorCriteriaRepo;
 
     public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity) {
         validationService.checkIsWorkoutAvailable(workout);
@@ -113,5 +118,11 @@ public class InstructorServiceImp implements InstructorService {
         return instructorRepo.findAll().stream()
                 .map(converter::convertInstructorEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<InstructorDto> findAllWithFilters(InstructorPage instructorPage,
+                                                  InstructorSearchCriteria instructorSearchCriteria) {
+        return instructorCriteriaRepo.findAllWithFilters(instructorPage, instructorSearchCriteria);
     }
 }
