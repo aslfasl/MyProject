@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import com.example.project.dto.AppUserDto;
+import com.example.project.dto.RoleDto;
 import com.example.project.entity.AppUser;
 import com.example.project.entity.Role;
 import com.example.project.exception.CustomException;
@@ -72,7 +74,7 @@ class UserServiceImpTest {
         Role role = new Role(null, "Test Role");
         assertEquals(null, roleRepo.findByName("Test Role"));
 
-        Role saveRole = userService.saveRole(role);
+        RoleDto saveRole = userService.saveRole(role);
 
         assertEquals(role.getName(), saveRole.getName());
         assertEquals(role, roleRepo.findByName("Test Role"));
@@ -97,10 +99,12 @@ class UserServiceImpTest {
         AppUser user = new AppUser(null, "Billy", "killer@", "asdasd", new ArrayList<>());
         userRepo.save(user);
 
-        AppUser userFromDb = userService.getUser("killer@");
+        AppUserDto userFromDb = userService.getUser("killer@");
 
-        assertEquals(user, userFromDb);
         assertEquals(user.getUsername(), userFromDb.getUsername());
+        assertEquals(user.getRoles().size(), userFromDb.getRoles().size());
+        assertEquals(user.getPassword(), userFromDb.getPassword());
+        assertEquals(user.getId(), userFromDb.getId());
     }
 
     @Test
@@ -111,9 +115,10 @@ class UserServiceImpTest {
         userRepo.save(user1);
         userRepo.save(user2);
 
-        List<AppUser> users = userService.getUsers();
+        List<AppUserDto> users = userService.getUsers();
 
         assertEquals(2, users.size());
-        assertTrue(users.containsAll(List.of(user1, user2)));
+        assertTrue(users.stream().anyMatch(appUserDto -> appUserDto.getUsername().equals("killer@")));
+        assertTrue(users.stream().anyMatch(appUserDto -> appUserDto.getUsername().equals("dragon666")));
     }
 }

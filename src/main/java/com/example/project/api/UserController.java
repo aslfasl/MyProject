@@ -1,5 +1,7 @@
 package com.example.project.api;
 
+import com.example.project.dto.AppUserDto;
+import com.example.project.dto.RoleDto;
 import com.example.project.entity.AppUser;
 import com.example.project.entity.Role;
 import com.example.project.service.SecurityService;
@@ -25,18 +27,18 @@ public class UserController {
     private final SecurityService securityService;
 
     @GetMapping("/user/all")
-    public ResponseEntity<List<AppUser>> getUsers() {
+    public ResponseEntity<List<AppUserDto>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
     @PostMapping("/user/save")
-    public ResponseEntity<AppUser> saveUser(@RequestBody AppUser user) {
+    public ResponseEntity<AppUserDto> saveUser(@RequestBody AppUser user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/user/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
     @PostMapping("/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
+    public ResponseEntity<RoleDto> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }

@@ -1,5 +1,8 @@
 package com.example.project.service;
 
+import com.example.project.converter.Converter;
+import com.example.project.dto.AppUserDto;
+import com.example.project.dto.RoleDto;
 import com.example.project.entity.AppUser;
 import com.example.project.entity.Role;
 import com.example.project.exception.CustomException;
@@ -22,6 +25,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
 
@@ -34,6 +38,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
+    private final Converter converter;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -52,22 +57,22 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public AppUser saveUser(AppUser user) {
+    public AppUserDto saveUser(AppUser user) {
         log.info("Saving new user {} to the database", user.getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (userRepo.existsByUsername(user.getUsername())){
             throw new CustomException(USER_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
         }
-        return userRepo.save(user);
+        return converter.convertAppUser(userRepo.save(user));
     }
 
     @Override
-    public Role saveRole(Role role) {
+    public RoleDto saveRole(Role role) {
         log.info("Saving new role {} to the database", role.getName());
         if (roleRepo.existsByName(role.getName())){
             throw new CustomException(ROLE_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
         }
-        return roleRepo.save(role);
+        return converter.convertValue(roleRepo.save(role), RoleDto.class);
     }
 
     @Override
@@ -88,18 +93,20 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public AppUser getUser(String username) {
+    public AppUserDto getUser(String username) {
         log.info("Fetching user {}", username);
         AppUser appUser = userRepo.findByUsername(username);
         if (appUser == null) {
             throw new CustomException(USER_NOT_FOUND_NAME + username, ErrorType.NOT_FOUND);
         }
-        return appUser;
+        return converter.convertAppUser(appUser);
     }
 
     @Override
-    public List<AppUser> getUsers() {
+    public List<AppUserDto> getUsers() {
         log.info("Fetching all users");
-        return userRepo.findAll();
+        return userRepo.findAll().stream()
+                .map(appUser -> converter.convertValue(appUser, AppUserDto.class))
+                .collect(Collectors.toList());
     }
 }

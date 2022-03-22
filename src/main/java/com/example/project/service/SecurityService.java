@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.project.dto.AppUserDto;
+import com.example.project.dto.RoleDto;
 import com.example.project.entity.AppUser;
 import com.example.project.entity.Role;
 import com.example.project.exception.CustomException;
@@ -39,13 +41,13 @@ public class SecurityService {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
-                AppUser user = userService.getUser(username);
+                AppUserDto user = userService.getUser(username);
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())
                         .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", user.getRoles().stream()
-                                .map(Role::getName)
+                                .map(RoleDto::getName)
                                 .collect(Collectors.toList()))
                         .sign(algorithm);
                 Map<String, String> tokens = new HashMap<>();

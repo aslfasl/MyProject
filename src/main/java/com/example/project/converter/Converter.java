@@ -1,14 +1,14 @@
 package com.example.project.converter;
 
-import com.example.project.dto.ClientDto;
-import com.example.project.dto.InstructorDto;
-import com.example.project.dto.WorkoutDto;
+import com.example.project.dto.*;
+import com.example.project.entity.AppUser;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,5 +83,14 @@ public class Converter {
         workoutEntity.setClients(clients);
         workoutEntity.setInstructors(instructors);
         return workoutEntity;
+    }
+
+    public AppUserDto convertAppUser(AppUser appUser) {
+        AppUserDto userDto = convertValue(appUser, AppUserDto.class);
+        List<RoleDto> roleDto = appUser.getRoles().stream()
+                .map(role -> convertValue(role, RoleDto.class))
+                .collect(Collectors.toList());
+        userDto.setRoles(roleDto);
+        return userDto;
     }
 }
