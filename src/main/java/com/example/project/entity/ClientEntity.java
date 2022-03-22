@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -28,5 +29,19 @@ public class ClientEntity extends BaseEntity{
 
     public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
         super(firstName, lastName, passport, birthdate, isActive);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return super.getFirstName().equals(that.getFirstName()) && super.getLastName().equals(that.getLastName())
+                && super.getPassport().equals(that.getPassport());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getFirstName(), this.getLastName(), this.getPassport());
     }
 }
