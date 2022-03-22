@@ -53,8 +53,7 @@ public class AppConfig {
                 .securitySchemes(Collections.singletonList(apiKey())).select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.regex("/*/.*"))
-                .build()
-                .tags(new Tag("Gym Service", "All APIs from project"));
+                .build();
     }
 
     private ApiInfo apiInfo() {
