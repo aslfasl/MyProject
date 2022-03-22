@@ -61,7 +61,7 @@ class UserServiceImpTest {
 
     @Test
     void saveUser() {
-        AppUser user = new AppUser(null, "Bob", "dragon666", "zxczxc", new ArrayList<>());
+        AppUserDto user = new AppUserDto(null, "Bob", "dragon666", "zxczxc", new ArrayList<>());
         assertFalse(userRepo.existsByUsername(user.getUsername()));
 
         userService.saveUser(user);
@@ -71,13 +71,14 @@ class UserServiceImpTest {
 
     @Test
     void shouldSaveRoleToDatabase() {
-        Role role = new Role(null, "Test Role");
+        RoleDto role = new RoleDto(null, "Test Role");
         assertEquals(null, roleRepo.findByName("Test Role"));
 
         RoleDto saveRole = userService.saveRole(role);
 
         assertEquals(role.getName(), saveRole.getName());
-        assertEquals(role, roleRepo.findByName("Test Role"));
+        assertEquals(role.getName(), roleRepo.findByName("Test Role").getName());
+        assertEquals(saveRole.getId(), roleRepo.findByName("Test Role").getId());
     }
 
     @Test

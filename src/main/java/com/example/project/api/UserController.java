@@ -32,13 +32,13 @@ public class UserController {
     }
 
     @PostMapping("/user/save")
-    public ResponseEntity<AppUserDto> saveUser(@RequestBody AppUser user) {
+    public ResponseEntity<AppUserDto> saveUser(@RequestBody AppUserDto user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/user/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
     @PostMapping("/role/save")
-    public ResponseEntity<RoleDto> saveRole(@RequestBody Role role) {
+    public ResponseEntity<RoleDto> saveRole(@RequestBody RoleDto role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }

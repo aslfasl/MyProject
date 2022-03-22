@@ -57,22 +57,24 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public AppUserDto saveUser(AppUser user) {
-        log.info("Saving new user {} to the database", user.getName());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (userRepo.existsByUsername(user.getUsername())){
+    public AppUserDto saveUser(AppUserDto userDto) {
+        log.info("Saving new user {} to the database", userDto.getName());
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if (userRepo.existsByUsername(userDto.getUsername())){
             throw new CustomException(USER_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
         }
-        return converter.convertAppUser(userRepo.save(user));
+        AppUser appUser = userRepo.save(converter.convertAppUserDto(userDto));
+        return converter.convertAppUser(appUser);
     }
 
     @Override
-    public RoleDto saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
-        if (roleRepo.existsByName(role.getName())){
+    public RoleDto saveRole(RoleDto roleDto) {
+        log.info("Saving new role {} to the database", roleDto.getName());
+        if (roleRepo.existsByName(roleDto.getName())){
             throw new CustomException(ROLE_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
         }
-        return converter.convertValue(roleRepo.save(role), RoleDto.class);
+        Role role = roleRepo.save(converter.convertValue(roleDto, Role.class));
+        return converter.convertValue(role, RoleDto.class);
     }
 
     @Override

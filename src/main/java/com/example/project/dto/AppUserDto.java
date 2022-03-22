@@ -1,6 +1,5 @@
 package com.example.project.dto;
 
-import com.example.project.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
