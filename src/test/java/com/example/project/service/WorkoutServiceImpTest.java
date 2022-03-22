@@ -312,9 +312,6 @@ class WorkoutServiceImpTest {
         WorkoutEntity saved2 = workoutRepo.save(workoutEntity2);
         WorkoutEntity saved3 = workoutRepo.save(workoutEntity3);
 
-        //FIXED. workoutService.getAllAvailavle() and .getAll() returns DTOs
-        // And I do not have an id in DTO's, so this is the only way i came up with.
-// TODO: 16.03.2022 search by saved.getId() presence not by size
         assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved1)));
         assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved2)));
         assertTrue(workoutService.getAll().contains(converter.convertWorkoutEntity(saved3)));
@@ -399,8 +396,7 @@ class WorkoutServiceImpTest {
         workoutService.addInstructorToWorkoutByWorkoutNameAndInstructorId(workoutName, instructorId);
 
         WorkoutEntity savedWorkout = workoutRepo.getById(workoutId);
-        // FIXED.
-        // FIXME: 16.03.2022 fix test javax.persistence.EntityNotFoundException: Unable to find com.example.project.entity.WorkoutEntity with id 19
+
         assertTrue(savedWorkout.getInstructors().contains(instructorEntity));
         assertEquals(1, savedWorkout.getInstructors().size());
     }
@@ -478,7 +474,7 @@ class WorkoutServiceImpTest {
 
     @Test
     @Transactional
-    void shouldThrowCustomExceptionWhenUpdateWorkoutByIdWithWrongName() throws JsonMappingException {
+    void shouldThrowCustomExceptionWhenUpdateWorkoutByIdWithWrongName() {
         Long id = -1000L;
         String name = "Regular workout";
         Duration duration = null;

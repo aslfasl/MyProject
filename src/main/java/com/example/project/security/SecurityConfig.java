@@ -20,11 +20,6 @@ import static org.springframework.http.HttpMethod.*;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final String API_USER = "/api/user/**";
-    public static final String API_CLIENT = "api/client/**";
-    public static final String API_WORKOUT = "/api/workout/**";
-    public static final String API_INSTRUCTOR = "api/instructor/**";
-    public static final String API = "/api/**";
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -50,14 +45,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(SWAGGER).permitAll();
         http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, API)
+        http.authorizeRequests().antMatchers(GET, "/api/**")
                 .hasAnyAuthority("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(POST, API_CLIENT, API_WORKOUT, API_INSTRUCTOR)
+        http.authorizeRequests().antMatchers(POST, "/api/client/**")
                 .hasAnyAuthority("ROLE_MANAGER");
-        http.authorizeRequests().antMatchers(PATCH, API_CLIENT, API_WORKOUT, API_INSTRUCTOR)
+        http.authorizeRequests().antMatchers(PATCH, "/api/client/**", "api/workout/**", "api/instructor/**")
                 .hasAnyAuthority("ROLE_MANAGER");
-        http.authorizeRequests().antMatchers(POST, API).hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(PATCH, API).hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/api/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(PATCH, "/api/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

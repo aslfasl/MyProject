@@ -74,8 +74,6 @@ public class ClientServiceImp implements ClientService {
         return converter.convertClientEntity(clientEntity);
     }
 
-    // TODO: 16.03.2022 use this approach to reduce verbose in com.example.project.service.ClientServiceImp.updateClientById
-    // FIXED. This is how it looks now.
     @Override
     public ClientDto updateClientById(Long id, ClientDto clientOverride) throws JsonMappingException {
         Optional<ClientEntity> optionalClientEntity = clientRepo.findById(id);
