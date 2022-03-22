@@ -82,13 +82,10 @@ class InstructorControllerTest {
     @Test
     void shouldSaveInstructorToDatabase() throws Exception {
         InstructorDto instructorDto =
-                new InstructorDto("Jack",
-                        "Black",
-                        "passport1",
-                        true,
-                        LocalDate.of(1999, 1, 1),
-                        new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto("sport", Duration.ofMinutes(45), true, 15, null, null);
+                new InstructorDto(null, "Jack", "Black", "passport1", true,
+                        LocalDate.of(1999, 1, 1), new HashSet<>());
+        WorkoutDto workoutDto = new WorkoutDto(null, "sport", Duration.ofMinutes(45), true,
+                15, null, null);
         instructorDto.getInstructorWorkouts().add(workoutDto);
 
         mockMvc.perform(post("/api/instructor/save")
@@ -164,12 +161,12 @@ class InstructorControllerTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        InstructorDto instructorDto =
-                new InstructorDto(newFirstname, newLastname, newPassport, newActive, newBirthdate, null);
+        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport, newActive,
+                newBirthdate, null);
 
         String content = mockMvc.perform((patch("/api/instructor/update?id={id}", id))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(instructorDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(instructorDto)))
                 .andExpect(status().isAccepted())
                 .andDo(print())
                 .andExpect(jsonPath("$.firstName", equalTo(newFirstname)))

@@ -87,7 +87,7 @@ class WorkoutControllerTest {
         Duration duration = Duration.ofMinutes(15);
         int limit = 5;
         WorkoutDto workoutDto =
-                new WorkoutDto(name, duration, true, limit, new HashSet<>(), new HashSet<>());
+                new WorkoutDto(null, name, duration, true, limit, new HashSet<>(), new HashSet<>());
         assertFalse(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, duration, limit));
 
         mockMvc.perform(post("/api/workout/save")
@@ -177,7 +177,7 @@ class WorkoutControllerTest {
                 new WorkoutEntity("workout1", Duration.ofMinutes(40), true, 15);
         workoutRepo.save(workoutEntity);
         long id = workoutEntity.getId();
-        WorkoutDto workoutDto = new WorkoutDto("Dancing Queen", Duration.ofMinutes(35), false, 25, null, null);
+        WorkoutDto workoutDto = new WorkoutDto(null, "Dancing Queen", Duration.ofMinutes(35), false, 25, null, null);
 
         mockMvc.perform((patch("/api/workout/update?id={id}", id))
                         .contentType(MediaType.APPLICATION_JSON)

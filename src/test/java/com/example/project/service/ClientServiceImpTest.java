@@ -80,7 +80,7 @@ class ClientServiceImpTest {
 
     @Test
     void shouldSaveClient() {
-        ClientDto clientDto = new ClientDto("Clint", "Eastwood", "123",
+        ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
                 LocalDate.of(2000, 1, 1), true, new HashSet<>());
         clientDto.getClientWorkouts().add(new WorkoutDto());
         assertFalse(clientRepo.existsByPassport("123"));
@@ -93,7 +93,7 @@ class ClientServiceImpTest {
 
     @Test
     void shouldThrowCustomExceptionWhenSaveClientAlreadyExists() {
-        ClientDto clientDto = new ClientDto("Clint", "Eastwood", "123",
+        ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
                 LocalDate.of(2000, 1, 1), true, new HashSet<>());
         clientRepo.save(new ClientEntity("Clint", "Eastwood", "123",
                 LocalDate.of(2000, 1, 1), true));
@@ -150,7 +150,8 @@ class ClientServiceImpTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        ClientDto clientOverride = new ClientDto(newFirstname, newLastname, newPassport, newBirthdate, newActive, null);
+        ClientDto clientOverride = new ClientDto(null, newFirstname, newLastname, newPassport,
+                newBirthdate, newActive, null);
 
 
         service.updateClientById(id, clientOverride);
@@ -172,7 +173,8 @@ class ClientServiceImpTest {
                 LocalDate.of(2000, 1, 1), false);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
-        ClientDto clientDto = new ClientDto(null, null, passport, null, true, null);
+        ClientDto clientDto = new ClientDto(null, null, null, passport,
+                null, true, null);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> service.updateClientById(id, clientDto));

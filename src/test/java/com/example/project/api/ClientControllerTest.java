@@ -90,13 +90,14 @@ class ClientControllerTest {
     @Test
     void shouldSaveNewClientToDatabase() throws Exception {
         ClientDto clientDto =
-                new ClientDto("Jack",
+                new ClientDto(null, "Jack",
                         "Black",
                         "passport1",
                         LocalDate.of(1999, 1, 1),
                         true,
                         new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto("sport", Duration.ofMinutes(45), true, 15, null, null);
+        WorkoutDto workoutDto = new WorkoutDto(null, "sport", Duration.ofMinutes(45),
+                true, 15, null, null);
         clientDto.getClientWorkouts().add(workoutDto);
 
         mockMvc.perform(post("/api/client/save")
@@ -153,7 +154,8 @@ class ClientControllerTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        ClientDto clientDto = new ClientDto(newFirstname, newLastname, newPassport, newBirthdate, newActive, null);
+        ClientDto clientDto = new ClientDto(null, newFirstname, newLastname,
+                newPassport, newBirthdate, newActive, null);
 
         String content = mockMvc.perform((patch("/api/client/update?id={id}", id))
                 .contentType(MediaType.APPLICATION_JSON)

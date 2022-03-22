@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class WorkoutDto {
 
+    private Long id;
     private String name;
     private Duration durationInMinutes;
     private boolean isAvailable;

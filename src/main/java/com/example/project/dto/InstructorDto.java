@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class InstructorDto {
 
+    private Long id;
     private String firstName;
     private String lastName;
     private String passport;

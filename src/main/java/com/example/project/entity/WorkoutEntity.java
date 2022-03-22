@@ -19,7 +19,6 @@ public class WorkoutEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     @Column(name = "workout_name", unique = true)
     @NonNull

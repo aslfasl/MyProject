@@ -34,7 +34,8 @@ class ValidationServiceTest {
     @Test
     void shouldThrowCustomExceptionWhenCheckClientStatus() {
         ClientDto clientDto =
-                new ClientDto("Vag", "Prl", "asdf", LocalDate.of(1000, 1, 1), false, new HashSet<>());
+                new ClientDto(null, "Vag", "Prl", "asdf",
+                        LocalDate.of(1000, 1, 1), false, new HashSet<>());
 
         CustomException exception =
                 assertThrows(CustomException.class, () -> validationService.checkClientStatus(clientDto));
@@ -44,8 +45,7 @@ class ValidationServiceTest {
 
     @Test
     void shouldThrowCustomExceptionWhenCheckInstructorStatus() {
-        InstructorDto instructorDto =
-                new InstructorDto("Vag", "Prl", "asdf", false, LocalDate.of(1000, 1, 1), new HashSet<>());
+        InstructorDto instructorDto = new InstructorDto(null, "Vag", "Prl", "asdf", false, LocalDate.of(1000, 1, 1), new HashSet<>());
 
         CustomException exception =
                 assertThrows(CustomException.class, () -> validationService.checkInstructorStatus(instructorDto));
@@ -65,12 +65,12 @@ class ValidationServiceTest {
 
     @Test
     void shouldThrowCustomExceptionWhenCheckClientAge() {
-        ClientDto clientDto1 =
-                new ClientDto("Vag", "Prl", "asdf", LocalDate.of(1000, 1, 1), true, new HashSet<>());
-        ClientDto clientDto2 =
-                new ClientDto("Vag", "Prl", "asdf", LocalDate.of(2100, 1, 1), true, new HashSet<>());
-        ClientDto clientDto3 =
-                new ClientDto("Vag", "Prl", "asdf", LocalDate.of(2021, 1, 1), true, new HashSet<>());
+        ClientDto clientDto1 = new ClientDto(null, "Vag", "Prl", "asdf",
+                LocalDate.of(1000, 1, 1), true, new HashSet<>());
+        ClientDto clientDto2 = new ClientDto(null, "Vag", "Prl", "asdf",
+                LocalDate.of(2100, 1, 1), true, new HashSet<>());
+        ClientDto clientDto3 = new ClientDto(null, "Vag", "Prl", "asdf",
+                LocalDate.of(2021, 1, 1), true, new HashSet<>());
 
         CustomException exception1 =
                 assertThrows(CustomException.class, () -> validationService.checkClientAge(clientDto1));
@@ -86,12 +86,12 @@ class ValidationServiceTest {
 
     @Test
     void shouldThrowCustomExceptionWhenCheckInstructorAge() {
-        InstructorDto instructorDto1 =
-                new InstructorDto("Vag", "Prl", "asdf", true, LocalDate.of(1000, 1, 1), new HashSet<>());
-        InstructorDto instructorDto2 =
-                new InstructorDto("Vag", "Prl", "asdf", true, LocalDate.of(2100, 1, 1), new HashSet<>());
-        InstructorDto instructorDto3 =
-                new InstructorDto("Vag", "Prl", "asdf", true, LocalDate.of(2021, 1, 1), new HashSet<>());
+        InstructorDto instructorDto1 = new InstructorDto(null, "Vag", "Prl", "asdf",
+                true, LocalDate.of(1000, 1, 1), new HashSet<>());
+        InstructorDto instructorDto2 = new InstructorDto(null, "Vag", "Prl", "asdf",
+                true, LocalDate.of(2100, 1, 1), new HashSet<>());
+        InstructorDto instructorDto3 = new InstructorDto(null, "Vag", "Prl", "asdf",
+                true, LocalDate.of(2021, 1, 1), new HashSet<>());
 
         CustomException exception1 =
                 assertThrows(CustomException.class, () -> validationService.checkInstructorAge(instructorDto1));

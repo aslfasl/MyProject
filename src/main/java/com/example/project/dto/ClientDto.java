@@ -12,6 +12,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class ClientDto {
 
+    private Long id;
     private String firstName;
     private String lastName;
     private String passport;

@@ -1,7 +1,6 @@
 package com.example.project.service;
 
 import com.example.project.dto.*;
-import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
@@ -105,8 +104,8 @@ class InstructorServiceImpTest {
                 new InstructorEntity("testName", "testSurname", "1234",
                         LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
-        InstructorDto instructorDto =
-                new InstructorDto("test", "test", "1234", true, LocalDate.of(2000,1,1), new HashSet<>());
+        InstructorDto instructorDto = new InstructorDto(null, "test", "test", "1234",
+                true, LocalDate.of(2000, 1, 1), new HashSet<>());
 
         CustomException exception = assertThrows(CustomException.class, () -> instructorService.save(instructorDto));
 
@@ -157,8 +156,8 @@ class InstructorServiceImpTest {
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        InstructorDto instructorDto =
-                new InstructorDto(newFirstname, newLastname, newPassport, newActive, newBirthdate, null);
+        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport, newActive,
+                newBirthdate, null);
 
 
         instructorService.updateById(id, instructorDto);
@@ -190,7 +189,7 @@ class InstructorServiceImpTest {
                 new InstructorEntity("Jack", "White", "12", LocalDate.of(2000, 1, 2), true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
-        InstructorDto instructorDto = new InstructorDto(null, null, "12", true, null, null);
+        InstructorDto instructorDto = new InstructorDto(null, null, null, "12", true, null, null);
 
         CustomException exception =
                 assertThrows(CustomException.class, () -> instructorService.updateById(id, instructorDto));
@@ -202,7 +201,7 @@ class InstructorServiceImpTest {
     void save() {
         String passport = "111160";
         InstructorDto instructorDto =
-                new InstructorDto("Bob", "Smith", passport, true,
+                new InstructorDto(null, "Bob", "Smith", passport, true,
                         LocalDate.of(2000, 1, 1), null);
         Set<WorkoutDto> workoutDtoSet = new HashSet<>();
         instructorDto.setInstructorWorkouts(workoutDtoSet);

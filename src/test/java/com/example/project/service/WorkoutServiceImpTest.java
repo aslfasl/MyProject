@@ -245,7 +245,7 @@ class WorkoutServiceImpTest {
         Duration durationInMin = durationTest;
         int peopleLimit = 10;
         WorkoutDto workoutDto =
-                new WorkoutDto(name, durationInMin, true, peopleLimit, new HashSet<>(), new HashSet<>());
+                new WorkoutDto(null, name, durationInMin, true, peopleLimit, new HashSet<>(), new HashSet<>());
         assertFalse(workoutRepo.existsByNameAndDurationInMinutesAndPeopleLimit(name, durationInMin, peopleLimit));
 
         workoutService.save(workoutDto);
@@ -446,7 +446,7 @@ class WorkoutServiceImpTest {
         Duration duration = null;
         boolean available = false;
         Integer limit = 222;
-        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
+        WorkoutDto workoutDto = new WorkoutDto(null, name, duration, available, limit, null, null);
 
         workoutService.updateById(id, workoutDto);
         WorkoutEntity checkWorkout = workoutRepo.getById(id);
@@ -469,7 +469,7 @@ class WorkoutServiceImpTest {
                 new WorkoutEntity(name, durationTest, true, 12);
         workoutRepo.save(workoutEntity);
         Long id = workoutEntity.getId();
-        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
+        WorkoutDto workoutDto = new WorkoutDto(null, name, duration, available, limit, null, null);
 
         CustomException exception = assertThrows(CustomException.class, () -> workoutService.updateById(id, workoutDto));
 
@@ -484,7 +484,7 @@ class WorkoutServiceImpTest {
         Duration duration = null;
         boolean available = false;
         Integer limit = 222;
-        WorkoutDto workoutDto = new WorkoutDto(name, duration, available, limit, null, null);
+        WorkoutDto workoutDto = new WorkoutDto(null, name, duration, available, limit, null, null);
 
         CustomException exception = assertThrows(CustomException.class, () -> workoutService.updateById(id, workoutDto));
 
