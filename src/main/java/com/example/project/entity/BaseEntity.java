@@ -1,6 +1,5 @@
 package com.example.project.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;

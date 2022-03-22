@@ -52,13 +52,13 @@ public class InstructorController {
     }
 
     @GetMapping("/instructor/all")
-    public ResponseEntity<List<InstructorDto>> getAllClients() {
+    public ResponseEntity<List<InstructorDto>> getAllInstructors() {
         List<InstructorDto> list = instructorService.getAll();
         return ResponseEntity.ok().body(list);
     }
 
     @PatchMapping("/instructor/update")
-    public ResponseEntity<InstructorDto> updateClientById(@RequestParam(name = "id") Long id,
+    public ResponseEntity<InstructorDto> updateInstructorById(@RequestParam(name = "id") Long id,
                                                           @RequestBody InstructorDto instructor) throws JsonMappingException {
         InstructorDto instructorUpdated =
                 instructorService.updateById(id, instructor);
@@ -66,7 +66,7 @@ public class InstructorController {
     }
 
     @GetMapping("/instructor/search")
-    public ResponseEntity<Page<InstructorDto>> getClientsPageFilter(InstructorPage instructorPage,
+    public ResponseEntity<Page<InstructorDto>> getInstructorPageFilter(InstructorPage instructorPage,
                                                                     InstructorSearchCriteria instructorSearchCriteria) {
         return ResponseEntity.ok().body(instructorService.findAllWithFilters(instructorPage, instructorSearchCriteria));
     }

@@ -1,7 +1,5 @@
 package com.example.project.security;
 
-import com.example.project.filter.CustomAuthenticationFilter;
-import com.example.project.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,14 +13,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String API_USER = "/api/user/**";
+    public static final String API_CLIENT = "api/client/**";
+    public static final String API_WORKOUT = "/api/workout/**";
+    public static final String API_INSTRUCTOR = "api/instructor/**";
+    public static final String API = "/api/**";
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -46,9 +48,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(SWAGGER).permitAll();
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll(); // TODO: 09.03.2022 add unsecure path
-        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER"); // TODO: 09.03.2022 add more
-        http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers(
+                GET, API)
+                .hasAnyAuthority("ROLE_USER"
+                );
+        http.authorizeRequests().antMatchers(POST, API_CLIENT, API_WORKOUT, API_INSTRUCTOR)
+                .hasAnyAuthority("ROLE_MANAGER");
+        http.authorizeRequests().antMatchers(PATCH, API_USER, API_CLIENT, API_WORKOUT, API_INSTRUCTOR)
+                .hasAnyAuthority("ROLE_MANAGER");
+        http.authorizeRequests().antMatchers(POST, API).hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(PATCH, API).hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -56,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 }

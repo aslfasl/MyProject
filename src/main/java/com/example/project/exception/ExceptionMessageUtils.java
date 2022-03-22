@@ -19,6 +19,13 @@ public class ExceptionMessageUtils {
 
     public static final String WRONG_AGE = "This age is not allowed";
 
+    public static final String ROLE_ALREADY_EXISTS = "This role already exists";
+    public static final String ROLE_NOT_FOUND_NAME = "Could not find role: ";
+
+    public static final String USER_ALREADY_EXISTS = "User with that username already exists";
+    public static final String USER_ALREADY_ROLE = "This user already has this role";
+    public static final String USER_NOT_FOUND_NAME = "Could not find user with username: ";
+
     private ExceptionMessageUtils() {
     }
 }

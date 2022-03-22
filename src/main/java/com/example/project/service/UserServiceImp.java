@@ -2,6 +2,8 @@ package com.example.project.service;
 
 import com.example.project.entity.AppUser;
 import com.example.project.entity.Role;
+import com.example.project.exception.CustomException;
+import com.example.project.exception.ErrorType;
 import com.example.project.repo.RoleRepo;
 import com.example.project.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.example.project.exception.ExceptionMessageUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,12 +55,18 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public AppUser saveUser(AppUser user) {
         log.info("Saving new user {} to the database", user.getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (userRepo.existsByUsername(user.getUsername())){
+            throw new CustomException(USER_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
+        }
         return userRepo.save(user);
     }
 
     @Override
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the database", role.getName());
+        if (roleRepo.existsByName(role.getName())){
+            throw new CustomException(ROLE_ALREADY_EXISTS, ErrorType.ALREADY_EXISTS);
+        }
         return roleRepo.save(role);
     }
 
@@ -64,13 +75,26 @@ public class UserServiceImp implements UserService, UserDetailsService {
         log.info("Adding role {} to user {}", roleName, username);
         AppUser user = userRepo.findByUsername(username);
         Role role = roleRepo.findByName(roleName);
+        if (user == null) {
+            throw new CustomException(USER_NOT_FOUND_NAME + username, ErrorType.NOT_FOUND);
+        }
+        if (role == null) {
+            throw new CustomException(ROLE_NOT_FOUND_NAME + roleName, ErrorType.NOT_FOUND);
+        }
+        if (user.getRoles().contains(role)) {
+            throw new CustomException(USER_ALREADY_ROLE, ErrorType.ALREADY_EXISTS);
+        }
         user.getRoles().add(role);
     }
 
     @Override
     public AppUser getUser(String username) {
         log.info("Fetching user {}", username);
-        return userRepo.findByUsername(username);
+        AppUser appUser = userRepo.findByUsername(username);
+        if (appUser == null) {
+            throw new CustomException(USER_NOT_FOUND_NAME + username, ErrorType.NOT_FOUND);
+        }
+        return appUser;
     }
 
     @Override
