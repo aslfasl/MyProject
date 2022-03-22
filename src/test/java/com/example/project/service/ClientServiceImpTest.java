@@ -8,7 +8,6 @@ import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
-import com.example.project.repo.WorkoutRepo;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

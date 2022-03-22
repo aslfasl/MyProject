@@ -1,12 +1,9 @@
 package com.example.project.api;
 
-import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutDto;
-import com.example.project.entity.ClientEntity;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.repo.InstructorRepo;
-import com.example.project.service.InstructorServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@WithMockUser
+@WithMockUser(username = "username", authorities = {"ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER"})
 @AutoConfigureMockMvc
 class InstructorControllerTest {
 
