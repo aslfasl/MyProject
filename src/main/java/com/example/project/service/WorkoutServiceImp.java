@@ -67,6 +67,9 @@ public class WorkoutServiceImp implements WorkoutService {
 
     public List<ClientDto> getActiveClientsByWorkoutName(String name) {
         WorkoutDto workoutDto = getByName(name);
+        if (workoutDto == null) {
+            throw new CustomException("Workout with name " + name + " not found", ErrorType.NOT_FOUND);
+        }
         return workoutDto.getClients().stream()
                 .filter(ClientDto::isActive)
                 .collect(Collectors.toList());
@@ -74,6 +77,9 @@ public class WorkoutServiceImp implements WorkoutService {
 
     public List<InstructorDto> getActiveInstructorsByWorkoutName(String name) {
         WorkoutDto workoutDto = getByName(name);
+        if (workoutDto == null) {
+            throw new CustomException("Workout with name " + name + " not found", ErrorType.NOT_FOUND);
+        }
         return workoutDto.getInstructors().stream()
                 .filter(InstructorDto::isActive)
                 .collect(Collectors.toList());
@@ -81,12 +87,9 @@ public class WorkoutServiceImp implements WorkoutService {
 
     @Override
     public WorkoutDto getById(Long id) {
-        Optional<WorkoutEntity> byId = workoutRepo.findById(id);
-        if (byId.isPresent()) {
-            return converter.convertWorkoutEntity(byId.get());
-        } else {
-            throw new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND);
-        }
+        return converter.convertWorkoutEntity(workoutRepo.findById(id)
+                .orElseThrow(() -> new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND)));
+
     }
 
     @Override
@@ -113,10 +116,10 @@ public class WorkoutServiceImp implements WorkoutService {
 
     @Override
     public WorkoutDto deleteById(Long id) {
-        WorkoutEntity workout = workoutRepo.getById(id);
+        WorkoutEntity workout = workoutRepo.findById(id)
+                .orElseThrow(() -> new CustomException(WORKOUT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND));
         workout.setAvailable(false);
-        WorkoutEntity workoutEntity = workoutRepo.save(workout);
-        return converter.convertWorkoutEntity(workoutEntity);
+        return converter.convertWorkoutEntity(workoutRepo.save(workout));
     }
 
     @Override
