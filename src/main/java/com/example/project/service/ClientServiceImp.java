@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
@@ -58,12 +57,8 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto getClientById(Long id) {
-        ClientEntity clientEntity = clientRepo.findClientById(id);
-        if (clientEntity == null) {
-            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
-                    ErrorType.NOT_FOUND);
-        }
-        return converter.convertClientEntity(clientEntity);
+        return converter.convertClientEntity(clientRepo.findById(id)
+                .orElseThrow(() -> new CustomException(CLIENT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND)));
     }
 
     @Override
@@ -76,12 +71,8 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto updateClientById(Long id, ClientDto clientOverride) throws JsonMappingException {
-        Optional<ClientEntity> optionalClientEntity = clientRepo.findById(id);
-        if (optionalClientEntity.isEmpty()) {
-            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
-                    ErrorType.NOT_FOUND);
-        }
-        ClientEntity clientToUpdate = optionalClientEntity.get();
+        ClientEntity clientToUpdate = clientRepo.findById(id)
+                .orElseThrow(() -> new CustomException(CLIENT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND));
         if (clientRepo.existsByPassport(clientOverride.getPassport())) {
             throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientOverride.getPassport(),
                     ErrorType.ALREADY_EXISTS);

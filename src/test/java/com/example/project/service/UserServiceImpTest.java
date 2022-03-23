@@ -72,7 +72,7 @@ class UserServiceImpTest {
     @Test
     void shouldSaveRoleToDatabase() {
         RoleDto role = new RoleDto(null, "Test Role");
-        assertEquals(null, roleRepo.findByName("Test Role"));
+        assertNull(roleRepo.findByName("Test Role"));
 
         RoleDto saveRole = userService.saveRole(role);
 
