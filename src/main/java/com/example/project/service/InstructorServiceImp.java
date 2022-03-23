@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
@@ -45,12 +44,8 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto getById(Long id) {
-        Optional<InstructorEntity> instructorOpt = instructorRepo.findById(id);
-        if (instructorOpt.isEmpty()) {
-            throw new CustomException(INSTRUCTOR_NOT_FOUND_ID + id,
-                    ErrorType.NOT_FOUND);
-        }
-        return converter.convertInstructorEntity(instructorOpt.get());
+        return converter.convertInstructorEntity(instructorRepo.findById(id)
+                .orElseThrow(() -> new CustomException(INSTRUCTOR_NOT_FOUND_ID + id, ErrorType.NOT_FOUND)));
     }
 
     @Override
@@ -62,19 +57,16 @@ public class InstructorServiceImp implements InstructorService {
 
     @Override
     public InstructorDto deleteById(Long id) {
-        InstructorEntity instructor = instructorRepo.getById(id);
+        InstructorEntity instructor = instructorRepo.findById(id)
+                .orElseThrow(() -> new CustomException(INSTRUCTOR_NOT_FOUND_ID + id, ErrorType.NOT_FOUND));
         instructor.setActive(false);
         return converter.convertInstructorEntity(instructorRepo.save(instructor));
     }
 
     @Override
     public InstructorDto updateById(Long id, InstructorDto instructorOverride) throws JsonMappingException {
-        Optional<InstructorEntity> optionalInstructor = instructorRepo.findById(id);
-        if (optionalInstructor.isEmpty()) {
-            throw new CustomException(CLIENT_NOT_FOUND_ID + id,
-                    ErrorType.NOT_FOUND);
-        }
-        InstructorEntity instructorToUpdate = optionalInstructor.get();
+        InstructorEntity instructorToUpdate = instructorRepo.findById(id)
+                .orElseThrow(() -> new CustomException(CLIENT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND));
         if (instructorRepo.existsByPassport(instructorOverride.getPassport())) {
             throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + instructorOverride.getPassport(),
                     ErrorType.ALREADY_EXISTS);
