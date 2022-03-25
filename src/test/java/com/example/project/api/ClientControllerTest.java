@@ -89,6 +89,7 @@ class ClientControllerTest {
                 new ClientDto(null, "Jack",
                         "Black",
                         "passport1",
+                        "address1",
                         LocalDate.of(1999, 1, 1),
                         true,
                         new HashSet<>());
@@ -147,11 +148,11 @@ class ClientControllerTest {
         ClientEntity clientEntity = new ClientEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
-        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123", newAddress = "address";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
         ClientDto clientDto = new ClientDto(null, newFirstname, newLastname,
-                newPassport, newBirthdate, newActive, null);
+                newPassport, newAddress, newBirthdate, newActive, null);
 
         String content = mockMvc.perform((patch("/api/client/update?id={id}", id))
                 .contentType(MediaType.APPLICATION_JSON)

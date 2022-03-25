@@ -16,6 +16,7 @@ public class ClientDto {
     private String firstName;
     private String lastName;
     private String passport;
+    private String address;
     private LocalDate birthdate;
     private boolean isActive;
     private Collection<WorkoutDto> clientWorkouts;

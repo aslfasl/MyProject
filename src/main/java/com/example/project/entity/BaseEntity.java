@@ -22,12 +22,13 @@ public class BaseEntity {
             unique = true)
     @NonNull
     private String passport;
+    private String address;
     private LocalDate birthdate;
     @Column(name = "status")
     @EqualsAndHashCode.Exclude
     private boolean isActive;
 
-    public BaseEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
+    public BaseEntity(String firstName, String lastName, @NonNull String passport, LocalDate birthdate, boolean isActive) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.passport = passport;

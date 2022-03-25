@@ -105,7 +105,7 @@ class InstructorServiceImpTest {
                         LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
         InstructorDto instructorDto = new InstructorDto(null, "test", "test", "1234",
-                true, LocalDate.of(2000, 1, 1), new HashSet<>());
+                "address", true, LocalDate.of(2000, 1, 1), new HashSet<>());
 
         CustomException exception = assertThrows(CustomException.class, () -> instructorService.save(instructorDto));
 
@@ -153,11 +153,11 @@ class InstructorServiceImpTest {
         instructorService.addWorkoutToInstructor(workoutEntity, instructorEntity);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
-        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123", newAddress = "address";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport, newActive,
-                newBirthdate, null);
+        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport, newAddress,
+                newActive, newBirthdate, null);
 
 
         instructorService.updateById(id, instructorDto);
@@ -189,7 +189,7 @@ class InstructorServiceImpTest {
                 new InstructorEntity("Jack", "White", "12", LocalDate.of(2000, 1, 2), true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
-        InstructorDto instructorDto = new InstructorDto(null, null, null, "12", true, null, null);
+        InstructorDto instructorDto = new InstructorDto(null, null, null, "12", null, true, null, null);
 
         CustomException exception =
                 assertThrows(CustomException.class, () -> instructorService.updateById(id, instructorDto));
@@ -201,8 +201,8 @@ class InstructorServiceImpTest {
     void save() {
         String passport = "111160";
         InstructorDto instructorDto =
-                new InstructorDto(null, "Bob", "Smith", passport, true,
-                        LocalDate.of(2000, 1, 1), null);
+                new InstructorDto(null, "Bob", "Smith", passport, "address",
+                        true, LocalDate.of(2000, 1, 1), null);
         Set<WorkoutDto> workoutDtoSet = new HashSet<>();
         instructorDto.setInstructorWorkouts(workoutDtoSet);
         assertFalse(instructorRepo.existsByPassport(passport));

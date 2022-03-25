@@ -76,8 +76,8 @@ class InstructorControllerTest {
     @Test
     void shouldSaveInstructorToDatabase() throws Exception {
         InstructorDto instructorDto =
-                new InstructorDto(null, "Jack", "Black", "passport1", true,
-                        LocalDate.of(1999, 1, 1), new HashSet<>());
+                new InstructorDto(null, "Jack", "Black", "passport1", "address",
+                        true, LocalDate.of(1999, 1, 1), new HashSet<>());
         WorkoutDto workoutDto = new WorkoutDto(null, "sport", Duration.ofMinutes(45), true,
                 15, null, null);
         instructorDto.getInstructorWorkouts().add(workoutDto);
@@ -152,11 +152,11 @@ class InstructorControllerTest {
         InstructorEntity instructorEntity = new InstructorEntity("Paul", "Green", "200", LocalDate.of(2000, 1, 1), true);
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
-        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123";
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123", newAddress = "address";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport, newActive,
-                newBirthdate, null);
+        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport,
+                newAddress, newActive, newBirthdate, null);
 
         String content = mockMvc.perform((patch("/api/instructor/update?id={id}", id))
                         .contentType(MediaType.APPLICATION_JSON)
