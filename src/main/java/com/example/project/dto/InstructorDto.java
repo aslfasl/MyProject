@@ -17,6 +17,7 @@ public class InstructorDto {
     private String lastName;
     private String passport;
     private String address;
+    private String phone;
     private boolean isActive;
     private LocalDate birthdate;
     private Set<WorkoutDto> instructorWorkouts;

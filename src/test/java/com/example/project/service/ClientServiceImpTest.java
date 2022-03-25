@@ -80,7 +80,8 @@ class ClientServiceImpTest {
     @Test
     void shouldSaveClient() {
         ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
-                "address", LocalDate.of(2000, 1, 1), true, new HashSet<>());
+                "address", "123456", LocalDate.of(2000, 1, 1),
+                true, new HashSet<>());
         clientDto.getClientWorkouts().add(new WorkoutDto());
         assertFalse(clientRepo.existsByPassport("123"));
 
@@ -93,7 +94,8 @@ class ClientServiceImpTest {
     @Test
     void shouldThrowCustomExceptionWhenSaveClientAlreadyExists() {
         ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
-                "address", LocalDate.of(2000, 1, 1), true, new HashSet<>());
+                "address", "123456", LocalDate.of(2000, 1, 1),
+                true, new HashSet<>());
         clientRepo.save(new ClientEntity("Clint", "Eastwood", "123",
                 LocalDate.of(2000, 1, 1), true));
 
@@ -146,11 +148,12 @@ class ClientServiceImpTest {
         clientService.addWorkoutToClient(clientEntity, workoutEntity);
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
-        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123", newAddress = "address";
+        String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123",
+                newAddress = "address", newPhone = "123456";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
         ClientDto clientOverride = new ClientDto(null, newFirstname, newLastname, newPassport, newAddress,
-                newBirthdate, newActive, null);
+                newPhone, newBirthdate, newActive, null);
 
 
         service.updateClientById(id, clientOverride);
@@ -173,7 +176,7 @@ class ClientServiceImpTest {
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
         ClientDto clientDto = new ClientDto(null, null, null, passport, null,
-                null, true, null);
+                null, null, true, null);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> service.updateClientById(id, clientDto));

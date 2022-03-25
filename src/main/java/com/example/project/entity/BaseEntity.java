@@ -23,6 +23,7 @@ public class BaseEntity {
     @NonNull
     private String passport;
     private String address;
+    private String phone;
     private LocalDate birthdate;
     @Column(name = "status")
     @EqualsAndHashCode.Exclude
