@@ -118,10 +118,9 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public List<ClientDto> getAllActiveClients() {
-//        return clientRepo.findAllByIsActiveTrue().stream()
-//                .map(converter::convertClientEntity)
-//                .collect(Collectors.toList());
-        return null;
+        return clientRepo.findAll().stream().filter(clientEntity -> clientEntity.getMembership().isActive())
+                .map(converter::convertClientEntity)
+                .collect(Collectors.toList());
     }
 
     @Override

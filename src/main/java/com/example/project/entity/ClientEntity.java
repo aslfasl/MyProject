@@ -34,7 +34,15 @@ public class ClientEntity extends BaseEntity{
     public ClientEntity(String firstName,
                         String lastName,
                         String passport,
-                        LocalDate birthdate) {
+                        LocalDate birthdate,
+                        MembershipEntity membership,
+                        Set<WorkoutClassEntity> workouts) {
+        super(firstName, lastName, passport, birthdate);
+        this.membership = membership;
+        this.clientWorkouts = workouts;
+    }
+
+    public ClientEntity(String firstName, String lastName, @NonNull String passport, LocalDate birthdate) {
         super(firstName, lastName, passport, birthdate);
     }
 
