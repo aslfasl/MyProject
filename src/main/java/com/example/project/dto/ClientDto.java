@@ -20,5 +20,5 @@ public class ClientDto {
     private String phone;
     private LocalDate birthdate;
     private boolean isActive;
-    private Collection<WorkoutDto> clientWorkouts;
+    private Collection<WorkoutClassDto> clientWorkouts;
 }

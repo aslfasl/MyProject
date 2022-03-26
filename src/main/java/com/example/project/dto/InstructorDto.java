@@ -20,7 +20,7 @@ public class InstructorDto {
     private String phone;
     private boolean isActive;
     private LocalDate birthdate;
-    private Set<WorkoutDto> instructorWorkouts;
+    private Set<WorkoutClassDto> instructorWorkouts;
 
 
 }

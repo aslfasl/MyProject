@@ -1,7 +1,7 @@
 package com.example.project.api;
 
 import com.example.project.dto.InstructorDto;
-import com.example.project.dto.WorkoutDto;
+import com.example.project.dto.WorkoutClassDto;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.repo.InstructorRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,9 +79,9 @@ class InstructorControllerTest {
                 new InstructorDto(null, "Jack", "Black", "passport1",
                         "address", "123456", true,
                         LocalDate.of(1999, 1, 1), new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto(null, "sport", Duration.ofMinutes(45), true,
+        WorkoutClassDto workoutClassDto = new WorkoutClassDto(null, "sport", Duration.ofMinutes(45), true,
                 15, null, null);
-        instructorDto.getInstructorWorkouts().add(workoutDto);
+        instructorDto.getInstructorWorkouts().add(workoutClassDto);
 
         mockMvc.perform(post("/api/instructor/save")
                         .contentType(MediaType.APPLICATION_JSON)

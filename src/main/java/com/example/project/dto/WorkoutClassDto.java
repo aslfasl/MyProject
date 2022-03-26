@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutDto {
+public class WorkoutClassDto {
 
     private Long id;
     private String name;
@@ -18,5 +18,5 @@ public class WorkoutDto {
     private boolean isAvailable;
     private Integer peopleLimit;
     private Set<ClientDto> clients;
-    private Set<InstructorDto> instructors;
+    private InstructorDto instructor;
 }

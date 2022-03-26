@@ -5,7 +5,7 @@ import com.example.project.converter.Converter;
 import com.example.project.dto.ClientPage;
 import com.example.project.dto.ClientSearchCriteria;
 import com.example.project.entity.ClientEntity;
-import com.example.project.entity.WorkoutEntity;
+import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.ClientCriteriaRepo;
@@ -34,7 +34,7 @@ public class ClientServiceImp implements ClientService {
     private final ObjectMapper objectMapper;
     private final ValidationService validationService;
 
-    public void addWorkoutToClient(ClientEntity clientEntity, WorkoutEntity workout) {
+    public void addWorkoutToClient(ClientEntity clientEntity, WorkoutClassEntity workout) {
         validationService.checkIsWorkoutAvailable(workout);
         if (clientEntity.getClientWorkouts().contains(workout)) {
             throw new CustomException(CLIENT_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);

@@ -3,7 +3,7 @@ package com.example.project.service;
 import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
 import com.example.project.entity.BaseEntity;
-import com.example.project.entity.WorkoutEntity;
+import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import org.springframework.stereotype.Service;
@@ -31,8 +31,8 @@ public class ValidationService {
         }
     }
 
-    void checkIsWorkoutAvailable(WorkoutEntity workoutEntity) {
-        if (!workoutEntity.isAvailable()) {
+    void checkIsWorkoutAvailable(WorkoutClassEntity workoutClassEntity) {
+        if (!workoutClassEntity.isAvailable()) {
             throw new CustomException("Workout is not available", ErrorType.INACTIVE);
         }
     }

@@ -20,8 +20,8 @@ public class Converter {
 
     public ClientDto convertClientEntity(ClientEntity clientEntity) {
         ClientDto clientDto = convertValue(clientEntity, ClientDto.class);
-        Set<WorkoutDto> workouts = clientEntity.getClientWorkouts().stream()
-                .map(workoutEntity -> convertValue(workoutEntity, WorkoutDto.class))
+        Set<WorkoutClassDto> workouts = clientEntity.getClientWorkouts().stream()
+                .map(workoutEntity -> convertValue(workoutEntity, WorkoutClassDto.class))
                 .collect(Collectors.toSet());
         clientDto.setClientWorkouts(workouts);
         return clientDto;
@@ -30,9 +30,9 @@ public class Converter {
     public ClientEntity convertClientDto(ClientDto clientDto) {
         ClientEntity clientEntity = convertValue(clientDto, ClientEntity.class);
 
-        Set<WorkoutEntity> workouts = clientDto.getClientWorkouts().stream()
+        Set<WorkoutClassEntity> workouts = clientDto.getClientWorkouts().stream()
 
-                .map(workoutDto -> convertValue(workoutDto, WorkoutEntity.class))
+                .map(workoutDto -> convertValue(workoutDto, WorkoutClassEntity.class))
                 .collect(Collectors.toSet());
         clientEntity.setClientWorkouts(workouts);
         return clientEntity;
@@ -40,8 +40,8 @@ public class Converter {
 
     public InstructorDto convertInstructorEntity(InstructorEntity instructorEntity) {
         InstructorDto instructorDto = convertValue(instructorEntity, InstructorDto.class);
-        Set<WorkoutDto> workouts = instructorEntity.getInstructorWorkouts().stream()
-                .map(workoutEntity -> convertValue(workoutEntity, WorkoutDto.class))
+        Set<WorkoutClassDto> workouts = instructorEntity.getInstructorWorkouts().stream()
+                .map(workoutEntity -> convertValue(workoutEntity, WorkoutClassDto.class))
                 .collect(Collectors.toSet());
         instructorDto.setInstructorWorkouts(workouts);
         return instructorDto;
@@ -49,37 +49,31 @@ public class Converter {
 
     public InstructorEntity convertInstructorDto(InstructorDto instructorDto) {
         InstructorEntity instructorEntity = convertValue(instructorDto, InstructorEntity.class);
-        Set<WorkoutEntity> workouts = instructorDto.getInstructorWorkouts().stream()
-                .map(workoutDto -> convertValue(workoutDto, WorkoutEntity.class))
+        Set<WorkoutClassEntity> workouts = instructorDto.getInstructorWorkouts().stream()
+                .map(workoutDto -> convertValue(workoutDto, WorkoutClassEntity.class))
                 .collect(Collectors.toSet());
         instructorEntity.setInstructorWorkouts(workouts);
         return instructorEntity;
     }
 
-    public WorkoutDto convertWorkoutEntity(WorkoutEntity workoutEntity) {
-        WorkoutDto workoutDto = convertValue(workoutEntity, WorkoutDto.class);
-        Set<ClientDto> clients = workoutEntity.getClients().stream()
+    public WorkoutClassDto convertWorkoutEntity(WorkoutClassEntity workoutClassEntity) {
+        WorkoutClassDto workoutClassDto = convertValue(workoutClassEntity, WorkoutClassDto.class);
+        Set<ClientDto> clients = workoutClassEntity.getClients().stream()
                 .map(this::convertClientEntity)
                 .collect(Collectors.toSet());
-        Set<InstructorDto> instructors = workoutEntity.getInstructors().stream()
-                .map(this::convertInstructorEntity)
-                .collect(Collectors.toSet());
-        workoutDto.setClients(clients);
-        workoutDto.setInstructors(instructors);
-        return workoutDto;
+        workoutClassDto.setClients(clients);
+        workoutClassDto.setInstructor(convertInstructorEntity(workoutClassEntity.getInstructor()));
+        return workoutClassDto;
     }
 
-    public WorkoutEntity convertWorkoutDto(WorkoutDto workoutDto) {
-        WorkoutEntity workoutEntity = convertValue(workoutDto, WorkoutEntity.class);
-        Set<ClientEntity> clients = workoutDto.getClients().stream()
+    public WorkoutClassEntity convertWorkoutDto(WorkoutClassDto workoutClassDto) {
+        WorkoutClassEntity workoutClassEntity = convertValue(workoutClassDto, WorkoutClassEntity.class);
+        Set<ClientEntity> clients = workoutClassDto.getClients().stream()
                 .map(this::convertClientDto)
                 .collect(Collectors.toSet());
-        Set<InstructorEntity> instructors = workoutDto.getInstructors().stream()
-                .map(this::convertInstructorDto)
-                .collect(Collectors.toSet());
-        workoutEntity.setClients(clients);
-        workoutEntity.setInstructors(instructors);
-        return workoutEntity;
+        workoutClassEntity.setClients(clients);
+        workoutClassEntity.setInstructor(convertInstructorDto(workoutClassDto.getInstructor()));
+        return workoutClassEntity;
     }
 
     public AppUserDto convertAppUser(AppUser appUser) {

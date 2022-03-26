@@ -5,7 +5,7 @@ import com.example.project.dto.InstructorDto;
 import com.example.project.dto.InstructorPage;
 import com.example.project.dto.InstructorSearchCriteria;
 import com.example.project.entity.InstructorEntity;
-import com.example.project.entity.WorkoutEntity;
+import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.exception.ErrorType;
 import com.example.project.repo.InstructorCriteriaRepo;
@@ -33,14 +33,14 @@ public class InstructorServiceImp implements InstructorService {
     private final ValidationService validationService;
     private final InstructorCriteriaRepo instructorCriteriaRepo;
 
-    public void addWorkoutToInstructor(WorkoutEntity workout, InstructorEntity instructorEntity) {
-        validationService.checkIsWorkoutAvailable(workout);
-        if (instructorEntity.getInstructorWorkouts().contains(workout)) {
-            throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
-        }
-        instructorEntity.getInstructorWorkouts().add(workout);
-        workout.getInstructors().add(instructorEntity);
-    }
+//    public void addWorkoutToInstructor(WorkoutClassEntity workout, InstructorEntity instructorEntity) {
+//        validationService.checkIsWorkoutAvailable(workout);
+//        if (instructorEntity.getInstructorWorkouts().contains(workout)) {
+//            throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
+//        }
+//        instructorEntity.getInstructorWorkouts().add(workout);
+//        workout.getInstructors().add(instructorEntity);
+//    }
 
     @Override
     public InstructorDto getById(Long id) {

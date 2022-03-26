@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 @Getter
 @Setter
 @Entity
-@Table(name = "workout")
+@Table(name = "class")
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutEntity {
+public class WorkoutClassEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +23,7 @@ public class WorkoutEntity {
     @Column(name = "workout_name", unique = true)
     @NonNull
     private String name;
-    @Column(name = "duration")
-    private Duration durationInMinutes;
+    private String description;
     @Column(name = "available")
     private boolean isAvailable;
     private Integer peopleLimit;
@@ -36,26 +35,31 @@ public class WorkoutEntity {
     @ToString.Exclude
     private Set<ClientEntity> clients = new HashSet<>();
 
-    @ManyToMany(mappedBy = "instructorWorkouts",
-            fetch = FetchType.EAGER,
+    @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = "instructor_id")
     @ToString.Exclude
     @JsonIgnore
-    private Set<InstructorEntity> instructors = new HashSet<>();
+    private InstructorEntity instructor;
 
-    public WorkoutEntity(String name, Duration durationInMinutes, boolean isAvailable, int peopleLimit) {
+    @OneToMany(cascade = CascadeType.ALL,
+    mappedBy = "workoutClass",
+    fetch = FetchType.EAGER)
+    private List<SessionEntity> sessions;
+
+
+    public WorkoutClassEntity(String name, boolean isAvailable, int peopleLimit) {
         this.name = name;
-        this.durationInMinutes = durationInMinutes;
         this.isAvailable = isAvailable;
         this.peopleLimit = peopleLimit;
     }
 
     @Override
     public String toString() {
-        return "WorkoutEntity{" +
+        return "ClassEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", durationInMinutes=" + durationInMinutes +
+                ", description='" + description + '\'' +
                 ", isAvailable=" + isAvailable +
                 ", peopleLimit=" + peopleLimit +
                 '}';

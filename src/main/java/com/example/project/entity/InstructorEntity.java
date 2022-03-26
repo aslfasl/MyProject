@@ -16,17 +16,22 @@ import java.util.Set;
 @Setter
 public class InstructorEntity extends BaseEntity{
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
+    private String speciality;
+    private String education;
+    @Column(name = "status")
+    @EqualsAndHashCode.Exclude
+    private boolean isActive;
+
+    @OneToMany(mappedBy = "instructor",
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JsonIgnore
-    @JoinTable(name = "instructor_workout",
-            joinColumns = {@JoinColumn(name = "instructor_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     @ToString.Exclude
-    private Set<WorkoutEntity> instructorWorkouts = new HashSet<>();
+    private Set<WorkoutClassEntity> instructorWorkouts = new HashSet<>();
 
     public InstructorEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
-        super(firstName, lastName, passport, birthdate, isActive);
+        super(firstName, lastName, passport, birthdate);
+        this.isActive = isActive;
     }
 
     @Override

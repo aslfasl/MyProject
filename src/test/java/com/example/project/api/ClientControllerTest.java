@@ -1,7 +1,7 @@
 package com.example.project.api;
 
 import com.example.project.dto.ClientDto;
-import com.example.project.dto.WorkoutDto;
+import com.example.project.dto.WorkoutClassDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.repo.ClientRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,9 +94,9 @@ class ClientControllerTest {
                         LocalDate.of(1999, 1, 1),
                         true,
                         new HashSet<>());
-        WorkoutDto workoutDto = new WorkoutDto(null, "sport", Duration.ofMinutes(45),
+        WorkoutClassDto workoutClassDto = new WorkoutClassDto(null, "sport", Duration.ofMinutes(45),
                 true, 15, null, null);
-        clientDto.getClientWorkouts().add(workoutDto);
+        clientDto.getClientWorkouts().add(workoutClassDto);
 
         mockMvc.perform(post("/api/client/save")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -17,6 +17,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class ClientEntity extends BaseEntity{
 
+    @OneToOne(mappedBy = "client",
+            cascade = {CascadeType.ALL})
+    private MembershipEntity membership;
+
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     @JsonIgnore
@@ -25,10 +29,10 @@ public class ClientEntity extends BaseEntity{
             inverseJoinColumns = {@JoinColumn(name = "workout_id", referencedColumnName = "id")})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<WorkoutEntity> clientWorkouts = new HashSet<>();
+    private Set<WorkoutClassEntity> clientWorkouts = new HashSet<>();
 
-    public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate, boolean isActive) {
-        super(firstName, lastName, passport, birthdate, isActive);
+    public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate) {
+        super(firstName, lastName, passport, birthdate);
     }
 
     @Override

@@ -25,16 +25,13 @@ public class BaseEntity {
     private String address;
     private String phone;
     private LocalDate birthdate;
-    @Column(name = "status")
-    @EqualsAndHashCode.Exclude
-    private boolean isActive;
 
-    public BaseEntity(String firstName, String lastName, @NonNull String passport, LocalDate birthdate, boolean isActive) {
+
+    public BaseEntity(String firstName, String lastName, @NonNull String passport, LocalDate birthdate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.passport = passport;
         this.birthdate = birthdate;
-        this.isActive = isActive;
     }
 
     @Override

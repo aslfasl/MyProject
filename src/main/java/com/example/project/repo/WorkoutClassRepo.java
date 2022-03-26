@@ -1,6 +1,6 @@
 package com.example.project.repo;
 
-import com.example.project.entity.WorkoutEntity;
+import com.example.project.entity.WorkoutClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,11 +8,11 @@ import java.time.Duration;
 import java.util.List;
 
 @Repository
-public interface WorkoutRepo extends JpaRepository<WorkoutEntity, Long> {
+public interface WorkoutClassRepo extends JpaRepository<WorkoutClassEntity, Long> {
 
-    List<WorkoutEntity> findAllByIsAvailableTrue();
+    List<WorkoutClassEntity> findAllByIsAvailableTrue();
 
-    WorkoutEntity findByName(String name);
+    WorkoutClassEntity findByName(String name);
 
     boolean existsByNameAndDurationInMinutesAndPeopleLimit(String name, Duration duration, int limit);
 
