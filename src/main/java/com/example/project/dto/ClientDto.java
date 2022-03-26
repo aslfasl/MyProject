@@ -1,5 +1,6 @@
 package com.example.project.dto;
 
+import com.example.project.entity.MembershipEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,6 @@ public class ClientDto {
     private String address;
     private String phone;
     private LocalDate birthdate;
-    private boolean isActive;
+    private MembershipDto membership;
     private Collection<WorkoutClassDto> clientWorkouts;
 }

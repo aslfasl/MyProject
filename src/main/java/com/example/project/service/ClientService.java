@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.dto.ClientDto;
 import com.example.project.dto.ClientPage;
 import com.example.project.dto.ClientSearchCriteria;
+import com.example.project.dto.MembershipDto;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.data.domain.Page;
 
@@ -13,6 +14,8 @@ import java.util.List;
 public interface ClientService {
 
     ClientDto saveClient(ClientDto client);
+
+    ClientDto saveClientWithMembership(ClientDto client, MembershipDto membershipDto);
 
     ClientDto getClientById(Long id);
 

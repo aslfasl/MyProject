@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -45,7 +44,7 @@ public class WorkoutClassEntity {
     @OneToMany(cascade = CascadeType.ALL,
     mappedBy = "workoutClass",
     fetch = FetchType.EAGER)
-    private List<SessionEntity> sessions;
+    private Set<WorkoutSessionEntity> sessions;
 
 
     public WorkoutClassEntity(String name, boolean isAvailable, int peopleLimit) {

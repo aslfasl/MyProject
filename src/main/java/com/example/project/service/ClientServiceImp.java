@@ -4,6 +4,7 @@ import com.example.project.dto.ClientDto;
 import com.example.project.converter.Converter;
 import com.example.project.dto.ClientPage;
 import com.example.project.dto.ClientSearchCriteria;
+import com.example.project.dto.MembershipDto;
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
@@ -46,13 +47,24 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientDto saveClient(ClientDto clientDto) {
         validationService.checkClientAge(clientDto);
-        validationService.checkClientStatus(clientDto);
         if (clientRepo.existsByPassport(clientDto.getPassport())) {
             throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(),
                     ErrorType.ALREADY_EXISTS);
         }
         ClientEntity clientEntity = clientRepo.save(converter.convertClientDto(clientDto));
         return converter.convertClientEntity(clientEntity);
+    }
+
+    @Override
+    public ClientDto saveClientWithMembership(ClientDto clientDto, MembershipDto membershipDto) {
+        validationService.checkClientAge(clientDto);
+        if (clientRepo.existsByPassport(clientDto.getPassport())) {
+            throw new CustomException(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(),
+                    ErrorType.ALREADY_EXISTS);
+        }
+        clientDto.setMembership(membershipDto);
+        ClientEntity saved = clientRepo.save(converter.convertClientDto(clientDto));
+        return converter.convertClientEntity(saved);
     }
 
     @Override
@@ -63,8 +75,9 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto deleteClientById(Long id) {
-        ClientEntity clientEntity = clientRepo.findClientById(id);
-        clientEntity.setActive(false);
+        ClientEntity clientEntity = clientRepo.findById(id)
+                .orElseThrow(() -> new CustomException(CLIENT_NOT_FOUND_ID + id, ErrorType.NOT_FOUND));
+        clientEntity.getMembership().setActive(false);
         clientRepo.save(clientEntity);
         return converter.convertClientEntity(clientEntity);
     }
@@ -95,7 +108,7 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public ClientDto getClientByPassport(String passport) {
-        ClientEntity client = clientRepo.findClientEntityByPassport(passport);
+        ClientEntity client = clientRepo.findByPassport(passport);
         if (client == null) {
             throw new CustomException(CLIENT_NOT_FOUND_PASSPORT + passport,
                     ErrorType.NOT_FOUND);
@@ -105,9 +118,10 @@ public class ClientServiceImp implements ClientService {
 
     @Override
     public List<ClientDto> getAllActiveClients() {
-        return clientRepo.findAllByIsActiveTrue().stream()
-                .map(converter::convertClientEntity)
-                .collect(Collectors.toList());
+//        return clientRepo.findAllByIsActiveTrue().stream()
+//                .map(converter::convertClientEntity)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override

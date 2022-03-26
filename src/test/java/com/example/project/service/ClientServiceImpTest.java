@@ -1,109 +1,160 @@
 package com.example.project.service;
 
-import com.example.project.dto.ClientDto;
-import com.example.project.dto.ClientPage;
-import com.example.project.dto.ClientSearchCriteria;
-import com.example.project.dto.WorkoutClassDto;
+import com.example.project.dto.*;
 import com.example.project.entity.ClientEntity;
+import com.example.project.entity.MembershipEntity;
 import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
 import com.example.project.repo.ClientRepo;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.example.project.exception.ExceptionMessageUtils.*;
+import static com.example.project.exception.ExceptionMessageUtils.CLIENT_ALREADY_EXISTS_PASSPORT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @SpringBootTest
 class ClientServiceImpTest {
-//    private final Duration durationTest = Duration.ofMinutes(45);
+    //    private final Duration durationTest = Duration.ofMinutes(45);
 //
-//    @Autowired
-//    private ClientServiceImp service;
-//
-//    @Autowired
-//    private ClientServiceImp clientService;
-//
-//    @Autowired
-//    private ClientRepo clientRepo;
-//
-//    ExampleMatcher modelMatcher = ExampleMatcher.matching()
-//            .withIgnorePaths("id")
-//            .withMatcher("passport", ignoreCase());
-//
-//    @AfterEach
-//    void after() {
-//        clientRepo.deleteAll();
-//    }
-//
-//    @Test
-//    void shouldAddWorkoutToClientEntity() {
-//        ClientEntity clientEntity =
-//                new ClientEntity("Jack", "Dogson", "890123",
-//                        LocalDate.of(1989, 1, 1), true);
-//        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("circle running", durationTest, true, 100);
-//        assertFalse(clientEntity.getClientWorkouts().contains(workoutClassEntity));
-//
-//        clientService.addWorkoutToClient(clientEntity, workoutClassEntity);
-//
-//        assertEquals(1, clientEntity.getClientWorkouts().size());
-//        assertTrue(clientEntity.getClientWorkouts().contains(workoutClassEntity));
-//    }
-//
-//    @Test
-//    void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
-//        ClientEntity clientEntity =
-//                new ClientEntity("Jack", "Dogson", "890123",
-//                        LocalDate.of(1989, 1, 1), true);
-//        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("circle running", durationTest, true, 100);
-//        clientService.addWorkoutToClient(clientEntity, workoutClassEntity);
-//
-//        CustomException exception = assertThrows(CustomException.class,
-//                () -> clientService.addWorkoutToClient(clientEntity, workoutClassEntity));
-//
-//        assertEquals("This client already signed for: " + workoutClassEntity.getName(), exception.getMessage());
-//    }
-//
-//    @Test
-//    void shouldSaveClient() {
-//        ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
-//                "address", "123456", LocalDate.of(2000, 1, 1),
-//                true, new HashSet<>());
-//        clientDto.getClientWorkouts().add(new WorkoutClassDto());
-//        assertFalse(clientRepo.existsByPassport("123"));
-//
-//        ClientDto client = service.saveClient(clientDto);
-//        assertTrue(clientRepo.existsByPassport("123"));
-//        assertEquals(clientDto.getBirthdate(), client.getBirthdate());
-//        assertEquals(clientDto.getClientWorkouts().size(), client.getClientWorkouts().size());
-//    }
-//
-//    @Test
-//    void shouldThrowCustomExceptionWhenSaveClientAlreadyExists() {
-//        ClientDto clientDto = new ClientDto(null, "Clint", "Eastwood", "123",
-//                "address", "123456", LocalDate.of(2000, 1, 1),
-//                true, new HashSet<>());
-//        clientRepo.save(new ClientEntity("Clint", "Eastwood", "123",
-//                LocalDate.of(2000, 1, 1), true));
-//
-//        CustomException exception = assertThrows(CustomException.class, () -> service.saveClient(clientDto));
-//
-//        assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(), exception.getMessage());
-//    }
-//
+    @Autowired
+    private ClientServiceImp service;
+
+    @Autowired
+    private ClientServiceImp clientService;
+
+    @Autowired
+    private ClientRepo clientRepo;
+
+    ExampleMatcher modelMatcher = ExampleMatcher.matching()
+            .withIgnorePaths("id")
+            .withMatcher("passport", ignoreCase());
+
+    @AfterEach
+    void after() {
+        clientRepo.deleteAll();
+    }
+
+    @Test
+    void shouldAddWorkoutToClientEntity() {
+        ClientEntity clientEntity = new ClientEntity("Jack",
+                "Dogson",
+                "890123",
+                LocalDate.of(1989, 1, 1));
+        MembershipEntity membership = new MembershipEntity(null,
+                LocalDate.now(),
+                LocalDate.now().plusMonths(6),
+                true,
+                null);
+        clientEntity.setMembership(membership);
+
+        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("circle running",
+                true,
+                100);
+        assertFalse(clientEntity.getClientWorkouts().contains(workoutClassEntity));
+
+        clientService.addWorkoutToClient(clientEntity, workoutClassEntity);
+
+        assertEquals(1, clientEntity.getClientWorkouts().size());
+        assertTrue(clientEntity.getClientWorkouts().contains(workoutClassEntity));
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenAddWorkoutInSecondTime() {
+        ClientEntity clientEntity =
+                new ClientEntity("Jack",
+                        "Dogson",
+                        "890123",
+                        LocalDate.of(1989, 1, 1));
+        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("circle running",
+                true,
+                100);
+        clientService.addWorkoutToClient(clientEntity, workoutClassEntity);
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> clientService.addWorkoutToClient(clientEntity, workoutClassEntity));
+
+        assertEquals("This client already signed for: " + workoutClassEntity.getName(), exception.getMessage());
+    }
+
+    @Test
+    void shouldSaveClient() {
+        MembershipDto membershipDto = new MembershipDto(
+                LocalDate.now(),
+                LocalDate.now().plusMonths(6),
+                true);
+        ClientDto clientDto = new ClientDto(null,
+                "Clint",
+                "Eastwood",
+                "123",
+                "address",
+                "123456",
+                LocalDate.of(2000, 1, 1),
+                membershipDto,
+                new HashSet<>());
+        clientDto.getClientWorkouts().add(new WorkoutClassDto());
+        assertFalse(clientRepo.existsByPassport("123"));
+
+        ClientDto client = service.saveClient(clientDto);
+        assertTrue(clientRepo.existsByPassport("123"));
+        assertEquals(clientDto.getBirthdate(), client.getBirthdate());
+        assertEquals(clientDto.getClientWorkouts().size(), client.getClientWorkouts().size());
+        assertEquals(clientDto.getMembership().getEndDate(), client.getMembership().getEndDate());
+    }
+
+    @Test
+    void shouldSaveClientWithMembership() {
+        MembershipDto membershipDto = new MembershipDto(
+                LocalDate.now(),
+                LocalDate.now().plusMonths(6),
+                true);
+        ClientDto clientDto = new ClientDto(null,
+                "Clint",
+                "Eastwood",
+                "123",
+                "address",
+                "123456",
+                LocalDate.of(2000, 1, 1),
+                null,
+                new HashSet<>());
+        assertFalse(clientRepo.existsByPassport("123"));
+
+        clientService.saveClientWithMembership(clientDto, membershipDto);
+        ClientEntity savedClient = clientRepo.findByPassport("123");
+
+        assertTrue(clientRepo.existsByPassport("123"));
+        assertEquals(clientDto.getBirthdate(), savedClient.getBirthdate());
+        assertEquals(clientDto.getMembership().getEndDate(), savedClient.getMembership().getEndDate());
+    }
+
+    @Test
+    void shouldThrowCustomExceptionWhenSaveClientAlreadyExists() {
+        ClientDto clientDto = new ClientDto(null,
+                "Clint",
+                "Eastwood",
+                "123",
+                "address",
+                "123456",
+                LocalDate.of(2000, 1, 1),
+                new MembershipDto(null, null, true),
+                new HashSet<>());
+        ClientEntity clientEntity = new ClientEntity("Clint",
+                "Eastwood",
+                "123",
+                LocalDate.of(2000, 1, 1));
+        clientRepo.save(clientEntity);
+
+        CustomException exception = assertThrows(CustomException.class, () -> service.saveClient(clientDto));
+
+        assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(), exception.getMessage());
+    }
+
 //    @Test
 //    void shouldGetClientById() {
 //        ClientEntity clientEntity = new ClientEntity("NameFirst",

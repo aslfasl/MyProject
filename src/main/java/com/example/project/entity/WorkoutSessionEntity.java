@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = "session")
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionEntity {
+public class WorkoutSessionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class SessionEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SessionEntity that = (SessionEntity) o;
+        WorkoutSessionEntity that = (WorkoutSessionEntity) o;
         return Objects.equals(durationInMinutes, that.durationInMinutes) && Objects.equals(startDate, that.startDate) && Objects.equals(startTime, that.startTime);
     }
 

@@ -17,8 +17,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class ClientEntity extends BaseEntity{
 
-    @OneToOne(mappedBy = "client",
-            cascade = {CascadeType.ALL})
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "membership_id")
     private MembershipEntity membership;
 
     @ManyToMany(fetch = FetchType.EAGER,
@@ -31,7 +31,10 @@ public class ClientEntity extends BaseEntity{
     @EqualsAndHashCode.Exclude
     private Set<WorkoutClassEntity> clientWorkouts = new HashSet<>();
 
-    public ClientEntity(String firstName, String lastName, String passport, LocalDate birthdate) {
+    public ClientEntity(String firstName,
+                        String lastName,
+                        String passport,
+                        LocalDate birthdate) {
         super(firstName, lastName, passport, birthdate);
     }
 
@@ -48,4 +51,6 @@ public class ClientEntity extends BaseEntity{
     public int hashCode() {
         return Objects.hash(this.getFirstName(), this.getLastName(), this.getPassport());
     }
+
+
 }
