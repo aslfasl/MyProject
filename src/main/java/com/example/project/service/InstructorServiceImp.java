@@ -33,14 +33,14 @@ public class InstructorServiceImp implements InstructorService {
     private final ValidationService validationService;
     private final InstructorCriteriaRepo instructorCriteriaRepo;
 
-//    public void addWorkoutToInstructor(WorkoutClassEntity workout, InstructorEntity instructorEntity) {
-//        validationService.checkIsWorkoutAvailable(workout);
-//        if (instructorEntity.getInstructorWorkouts().contains(workout)) {
-//            throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
-//        }
-//        instructorEntity.getInstructorWorkouts().add(workout);
-//        workout.getInstructors().add(instructorEntity);
-//    }
+    public void addWorkoutToInstructor(WorkoutClassEntity workout, InstructorEntity instructorEntity) {
+        validationService.checkIsWorkoutAvailable(workout);
+        if (instructorEntity.getInstructorWorkouts().contains(workout)) {
+            throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
+        }
+        instructorEntity.getInstructorWorkouts().add(workout);
+        workout.setInstructor(instructorEntity);
+    }
 
     @Override
     public InstructorDto getById(Long id) {

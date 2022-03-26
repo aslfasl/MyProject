@@ -18,6 +18,8 @@ public class InstructorDto {
     private String passport;
     private String address;
     private String phone;
+    private String speciality;
+    private String education;
     private boolean isActive;
     private LocalDate birthdate;
     private Set<WorkoutClassDto> instructorWorkouts;

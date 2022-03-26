@@ -75,12 +75,19 @@ class InstructorControllerTest {
 
     @Test
     void shouldSaveInstructorToDatabase() throws Exception {
-        InstructorDto instructorDto =
-                new InstructorDto(null, "Jack", "Black", "passport1",
-                        "address", "123456", true,
-                        LocalDate.of(1999, 1, 1), new HashSet<>());
-        WorkoutClassDto workoutClassDto = new WorkoutClassDto(null, "sport", Duration.ofMinutes(45), true,
-                15, null, null);
+        InstructorDto instructorDto = new InstructorDto(null,
+                "Jack",
+                "Black",
+                "passport1",
+                "address",
+                "123456",
+                "speciality",
+                "education",
+                true,
+                LocalDate.of(1999, 1, 1),
+                new HashSet<>());
+        WorkoutClassDto workoutClassDto = new WorkoutClassDto(null, "sport",
+                "description", true, 15, null, null, null);
         instructorDto.getInstructorWorkouts().add(workoutClassDto);
 
         mockMvc.perform(post("/api/instructor/save")
@@ -154,11 +161,21 @@ class InstructorControllerTest {
         instructorRepo.save(instructorEntity);
         long id = instructorEntity.getId();
         String newFirstname = "Anna", newLastname = "Ivanova", newPassport = "fffda123",
-                newAddress = "address", newPhone = "123456";
+                newAddress = "address", newPhone = "123456", newSpeciality = "speciality", newEducation = "education";
         LocalDate newBirthdate = LocalDate.of(1995, 5, 5);
         boolean newActive = true;
-        InstructorDto instructorDto = new InstructorDto(null, newFirstname, newLastname, newPassport,
-                newAddress, newPhone, newActive, newBirthdate, null);
+        InstructorDto instructorDto = new InstructorDto(
+                null,
+                newFirstname,
+                newLastname,
+                newPassport,
+                newAddress,
+                newPhone,
+                newSpeciality,
+                newEducation,
+                newActive,
+                newBirthdate,
+                null);
 
         String content = mockMvc.perform((patch("/api/instructor/update?id={id}", id))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -169,6 +186,9 @@ class InstructorControllerTest {
                 .andExpect(jsonPath("$.lastName", equalTo(newLastname)))
                 .andExpect(jsonPath("$.passport", equalTo(newPassport)))
                 .andExpect(jsonPath("$.active", equalTo(newActive)))
+                .andExpect(jsonPath("$.education", equalTo(newEducation)))
+                .andExpect(jsonPath("$.address", equalTo(newAddress)))
+                .andExpect(jsonPath("$.speciality", equalTo(newSpeciality)))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

@@ -44,6 +44,8 @@ public class WorkoutClassEntity {
     @OneToMany(cascade = CascadeType.ALL,
     mappedBy = "workoutClass",
     fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<WorkoutSessionEntity> sessions;
 
 
