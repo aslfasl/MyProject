@@ -34,6 +34,11 @@ public class ValidationService {
             throw new CustomException("Instructor is not active", ErrorType.INACTIVE);
         }
     }
+    void checkInstructorStatus(InstructorEntity instructor) {
+        if (!instructor.isActive()) {
+            throw new CustomException("Instructor is not active", ErrorType.INACTIVE);
+        }
+    }
 
     void checkIsWorkoutAvailable(WorkoutClassEntity workoutClassEntity) {
         if (!workoutClassEntity.isAvailable()) {

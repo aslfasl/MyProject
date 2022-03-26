@@ -46,7 +46,7 @@ public class WorkoutClassEntity {
     fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
-    private Set<WorkoutSessionEntity> sessions;
+    private Set<WorkoutSessionEntity> sessions = new HashSet<>();
 
 
     public WorkoutClassEntity(String name, boolean isAvailable, int peopleLimit) {

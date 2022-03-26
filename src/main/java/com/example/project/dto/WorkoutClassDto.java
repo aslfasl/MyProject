@@ -18,5 +18,5 @@ public class WorkoutClassDto {
     private Integer peopleLimit;
     private Set<ClientDto> clients;
     private InstructorDto instructor;
-    private WorkoutSessionDto session;
+    private Set<WorkoutSessionDto> sessions;
 }

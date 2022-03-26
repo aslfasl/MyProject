@@ -18,6 +18,14 @@ public class Converter {
         return objectMapper.convertValue(fromValue, toValueType);
     }
 
+    public WorkoutSessionDto convertSessionEntity(WorkoutSessionEntity workoutSession) {
+        return convertValue(workoutSession, WorkoutSessionDto.class);
+    }
+
+    public WorkoutSessionEntity convertSessionDto(WorkoutSessionDto workoutSessionDto) {
+        return convertValue(workoutSessionDto, WorkoutSessionEntity.class);
+    }
+
     public ClientDto convertClientEntity(ClientEntity clientEntity) {
         ClientDto clientDto = convertValue(clientEntity, ClientDto.class);
         Set<WorkoutClassDto> workouts = clientEntity.getClientWorkouts().stream()
@@ -39,6 +47,9 @@ public class Converter {
     }
 
     public InstructorDto convertInstructorEntity(InstructorEntity instructorEntity) {
+        if (instructorEntity == null) {
+            return null;
+        }
         InstructorDto instructorDto = convertValue(instructorEntity, InstructorDto.class);
         Set<WorkoutClassDto> workouts = instructorEntity.getInstructorWorkouts().stream()
                 .map(workoutEntity -> convertValue(workoutEntity, WorkoutClassDto.class))
@@ -48,6 +59,9 @@ public class Converter {
     }
 
     public InstructorEntity convertInstructorDto(InstructorDto instructorDto) {
+        if (instructorDto == null) {
+            return null;
+        }
         InstructorEntity instructorEntity = convertValue(instructorDto, InstructorEntity.class);
         Set<WorkoutClassEntity> workouts = instructorDto.getInstructorWorkouts().stream()
                 .map(workoutDto -> convertValue(workoutDto, WorkoutClassEntity.class))
@@ -56,17 +70,21 @@ public class Converter {
         return instructorEntity;
     }
 
-    public WorkoutClassDto convertWorkoutEntity(WorkoutClassEntity workoutClassEntity) {
+    public WorkoutClassDto convertWorkoutClassEntity(WorkoutClassEntity workoutClassEntity) {
         WorkoutClassDto workoutClassDto = convertValue(workoutClassEntity, WorkoutClassDto.class);
         Set<ClientDto> clients = workoutClassEntity.getClients().stream()
                 .map(this::convertClientEntity)
                 .collect(Collectors.toSet());
+        Set<WorkoutSessionDto> sessions = workoutClassEntity.getSessions().stream()
+                .map(this::convertSessionEntity)
+                .collect(Collectors.toSet());
+        workoutClassDto.setSessions(sessions);
         workoutClassDto.setClients(clients);
         workoutClassDto.setInstructor(convertInstructorEntity(workoutClassEntity.getInstructor()));
         return workoutClassDto;
     }
 
-    public WorkoutClassEntity convertWorkoutDto(WorkoutClassDto workoutClassDto) {
+    public WorkoutClassEntity convertWorkoutClassDto(WorkoutClassDto workoutClassDto) {
         WorkoutClassEntity workoutClassEntity = convertValue(workoutClassDto, WorkoutClassEntity.class);
         Set<ClientEntity> clients = workoutClassDto.getClients().stream()
                 .map(this::convertClientDto)

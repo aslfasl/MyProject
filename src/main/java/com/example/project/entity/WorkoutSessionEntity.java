@@ -1,9 +1,6 @@
 package com.example.project.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Duration;
@@ -21,6 +18,7 @@ public class WorkoutSessionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Long id;
     @Column(name = "duration")
     private Duration durationInMinutes;
@@ -30,6 +28,7 @@ public class WorkoutSessionEntity {
     @ManyToOne(cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id")
+    @EqualsAndHashCode.Exclude
     private WorkoutClassEntity workoutClass;
 
     @Override

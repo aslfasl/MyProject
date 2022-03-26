@@ -14,8 +14,6 @@ public interface WorkoutClassRepo extends JpaRepository<WorkoutClassEntity, Long
 
     WorkoutClassEntity findByName(String name);
 
-//    boolean existsByNameAndDurationInMinutesAndPeopleLimit(String name, Duration duration, int limit);
-
     boolean existsByName(String name);
 
 }
