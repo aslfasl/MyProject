@@ -4,7 +4,6 @@ import com.example.project.entity.WorkoutClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
 import java.util.List;
 
 @Repository

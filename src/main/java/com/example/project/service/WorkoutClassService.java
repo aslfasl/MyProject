@@ -4,7 +4,6 @@ import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutClassDto;
 import com.example.project.dto.WorkoutSessionDto;
-import com.example.project.entity.WorkoutSessionEntity;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.List;
