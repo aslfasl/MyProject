@@ -4,6 +4,7 @@ import com.example.project.converter.Converter;
 import com.example.project.dto.ClientDto;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutClassDto;
+import com.example.project.dto.WorkoutSessionDto;
 import com.example.project.service.WorkoutClassService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
@@ -78,5 +79,22 @@ public class WorkoutController {
     public ResponseEntity<List<ClientDto>> showActiveClientsCounter(@RequestParam String name) {
         List<ClientDto> clients = workoutClassService.getActiveClientsByClassName(name);
         return ResponseEntity.ok().body(clients);
+    }
+
+    @GetMapping("/workout/sessions/{id}")
+    public ResponseEntity<List<WorkoutSessionDto>> showAllWorkoutClassSessions(@PathVariable Long id) {
+        return ResponseEntity.ok().body(workoutClassService.getAllClassSessions(id));
+    }
+
+    @DeleteMapping("/workout/session/delete")
+    public ResponseEntity <WorkoutSessionDto> deleteSessionById(@RequestParam Long classId,
+                                                                @RequestParam  Long sessionId){
+        return ResponseEntity.ok().body(workoutClassService.deleteSession(classId, sessionId));
+    }
+
+    @PatchMapping("/workout/session/add/{id}")
+    public ResponseEntity<WorkoutSessionDto> addSessionToWorkoutClassById(@PathVariable Long id,
+                                                                          @RequestBody WorkoutSessionDto workoutSessionDto) {
+        return ResponseEntity.accepted().body(workoutClassService.addSession(id, workoutSessionDto));
     }
 }

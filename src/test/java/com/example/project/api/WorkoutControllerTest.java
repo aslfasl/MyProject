@@ -1,11 +1,10 @@
 package com.example.project.api;
 
+import com.example.project.converter.Converter;
 import com.example.project.dto.InstructorDto;
 import com.example.project.dto.WorkoutClassDto;
-import com.example.project.entity.ClientEntity;
-import com.example.project.entity.InstructorEntity;
-import com.example.project.entity.MembershipEntity;
-import com.example.project.entity.WorkoutClassEntity;
+import com.example.project.dto.WorkoutSessionDto;
+import com.example.project.entity.*;
 import com.example.project.repo.ClientRepo;
 import com.example.project.repo.InstructorRepo;
 import com.example.project.repo.WorkoutClassRepo;
@@ -22,7 +21,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
@@ -56,6 +57,9 @@ class WorkoutControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    private Converter converter;
 
     @BeforeEach
     public void setup() {
@@ -278,5 +282,102 @@ class WorkoutControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$[*]", hasSize(2)))
                 .andExpect(jsonPath("$[*].membership.active", containsInAnyOrder(true, true)));
+    }
+
+    @Test
+    @Transactional
+    void shouldGetAllClassSessionsById() throws Exception {
+        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("Super workout", true, 12);
+        WorkoutSessionEntity workoutSession1 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(30),
+                LocalDate.of(2022, 4, 4),
+                LocalTime.of(12, 0),
+                null);
+        WorkoutSessionEntity workoutSession2 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(40),
+                LocalDate.of(2022, 3, 4),
+                LocalTime.of(12, 0),
+                null);
+        WorkoutSessionEntity workoutSession3 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(50),
+                LocalDate.of(2022, 5, 4),
+                LocalTime.of(12, 0),
+                null);
+        workoutClassEntity.getSessions().add(workoutSession1);
+        workoutClassEntity.getSessions().add(workoutSession2);
+        workoutClassEntity.getSessions().add(workoutSession3);
+        classRepo.save(workoutClassEntity);
+        long id = workoutClassEntity.getId();
+
+        mockMvc.perform(get("/api/workout/sessions/" + id))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$[*]", hasSize(3)))
+                .andExpect(jsonPath("$[*].durationInMinutes", containsInAnyOrder(30 * 60d, 40 * 60d, 50 * 60d)));
+    }
+
+    @Test
+    @Transactional
+    void shouldDeleteClassSessionsByIds() throws Exception {
+        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("Super workout", true, 12);
+        WorkoutSessionEntity workoutSession1 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(30),
+                LocalDate.of(2022, 4, 4),
+                LocalTime.of(12, 0),
+                null);
+        WorkoutSessionEntity workoutSession2 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(40),
+                LocalDate.of(2022, 3, 4),
+                LocalTime.of(12, 0),
+                null);
+        WorkoutSessionEntity workoutSession3 = new WorkoutSessionEntity(
+                null,
+                Duration.ofMinutes(50),
+                LocalDate.of(2022, 5, 4),
+                LocalTime.of(12, 0),
+                null);
+        workoutClassEntity.getSessions().add(workoutSession1);
+        workoutClassEntity.getSessions().add(workoutSession2);
+        workoutClassEntity.getSessions().add(workoutSession3);
+        classRepo.save(workoutClassEntity);
+        long classId = workoutClassEntity.getId();
+        long sessionId = workoutSession2.getId();
+
+        mockMvc.perform((delete("/api/workout/session/delete?classId={classId}&sessionId={sessionId}",
+                        classId, sessionId)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(40 * 60d)));
+
+        assertFalse(classRepo.getById(classId).getSessions().contains(workoutSession2));
+    }
+
+    @Test
+    @Transactional
+    void shouldAddSessionToWorkoutClassById() throws Exception {
+        WorkoutClassEntity workoutClassEntity = new WorkoutClassEntity("Super workout", true, 12);
+        WorkoutSessionDto sessionDto = new WorkoutSessionDto(
+                null,
+                Duration.ofMinutes(30),
+                LocalDate.of(2022, 4, 4),
+                LocalTime.of(12, 0),
+                null);
+        classRepo.save(workoutClassEntity);
+        long classId = workoutClassEntity.getId();
+
+
+        mockMvc.perform(patch("/api/workout/session/add/" + classId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(sessionDto)))
+                .andExpect(status().isAccepted())
+                .andDo(print())
+                .andExpect(jsonPath("$.durationInMinutes", equalTo(30 * 60d)));
+
+        assertTrue(classRepo.getById(classId).getSessions().contains(converter.convertSessionDto(sessionDto)));
     }
 }
