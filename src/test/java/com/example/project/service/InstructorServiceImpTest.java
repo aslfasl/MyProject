@@ -4,7 +4,7 @@ import com.example.project.dto.*;
 import com.example.project.entity.InstructorEntity;
 import com.example.project.entity.WorkoutClassEntity;
 import com.example.project.exception.CustomException;
-import com.example.project.repo.InstructorRepo;
+import com.example.project.repo.*;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -24,8 +23,8 @@ import static com.example.project.exception.ExceptionMessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class InstructorServiceImpTest {
-
 
     @Autowired
     private InstructorRepo instructorRepo;

@@ -35,6 +35,7 @@ public class InstructorServiceImp implements InstructorService {
 
     public void addWorkoutToInstructor(WorkoutClassEntity workout, InstructorEntity instructorEntity) {
         validationService.checkIsWorkoutAvailable(workout);
+        validationService.checkInstructorEntityStatus(instructorEntity);
         if (instructorEntity.getInstructorWorkouts().contains(workout)) {
             throw new CustomException(INSTRUCTOR_ALREADY_SIGNED_FOR + workout.getName(), ErrorType.ALREADY_EXISTS);
         }
