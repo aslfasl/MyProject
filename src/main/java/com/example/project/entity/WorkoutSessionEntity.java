@@ -8,12 +8,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-@Getter
-@Setter
+
 @Entity
 @Table(name = "session")
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class WorkoutSessionEntity {
 
     @Id
@@ -29,6 +29,7 @@ public class WorkoutSessionEntity {
             fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id")
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private WorkoutClassEntity workoutClass;
 
     @Override

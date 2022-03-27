@@ -9,12 +9,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @Entity
 @NoArgsConstructor
 @Table(name = "client")
-@AllArgsConstructor
 public class ClientEntity extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
