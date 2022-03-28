@@ -28,9 +28,6 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 class ClientServiceImpTest {
 
     @Autowired
-    private ClientServiceImp service;
-
-    @Autowired
     private ClientServiceImp clientService;
 
     @Autowired
@@ -105,7 +102,7 @@ class ClientServiceImpTest {
         clientDto.getClientWorkouts().add(new WorkoutClassDto());
         assertFalse(clientRepo.existsByPassport("123"));
 
-        ClientDto client = service.saveClient(clientDto);
+        ClientDto client = clientService.saveClient(clientDto);
 
         assertTrue(clientRepo.existsByPassport("123"));
         assertEquals(clientDto.getBirthdate(), client.getBirthdate());
@@ -155,7 +152,7 @@ class ClientServiceImpTest {
                 LocalDate.of(2000, 1, 1));
         clientRepo.save(clientEntity);
 
-        CustomException exception = assertThrows(CustomException.class, () -> service.saveClient(clientDto));
+        CustomException exception = assertThrows(CustomException.class, () -> clientService.saveClient(clientDto));
 
         assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + clientDto.getPassport(), exception.getMessage());
     }
@@ -177,7 +174,7 @@ class ClientServiceImpTest {
         assertTrue(clientRepo.exists(Example.of(clientEntity, modelMatcher)));
         long id = clientEntity.getId();
 
-        ClientDto client = service.getClientById(id);
+        ClientDto client = clientService.getClientById(id);
 
         assertEquals(clientEntity.getPassport(), client.getPassport());
         assertEquals(client.getBirthdate(), client.getBirthdate());
@@ -202,7 +199,7 @@ class ClientServiceImpTest {
         clientRepo.save(clientEntity);
         long id = clientEntity.getId();
 
-        ClientDto clientDto = service.deleteClientById(id);
+        ClientDto clientDto = clientService.deleteClientById(id);
 
         assertFalse(clientDto.getMembership().isActive());
         assertFalse(clientRepo.getById(id).getMembership().isActive());
@@ -237,7 +234,7 @@ class ClientServiceImpTest {
                 newPhone, newBirthdate, newMembershipDto, null);
 
 
-        service.updateClientById(id, clientOverride);
+        clientService.updateClientById(id, clientOverride);
 
         ClientEntity clientSaved = clientRepo.getById(id);
         assertEquals(newFirstname, clientSaved.getFirstName());
@@ -271,7 +268,7 @@ class ClientServiceImpTest {
                 null, null, new MembershipDto(), null);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, clientDto));
+                () -> clientService.updateClientById(id, clientDto));
 
         assertEquals(CLIENT_ALREADY_EXISTS_PASSPORT + passport, exception.getMessage());
     }
@@ -282,7 +279,7 @@ class ClientServiceImpTest {
         ClientDto clientDto = new ClientDto();
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> service.updateClientById(id, clientDto));
+                () -> clientService.updateClientById(id, clientDto));
 
         assertEquals(CLIENT_NOT_FOUND_ID + id, exception.getMessage());
     }
@@ -314,7 +311,7 @@ class ClientServiceImpTest {
         clientRepo.save(clientEntity2);
         clientRepo.save(clientEntity3);
 
-        List<ClientDto> clients = service.getClientByFullNameAndBirthDate(name, lastName, localDate);
+        List<ClientDto> clients = clientService.getClientByFullNameAndBirthDate(name, lastName, localDate);
         assertTrue(clients.stream().allMatch(clientDto -> clientDto.getFirstName().equals(name)));
         assertTrue(clients.stream().allMatch(clientDto -> clientDto.getLastName().equals(lastName)));
         assertTrue(clients.stream().allMatch(clientDto -> clientDto.getBirthdate().equals(localDate)));
@@ -345,8 +342,8 @@ class ClientServiceImpTest {
         clientRepo.save(clientEntity2);
         clientRepo.save(clientEntity3);
 
-        List<ClientDto> allActiveClients = service.getAllActiveClients();
-        assertEquals(3, service.getAll().size());
+        List<ClientDto> allActiveClients = clientService.getAllActiveClients();
+        assertEquals(3, clientService.getAll().size());
         assertEquals(2, allActiveClients.size());
         assertTrue(allActiveClients.stream().allMatch(clientDto -> clientDto.getMembership().isActive()));
     }
@@ -362,7 +359,7 @@ class ClientServiceImpTest {
                 new HashSet<>());
         clientRepo.save(clientEntity);
 
-        ClientDto clientDto = service.getClientByPassport(passport);
+        ClientDto clientDto = clientService.getClientByPassport(passport);
 
         assertEquals(clientEntity.getPassport(), clientDto.getPassport());
         assertEquals(clientEntity.getBirthdate(), clientDto.getBirthdate());
@@ -373,7 +370,7 @@ class ClientServiceImpTest {
     void shouldThrowCustomExceptionWhenGetClientByPassportNotFound() {
         String passport = "7777";
 
-        CustomException exception = assertThrows(CustomException.class, () -> service.getClientByPassport(passport));
+        CustomException exception = assertThrows(CustomException.class, () -> clientService.getClientByPassport(passport));
 
         assertEquals(CLIENT_NOT_FOUND_PASSPORT + passport, exception.getMessage());
     }
