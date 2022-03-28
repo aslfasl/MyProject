@@ -2,7 +2,7 @@ package com.example.project.repo;
 
 import com.example.project.entity.ClientEntity;
 import com.example.project.entity.MembershipEntity;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,8 +18,8 @@ class ClientRepoTest {
     @Autowired
     private ClientRepo clientRepo;
 
-    @AfterEach
-    void clean(){
+    @BeforeEach
+    void setUp(){
         clientRepo.deleteAll();
     }
 
@@ -39,6 +39,8 @@ class ClientRepoTest {
         List<ClientEntity> clientsActive = clientRepo.getClientEntitiesByMembershipActive();
 
         assertTrue(clientsActive.stream().allMatch(client -> client.getMembership().isActive()));
+        System.out.println(clientsActive);
         assertEquals(3, clientsActive.size());
+
     }
 }
