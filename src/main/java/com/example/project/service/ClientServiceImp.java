@@ -151,7 +151,7 @@ public class ClientServiceImp implements ClientService {
                         clientEntity.getFirstName(), clientEntity.getLastName());
             }
         }
-        log.info("Membership check completed");
+        log.info("Memberships check completed");
     }
 
     @SneakyThrows
