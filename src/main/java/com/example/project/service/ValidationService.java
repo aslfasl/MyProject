@@ -83,6 +83,6 @@ public class ValidationService {
     }
 
     boolean checkMembershipDate(ClientEntity client) {
-        return client.getMembership().getEndDate().isAfter(LocalDate.now());
+        return client.getMembership().getEndDate().isBefore(LocalDate.now());
     }
 }
