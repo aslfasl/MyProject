@@ -53,7 +53,7 @@ class ValidationServiceTest {
     }
 
     @Test
-    void shouldThrowCustomExceptionWhenCheckInstructorStatus() {
+    void shouldThrowCustomExceptionWhenCheckInstructorDtoStatus() {
         InstructorDto instructorDto = new InstructorDto(
                 null,
                 "Vag",
@@ -243,5 +243,20 @@ class ValidationServiceTest {
                 () -> validationService.checkInstructorStatus(instructorEntity));
 
         assertEquals("Instructor is not active", exception.getMessage());
+    }
+
+    @Test
+    void shouldCheckClientMembershipStatus() {
+        ClientEntity client = new ClientEntity(
+                "Bob",
+                "Dob",
+                "asdfgq",
+                LocalDate.of(2000, 1, 1));
+        client.setMembership(new MembershipEntity(
+                LocalDate.of(2020, 1, 1),
+                LocalDate.now().minusDays(2),
+                true));
+
+        assertFalse(validationService.checkMembershipDate(client));
     }
 }

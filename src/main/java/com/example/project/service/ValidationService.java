@@ -76,13 +76,7 @@ public class ValidationService {
         }
     }
 
-    void checkInstructorEntityStatus(InstructorEntity instructor) {
-        if (!instructor.isActive()) {
-            throw new CustomException("Person is not active", ErrorType.INACTIVE);
-        }
-    }
-
     boolean checkMembershipDate(ClientEntity client) {
-        return client.getMembership().getEndDate().isBefore(LocalDate.now());
+        return client.getMembership().getEndDate().isAfter(LocalDate.now());
     }
 }
