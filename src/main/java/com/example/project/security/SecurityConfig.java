@@ -46,13 +46,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(SWAGGER).permitAll();
         http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/api/**")
-                .hasAnyAuthority("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(POST, "/api/client/**")
+                .hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers(POST, "/api/client/**", "api/workout/**", "api/instructor/**")
                 .hasAnyAuthority("ROLE_MANAGER");
         http.authorizeRequests().antMatchers(PATCH, "/api/client/**", "api/workout/**", "api/instructor/**")
                 .hasAnyAuthority("ROLE_MANAGER");
-        http.authorizeRequests().antMatchers(POST, "/api/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(PATCH, "/api/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/client/**", "api/workout/**", "api/instructor/**")
+                .hasAnyAuthority("ROLE_MANAGER");
+        http.authorizeRequests().antMatchers(GET, "/admin/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/admin/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(PATCH, "/admin/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -20,7 +20,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api")
+@RequestMapping("admin")
 public class UserController {
 
     private final UserService userService;

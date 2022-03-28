@@ -14,16 +14,21 @@ import com.example.project.repo.ClientRepo;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.project.exception.ExceptionMessageUtils.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @Transactional
@@ -134,6 +139,25 @@ public class ClientServiceImp implements ClientService {
     public Page<ClientDto> getClientsFilterPage(ClientPage clientPage,
                                                 ClientSearchCriteria clientSearchCriteria) {
         return clientCriteriaRepo.findAllWithFilters(clientPage, clientSearchCriteria);
+    }
+
+    @Scheduled(cron = "0 0 6 * * *")
+    public void membershipCheck() {
+        log.info("Stating membership check");
+        for (ClientEntity clientEntity : clientRepo.getClientEntitiesByMembershipActive()) {
+            if (validationService.checkMembershipDate(clientEntity)) {
+                clientEntity.getMembership().setActive(false);
+                log.info("Membership of user {} {} is no longer active",
+                        clientEntity.getFirstName(), clientEntity.getLastName());
+            }
+        }
+        log.info("Membership check completed");
+    }
+
+    @SneakyThrows
+    @PostConstruct
+    public void init() {
+        membershipCheck();
     }
 
 }

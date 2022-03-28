@@ -81,4 +81,8 @@ public class ValidationService {
             throw new CustomException("Person is not active", ErrorType.INACTIVE);
         }
     }
+
+    boolean checkMembershipDate(ClientEntity client) {
+        return client.getMembership().getEndDate().isAfter(LocalDate.now());
+    }
 }
