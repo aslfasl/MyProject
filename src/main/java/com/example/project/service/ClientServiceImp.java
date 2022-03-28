@@ -143,7 +143,7 @@ public class ClientServiceImp implements ClientService {
 
     @Scheduled(cron = "0 0 6 * * *")
     public void membershipCheck() {
-        log.info("Stating membership check");
+        log.info("Starting membership check");
         for (ClientEntity clientEntity : clientRepo.getClientEntitiesByMembershipActive()) {
             if (validationService.checkMembershipDate(clientEntity)) {
                 clientEntity.getMembership().setActive(false);
