@@ -2,8 +2,6 @@ package com.example.project.api;
 
 import com.example.project.dto.AppUserDto;
 import com.example.project.dto.RoleDto;
-import com.example.project.entity.AppUser;
-import com.example.project.entity.Role;
 import com.example.project.service.SecurityService;
 import com.example.project.service.UserService;
 import lombok.Data;
@@ -52,6 +50,17 @@ public class UserController {
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         securityService.refreshToken(request, response);
+    }
+
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<AppUserDto> deleteUser(@RequestBody RoleToUserForm form) {
+        return ResponseEntity.ok().body(userService.deleteUser(form.getUserName()));
+    }
+
+    @DeleteMapping("/role/delete_from_user")
+    public ResponseEntity<RoleDto> deleteRoleFromUser(@RequestBody RoleToUserForm form) {
+        return ResponseEntity.ok()
+                .body(userService.deleteRoleFromUser(form.getUserName(), form.getRoleName()));
     }
 }
 

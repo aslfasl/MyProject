@@ -11,5 +11,7 @@ public interface UserService {
     void addRoleToUser(String username, String roleName);
     AppUserDto getUser(String username);
     List<AppUserDto> getUsers();
+    RoleDto deleteRoleFromUser(String username, String roleName);
+    AppUserDto deleteUser(String username);
 
 }

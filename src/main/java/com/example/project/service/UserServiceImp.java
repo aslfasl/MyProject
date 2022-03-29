@@ -111,4 +111,27 @@ public class UserServiceImp implements UserService, UserDetailsService {
                 .map(appUser -> converter.convertValue(appUser, AppUserDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public RoleDto deleteRoleFromUser(String username, String roleName) {
+        log.info("Deleting role {} from user {}", roleName, username);
+        AppUser user = userRepo.findByUsername(username);
+        Role role = roleRepo.findByName(roleName);
+        if (user == null) {
+            throw new CustomException(USER_NOT_FOUND_NAME + username, ErrorType.NOT_FOUND);
+        }
+        if (role == null) {
+            throw new CustomException(ROLE_NOT_FOUND_NAME + roleName, ErrorType.NOT_FOUND);
+        }
+        user.getRoles().remove(role);
+        return converter.convertValue(role, RoleDto.class);
+
+    }
+
+    @Override
+    public AppUserDto deleteUser(String username) {
+        AppUser user = userRepo.findByUsername(username);
+        userRepo.deleteById(user.getId());
+        return converter.convertValue(user, AppUserDto.class);
+    }
 }
